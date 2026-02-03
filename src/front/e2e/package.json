@@ -1,10 +1,11 @@
 {
-  "name": "e2e",
+  "name": "electorci-e2e",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "playwright test",
+    "test-ui": "playwright test --ui --ui-host=0.0.0.0 --ui-port=9323"
   },
   "keywords": [],
   "author": "",
@@ -12,5 +13,9 @@
   "type": "commonjs",
   "devDependencies": {
     "playwright": "^1.58.1"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.58.1",
+    "@types/node": "^25.2.0"
   }
 }
