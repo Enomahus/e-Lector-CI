@@ -1,0 +1,7 @@
+<div class="app">
+  @if (translationsLoaded$ | async) {
+    <router-outlet></router-outlet>
+  } @else {
+    <app-loader></app-loader>
+  }
+</div>
