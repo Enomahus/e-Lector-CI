@@ -1,0 +1,34 @@
+{
+  "global": {
+    "accept": "Accept",
+    "createAccount": "Create an account",
+    "save": "Save",
+    "search": "Search",
+    "edit": "Edit",
+    "back": "Back",
+    "cancel": "Cancel",
+    "login": "Log in",
+    "no": "No",
+    "yes": "Yes"
+  },
+  "formError": {
+    "required": "Required field",
+    "emailInvalid": "The email is not in the correct format.",
+    "passwordFormat": "The password must contain between 8 and 24 characters and have at least one lowercase letter, one uppercase letter, one number and one special character.",
+    "passwordMismatch": "Passwords do not match",
+    "emailUnique": "This email address already exists. Please use a different email address."
+  },
+  "login": {
+    "email": "E-mail",
+    "password": "Password",
+    "title": "Login",
+    "forgotPassword": "I have forgotten my password",
+    "noAccount": "Don't have an account ?",
+    "signUp": "Sign up"
+  },
+  "footer": {
+    "text": "© 2026 Independent Electoral Commission (IEC) - Côte d'Ivoire.",
+    "rights": "All rights reserved."
+  },
+  "navbar": {}
+}

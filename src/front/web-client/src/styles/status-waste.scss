@@ -1,0 +1,51 @@
+.status {
+  &.status-waste-draft {
+    background-color: var(--status-waste-draft-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-waste-sealed {
+    background-color: var(--status-waste-sealed-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-waste-signedByProducer {
+    background-color: var(--status-waste-signedByProducer-color);
+    color: var(--primary-text-color);
+  }
+
+  &.status-waste-sent {
+    background-color: var(--status-waste-sent-color);
+    color: var(--primary-text-color);
+  }
+
+  &.status-waste-received {
+    background-color: var(--status-waste-received-color);
+    color: var(--primary-text-color);
+  }
+
+  &.status-waste-awaitingGroup {
+    background-color: var(--status-waste-awaitingGroup-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-waste-grouped {
+    background-color: var(--status-waste-grouped-color);
+    color: var(--primary-text-color);
+  }
+
+  &.status-waste-accepted {
+    background-color: var(--status-waste-accepted-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-waste-processed {
+    background-color: var(--status-waste-processed-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-waste-followedWithPnttd {
+    background-color: var(--status-waste-followedWithPnttd-color);
+    color: var(--primary-text-color);
+  }
+}

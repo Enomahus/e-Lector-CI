@@ -18,6 +18,11 @@ export const routes: Routes = [
     title: 'Forgot Password',
   },
   {
+    path: 'register',
+    loadComponent: () => import('./pages/login/create-account/create-account').then((m) => m.CreateAccount),
+    title: 'Create an account'
+  },
+  {
     path: 'home',
     loadComponent: () => import('./pages/home/home').then((m) => m.Home),
     title: 'Home',

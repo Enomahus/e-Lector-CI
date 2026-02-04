@@ -1,0 +1,31 @@
+.status {
+  &.status-shipment-toBeProcessed {
+    background-color: var(--status-shipment-toBeProcessed-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-shipment-collecting {
+    background-color: var(--status-shipment-collecting-color);
+    color: var(--primary-text-color);
+  }
+
+  &.status-shipment-partiallyCollected {
+    background-color: var(--status-shipment-partiallyCollected-color);
+    color: var(--primary-text-color);
+  }
+
+  &.status-shipment-collectionCompleted {
+    background-color: var(--status-shipment-collectionCompleted-color);
+    color: var(--primary-text-color);
+  }
+
+  &.status-shipment-processing {
+    background-color: var(--status-shipment-processing-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-shipment-closed {
+    background-color: var(--status-shipment-closed-color);
+    color: var(--inverse-text-color);
+  }
+}

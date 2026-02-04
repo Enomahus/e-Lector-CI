@@ -1,0 +1,15 @@
+// Variables de couleurs
+$color-primary: #1a2b49;
+
+.footer-container{
+    display: flex;
+    height: 50px;
+    justify-content: center;
+    color: $color-primary;
+
+    .footer-text {
+        .rights {
+            opacity: 0.33;
+        }
+    }
+}

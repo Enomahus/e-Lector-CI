@@ -1,0 +1,34 @@
+{
+  "global": {
+    "accept": "Accepter",
+    "createAccount": "Créer un compte",
+    "save": "Enregistrer",
+    "search": "Rechercher",
+    "edit": "Editer",
+    "back": "Retour",
+    "cancel": "Retour",
+    "login": "Se connecter",
+    "no": "Non",
+    "yes": "Oui"
+  },
+  "formError": {
+    "required": "Champ requis",
+    "emailInvalid": "L'email n'est pas au bon format",
+    "passwordFormat": "Le mot de passe doit contenir entre 8 et 24 caractères et avoir au moins une lettre minuscule, une lettre majuscule, un chiffre et un caracère spécial",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "emailUnique": "Cet e-mail existe déjà. Merci d'utiliser un autre e-mail"
+  },
+  "login": {
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "title": "Connexion",
+    "forgotPassword": "J'ai oublié mon mot de passe",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "signUp": "Inscrivez-vous"
+  },
+  "footer": {
+    "text": "© 2026 Commission Électorale Indépendante (CEI) - Côte d'Ivoire.",
+    "rights": "Tous droits réservés."
+  },
+  "navbar": {}
+}
