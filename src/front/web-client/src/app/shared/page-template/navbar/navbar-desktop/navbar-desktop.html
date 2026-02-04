@@ -1,0 +1,46 @@
+<nav class="navbar-desktop">
+  <div class="navbar-desktop-container">
+    <div class="brand-section" (click)="goBackHome()">
+      <div class="flag-icon">
+        <div class="stripe orange"></div>
+        <div class="stripe white"></div>
+        <div class="stripe green"></div>
+      </div>
+      <span class="brand-name">
+        E-Lector
+        <span class="ci-text">ci</span>
+      </span>
+    </div>
+
+    <ul>
+      <li>
+        <a routerLink="/login">{{ 'navbar.registrationRequest' | translate }}</a>
+      </li>
+      <li>
+        <a routerLink="/registrationRequest">{{ 'navbar.requests' | translate }}</a>
+      </li>
+      <li style="float: right">
+        <a routerLink="/faq">{{ 'navbar.faq' | translate }}</a>
+      </li>
+      <li style="float: right">
+        <a routerLink="/faq">{{ 'navbar.Administration' | translate }}</a>
+      </li>
+    </ul>
+
+    <ul class="user-section">
+      <li class="user-info">
+        <span class="user-name">User name</span>
+        <span class="user-role">User role</span>
+      </li>
+      <li>
+        <app-language-switcher></app-language-switcher>
+      </li>
+
+      <li>
+        <button class="btn-logout" type="button" (click)="logout.emit()" [title]="'navbar.logout' | translate">
+            <i class="ph ph-sign-out"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>

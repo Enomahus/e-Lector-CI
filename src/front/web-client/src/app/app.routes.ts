@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
+import { PageTemplate } from './shared/page-template/page-template';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home',
+    redirectTo: '/login',
     pathMatch: 'full',
   },
   {
@@ -19,12 +20,19 @@ export const routes: Routes = [
   },
   {
     path: 'register',
-    loadComponent: () => import('./pages/login/create-account/create-account').then((m) => m.CreateAccount),
-    title: 'Create an account'
+    loadComponent: () =>
+      import('./pages/login/create-account/create-account').then((m) => m.CreateAccount),
+    title: 'Create an account',
   },
   {
-    path: 'home',
-    loadComponent: () => import('./pages/home/home').then((m) => m.Home),
-    title: 'Home',
+    path: '',
+    component: PageTemplate,
+    children: [
+      {
+        path: 'home',
+        loadComponent: () => import('./pages/home/home').then((m) => m.Home),
+        title: 'Home',
+      },
+    ],
   },
 ];

@@ -4,6 +4,14 @@
   display: flex;
   flex-direction: column;
 
+  .language-switcher {
+    position: absolute;
+    top: 8px;
+    width: 130px;
+    right: 0;
+    margin-right: 16px;
+  }
+
   .login-page-template {
     display: flex;
     align-items: center;
@@ -46,7 +54,6 @@
     }
   }
 }
-
 
 @media screen and (max-width: 900px) {
   .login-img {

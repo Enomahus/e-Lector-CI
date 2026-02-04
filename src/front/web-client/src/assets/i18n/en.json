@@ -9,7 +9,12 @@
     "cancel": "Cancel",
     "login": "Log in",
     "no": "No",
-    "yes": "Yes"
+    "yes": "Yes",
+    "language": "Language",
+    "lang": {
+      "fr": "French",
+      "en": "English"
+    }
   },
   "formError": {
     "required": "Required field",
@@ -30,5 +35,13 @@
     "text": "© 2026 Independent Electoral Commission (IEC) - Côte d'Ivoire.",
     "rights": "All rights reserved."
   },
-  "navbar": {}
+  "navbar": {
+    "displayMenu": "Display menu",
+    "logout": "Log out"
+  },
+  "roles": {
+    "OrganismAgentRole": "Organism agent",
+    "DefaultRole": "Elector",
+    "SuperAdmin": "Administrator CEI"
+  }
 }

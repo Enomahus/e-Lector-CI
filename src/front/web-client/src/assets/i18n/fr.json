@@ -9,7 +9,12 @@
     "cancel": "Retour",
     "login": "Se connecter",
     "no": "Non",
-    "yes": "Oui"
+    "yes": "Oui",
+    "language": "Langue",
+    "lang": {
+      "fr": "Français",
+      "en": "Anglais"
+    }
   },
   "formError": {
     "required": "Champ requis",
@@ -30,5 +35,18 @@
     "text": "© 2026 Commission Électorale Indépendante (CEI) - Côte d'Ivoire.",
     "rights": "Tous droits réservés."
   },
-  "navbar": {}
+  "navbar": {
+    "displayMenu": "Afficher le menu",
+    "logout": "Se déconnecter",
+    "registrationRequest": "Demande d'inscription",
+    "myRequest": "Mes demandes",
+    "requests": "Demandes",
+    "faq": "FAQ",
+    "Administration": "Administration"
+  },
+  "roles": {
+    "OrganismAgentRole": "Agent d'organisme",
+    "DefaultRole": "Electeur",
+    "SuperAdmin": "Administrateur CEI"
+  }
 }
