@@ -19,6 +19,7 @@
   "formError": {
     "required": "Required field",
     "emailInvalid": "The email is not in the correct format.",
+    "positiveNumber": "Must be a number greater than zero",
     "passwordFormat": "The password must contain between 8 and 24 characters and have at least one lowercase letter, one uppercase letter, one number and one special character.",
     "passwordMismatch": "Passwords do not match",
     "emailUnique": "This email address already exists. Please use a different email address."
@@ -36,8 +37,18 @@
     "rights": "All rights reserved."
   },
   "navbar": {
+    "projectName": "E-Lector",
+    "projectCountryCode": "ci",
     "displayMenu": "Display menu",
-    "logout": "Log out"
+    "logout": "Log out",
+    "registrationRequest": "Registration request",
+    "myRequests": "My requests",
+    "myRequestsForOrganism": "Requests",
+    "myRequestsForAdmin": "Requests",
+    "faq": "FAQ",
+    "Administration": "Administration",
+    "pollingStation": "Polling station",
+    "geagraphicArea": "Circonscription"
   },
   "roles": {
     "OrganismAgentRole": "Organism agent",

@@ -27,6 +27,9 @@ export abstract class BaseNavbar {
   private readonly languageService = inject(LanguageService);
 
   dropdownOpen = signal(false);
+  showAdminRequestsText = signal(false);
+  showOrganismRequestsText = signal(false);
+  showElectorRequestsText = signal(false);
 
   constructor() {
     // Hide dropdown after having navigated to another page.

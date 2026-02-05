@@ -33,6 +33,21 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/home/home').then((m) => m.Home),
         title: 'Home',
       },
+      {
+        path: 'admin',
+        children: [
+          {
+            path: 'geographic-area',
+            loadComponent: () => import('./pages/administration/geographic-area/geographic-area').then((m) => m.GeographicArea),
+            title: 'Geographic area'
+          },
+          {
+            path: 'polling-station',
+            loadComponent: () => import('./pages/administration/polling-station/polling-station').then((m) => m.PollingStation),
+            title: 'Polling station'
+          }
+        ]
+      }
     ],
   },
 ];
