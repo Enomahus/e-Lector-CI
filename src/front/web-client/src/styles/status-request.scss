@@ -1,0 +1,64 @@
+.status {
+  &.status-request-draft {
+    background-color: var(--status-request-draft-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-request-toBeProcessed {
+    background-color: var(--status-request-toBeProcessed-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-request-waitingForInformation {
+    background-color: var(--status-request-waiting-color);
+    color: var(--primary-text-color);
+  }
+
+  &.status-request-validated {
+    background-color: var(--status-request-validated-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-request-refused {
+    background-color: var(--status-request-refused-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-request-collectionInProgress {
+    background-color: var(--status-request-collection-in-progress-color);
+    color: var(--primary-text-color);
+  }
+
+  &.status-request-partiallyCollected {
+    background-color: var(--status-request-partiallyCollected-color);
+    color: var(--primary-text-color);
+  }
+
+  &.status-request-collectionCompleted {
+    background-color: var(--status-request-collectionCompleted-color);
+    color: var(--primary-text-color);
+  }
+
+  &.status-request-processing {
+    background-color: var(--status-request-processing-color);
+    color: var(--inverse-text-color);
+  }
+
+  &.status-request-closed {
+    background-color: var(--status-request-closed-color);
+    color: var(--inverse-text-color);
+  }
+}
+
+.status-request-list-item-toBeProcessed {
+  color: var(--status-request-toBeProcessed-color);
+}
+.status-request-list-item-waitingForInformation {
+  color: var(--status-request-list-item-waiting-color);
+}
+.status-request-list-item-validated {
+  color: var(--status-request-validated-color);
+}
+.status-request-list-item-refused {
+  color: var(--status-request-refused-color);
+}

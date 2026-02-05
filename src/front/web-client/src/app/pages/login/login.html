@@ -1,1 +1,47 @@
-<p>login works!</p>
+<app-login-page-template>
+  <form class="basic-form login-form" (submit)="onSubmit()">
+    <div class="input-block required">
+      <label for="email">{{ 'login.email' | translate }}</label>
+      <input id="email" type="email" [formField]="loginForm.email" />
+      @if (loginForm.email().touched() && loginForm.email().errors()) {
+        <ul class="form-errors">
+          @for (error of loginForm.email().errors(); track error.kind) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="input-block required">
+      <label for="password">{{ 'login.password' | translate }}</label>
+      <div class="password-container">
+        <input id="password" [type]="showPassword() ? 'text' :'password'" [formField]="loginForm.password" />
+        <button type="button" class="toggle-password" (click)="showPassword.set(!showPassword())">
+            <i [class]="showPassword()  ? 'ph ph-eye' : 'ph ph-eye-slash'"></i>
+        </button>
+      </div>
+      @if (loginForm.password().touched() && loginForm.password().errors()) {
+        <ul class="form-errors">
+          @for (error of loginForm.password().errors(); track error.kind) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <span class="forgot-password"><a routerLink="/forgot-password">{{'login.forgotPassword' |translate}}</a></span>
+
+    <div class="btn-container">
+        <button class="btn secondary" type="submit" [disabled]="loginForm().invalid()">
+            {{'global.login' |translate}}
+            @if(isLoggingIn()) {
+                <app-loader></app-loader>
+            }
+        </button>
+    </div>
+
+    <span class="sign-up">{{'login.noAccount' |translate}} 
+        <a routerLink="/register">{{'login.signUp' |translate}}</a></span>
+
+  </form>
+</app-login-page-template>

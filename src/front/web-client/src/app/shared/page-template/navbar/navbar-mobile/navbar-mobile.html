@@ -1,0 +1,85 @@
+<nav class="navbar-desktop">
+  <div class="navbar-desktop-container">
+    <div class="brand-section" (click)="goBackHome()">
+      <div class="flag-icon">
+        <div class="stripe orange"></div>
+        <div class="stripe white"></div>
+        <div class="stripe green"></div>
+      </div>
+      <span class="brand-name">
+        {{ 'navbar.projectName' | translate }}
+        <span class="ci-text">{{ 'navbar.projectCountryCode' | translate }}</span>
+      </span>
+    </div>
+
+    <ul class="menu">
+      <li class="menu-item" [routerLinkActive]="'active'">
+        <a routerLink="/login">{{ 'navbar.registrationRequest' | translate }}</a>
+      </li>
+      @if (showAdminRequestsText()) {
+        <li class="menu-item" [routerLinkActive]="'active'">
+          <a class="menu-item-interaction" routerLink="certificate-requests-for-admin">
+            {{ 'navbar.myRequestsForAdmin' | translate }}
+          </a>
+        </li>
+      }
+      @if (showOrganismRequestsText()) {
+        <li class="menu-item" [routerLinkActive]="'active'">
+          <a class="menu-item-interaction" routerLink="certificate-requests-for-management">
+            {{ 'navbar.myRequestsForOrganism' | translate }}
+          </a>
+        </li>
+      }
+      @if (showElectorRequestsText()) {
+        <li class="menu-item" [routerLinkActive]="'active'">
+          <a class="menu-item-interaction" routerLink="/registration-requests">
+            {{ 'navbar.myRequests' | translate }}
+          </a>
+        </li>
+      }
+      <li class="menu-item" [routerLinkActive]="'active'">
+        <a routerLink="/faq">{{ 'navbar.faq' | translate }}</a>
+      </li>
+      <li class="menu-item" [class.active]="isRouteMatching('admin')">
+        <button class="btn btn-no-style dropbtn" (click)="dropdownOpen.set(!dropdownOpen())">
+          <span>{{ 'navbar.Administration' | translate }}</span>
+          <i class="ph ph-caret-down"></i>
+        </button>
+        @if (dropdownOpen()) {
+          <div class="dropdown-content">
+            <a routerLink="admin/geographic-area" [routerLinkActive]="'active'">
+              <span>{{ 'navbar.geagraphicArea' | translate }}</span>
+            </a>
+            <a routerLink="admin/polling-station" [routerLinkActive]="'active'">
+              <span>{{ 'navbar.pollingStation' | translate }}</span>
+            </a>
+          </div>
+        }
+      </li>
+    </ul>
+
+    <ul class="menu menu-user">
+      @if (userName$ | async; as userName) {
+        <li class="menu-item" [routerLinkActive]="'active'">
+          <a class="menu-item-interaction user" routerLink="my-account">
+            <i class="ph ph-user"></i>
+            <span class="current-username">{{ userName }}</span>
+          </a>
+        </li>
+      }
+      <li class="language-switcher">
+        <app-language-switcher></app-language-switcher>
+      </li>
+      <li>
+        <button
+          class="btn primary"
+          type="button"
+          (click)="logout.emit()"
+          [title]="'navbar.logout' | translate"
+        >
+          <i class="ph ph-sign-out"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>

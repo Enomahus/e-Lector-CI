@@ -1,0 +1,34 @@
+@use '../../../../styles/variable.scss' as *;
+
+header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: var(--tertiary-text-color);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--standard-box-shadow);
+  padding: 0 40px 0 32px;
+  height: 60px;
+
+  .mobile-toggle {
+    display: none;
+  }
+
+  app-navbar-desktop {
+    height: 100%;
+    width: 100%;
+  }
+
+  @media screen and (max-width: $mobile-screen-max-width) {
+    .mobile-toggle {
+      display: flex;
+      flex: 1;
+      justify-content: right;
+    }
+
+    app-navbar-desktop {
+      display: none;
+    }
+  }
+}

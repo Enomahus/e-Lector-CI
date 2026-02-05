@@ -1,0 +1,42 @@
+<div class="area-form-card">
+      <h3>Configuration Géographique</h3>
+      
+      <form [formGroup]="areaForm" (ngSubmit)="saveArea()">
+        <div class="form-group">
+          <label>Nom de la zone (ex: ABIDJAN)</label>
+          <input type="text" formControlName="name" placeholder="Saisissez le nom..." />
+        </div>
+
+        <div class="form-group">
+          <label>Niveau</label>
+          <select formControlName="level">
+            <option [value]="null">Sélectionnez un niveau</option>
+            @for (level of levels; track level.value) {
+              <option [value]="level.value">{{ level.label }}</option>
+            }
+          </select>
+        </div>
+
+        @if (isNotRoot()) {
+          <div class="form-group slide-in">
+            <label>Rattaché à (Parent)</label>
+            <select formControlName="parentId">
+              <option [value]="null">-- Choisir le parent --</option>
+              @for (parent of availableParents(); track parent.id) {
+                <option [value]="parent.id">[{{ parent.levelName }}] {{ parent.name }}</option>
+              }
+            </select>
+            @if (areaForm.get('parentId')?.invalid && areaForm.get('parentId')?.touched) {
+              <small class="error">Le parent est requis pour ce niveau.</small>
+            }
+          </div>
+        }
+
+        <div class="actions">
+          <button type="button" class="btn-secondary" (click)="areaForm.reset()">Annuler</button>
+          <button type="submit" [disabled]="areaForm.invalid" class="btn-primary">
+            Créer la zone
+          </button>
+        </div>
+      </form>
+    </div>

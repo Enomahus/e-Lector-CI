@@ -1,0 +1,61 @@
+<div class="form-container">
+  <h2>Création d'un Bureau de Vote</h2>
+
+  <form (submit)="onSubmit()">
+    <div class="field">
+      <label>Département</label>
+      <select [formField]="pollingStationForm.departmentId">
+        <option [ngValue]="null">Sélectionnez un département</option>
+        @for (dept of departments(); track dept.id) {
+          <option [ngValue]="dept.id">{{ dept.name }}</option>
+        }
+      </select>
+    </div>
+    <!-- <pre>{{departments() | json}}</pre>
+    <pre>{{pollingStationForm().value| json}}</pre> -->
+
+    <div class="field">
+      <label>Sous-Préfecture</label>
+      <select [formField]="pollingStationForm.subPrefectureId">
+        @for (sp of filteredSubPrefectures(); track sp.id) {
+          <option [ngValue]="sp.id">{{ sp.name }}</option>
+        }
+      </select>
+    </div>
+    <!-- <pre>{{filteredSubPrefectures() | json}}</pre> -->
+
+    <div class="field">
+      <label for="communeId">Commune</label>
+      <select id="communeId" [formField]="pollingStationForm.communeId">
+        @for (com of filteredCommunes(); track com.id) {
+          <option [ngValue]="com.id">{{ com.name }}</option>
+        }
+      </select>
+    </div>
+
+    <hr />
+
+    <div class="field">
+      <label for="name">Nom du Lieu de Vote (EPV, Ecole, etc.)</label>
+      <input
+        id="name"
+        type="text"
+        [formField]="pollingStationForm.name"
+        placeholder="ex: EPV KAUNAN 1"
+      />
+    </div>
+
+    <div class="field">
+      <label for="pollingStationNumber">Numéro du Bureau</label>
+      <input
+        id="pollingStationNumber"
+        type="number"
+        [formField]="pollingStationForm.pollingStationNumber"
+      />
+    </div>
+
+    <button type="submit" [disabled]="pollingStationForm().invalid()" class="btn primary">
+      Enregistrer le Bureau
+    </button>
+  </form>
+</div>
