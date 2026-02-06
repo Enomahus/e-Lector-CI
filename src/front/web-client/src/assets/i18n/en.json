@@ -53,6 +53,6 @@
   "roles": {
     "OrganismAgentRole": "Organism agent",
     "DefaultRole": "Elector",
-    "SuperAdmin": "Administrator CEI"
+    "SuperAdminRole": "Administrator CEI"
   }
 }
