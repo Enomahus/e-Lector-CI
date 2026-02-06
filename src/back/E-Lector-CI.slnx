@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Backend/00-Web/00-Web.csproj" Id="8e448a61-0f90-4362-ab7c-80e970e47fab" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>

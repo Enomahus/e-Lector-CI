@@ -34,9 +34,9 @@ export class PollingStation {
 
   // Modèle du formulaire (Initialisation avec null pour les IDs)
   pollingStationModel = signal({
-    departmentId: null as number | null,
-    subPrefectureId: null as number | null,
-    communeId: null as number | null,
+    departmentId: '',
+    subPrefectureId: '',
+    communeId: '',
     name: '',
     pollingStationNumber: 1,
   });
