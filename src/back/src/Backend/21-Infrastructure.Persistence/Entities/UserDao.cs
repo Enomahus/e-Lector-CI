@@ -1,0 +1,21 @@
+﻿using Application.Common.Enums;
+using Infrastructure.Persistence.Common;
+using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+
+namespace Infrastructure.Persistence.Entities;
+
+public class UserDao : IdentityUser<Guid>, IEntityBaseDao<Guid>
+{
+    public PersonTitle Civility { get; set; }
+    [MaxLength(50)]
+    public string FirstName { get; set; }
+
+    [MaxLength(50)]
+    public string LastName { get; set; }
+
+    public virtual ICollection<RefreshTokenDao> RefreshTokens { get; set; } = [];
+    public virtual ICollection<UserRoleDao> UserRoles { get; set; }
+    public virtual ICollection<RegistrationRequestDao> CreatedRegistrationRequests { get; set; } = [];
+    public virtual ICollection<RegistrationRequestDao> UpdatedRegistrationRequests { get; set; } = [];
+}
