@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "AppDbDesign": "Server=localhost,43100;Database=ElectorDb;Connection Lifetime=30;User ID=sa;Password=#Elector@2026;Encrypt=False"
+  }
+}

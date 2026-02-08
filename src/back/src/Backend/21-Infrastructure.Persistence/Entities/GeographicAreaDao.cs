@@ -10,6 +10,7 @@ public class GeographicAreaDao : EntityBaseDao<long>
     [Required, MaxLength(100)]
     public string Name { get; set; }
 
+    [Required]
     public LocationLevel Level { get; set; }
 
     // Auto-référence : le parent de cette zone
