@@ -9,8 +9,7 @@ public class ReadOnlyDbContext : ApplicationDbContext
     public ReadOnlyDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
-        ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTrackingWithIdentityResolution;
+        ChangeTracker.QueryTrackingBehavior =
+            QueryTrackingBehavior.NoTrackingWithIdentityResolution;
     }
-
-    
 }
