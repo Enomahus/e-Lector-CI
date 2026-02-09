@@ -11,6 +11,7 @@ using Infrastructure.Persistence.SQLServer.Seeders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
 using Tools.Configuration;
 
@@ -87,7 +88,7 @@ namespace Application.UnitTest.Common
                     p => substitute,
                     ServiceLifetime.Transient
                 );
-                //serviceCollection.Replace(descriptor);
+                services.Replace(descriptor);
                 //currentUserPermissionsProviderSub
                 //    .IsCurrentUserAuthenticatedAsync()
                 //    .Returns(Task.FromResult(true));
