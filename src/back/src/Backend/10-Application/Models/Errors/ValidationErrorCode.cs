@@ -14,6 +14,7 @@ public enum ValidationErrorCode
     UserLinked,
     InvalidEmail,
     InvalidEnum,
+    InvalidLevel,
     InvalidDate,
     CountryMustExist,
     InvalidSearchTerm,

@@ -29,50 +29,66 @@ public class CreateGeographicAreaCommandValidator : AbstractValidator<CreateGeog
             .NotEmpty()
             .WithMessage(ValidationErrorCode.Required.ToString())
             .MaximumLength(50)
-            .MustAsync(
-                async (command, name, cancellationToken) =>
-                {
-                    // On vérifie si une zone avec le même nom existe déjà sous le même parent
-                    // (Si ParentId est null, on vérifie au niveau racine)
-                    return !await _context.GeographicAreas.AnyAsync(
-                        x => x.Name == name && x.ParentId == command.ParentId,
-                        cancellationToken
-                    );
-                }
-            )
+            .WithMessage(ValidationErrorCode.MaxLength.ToString())
+            .MustAsync(BeUniqueNameInParentAsync)
             .WithMessage(ValidationErrorCode.AlreadyExists.ToString());
 
-        RuleFor(x => x.ParentId)
-            // 1. Validation pour le niveau Continent (Level 1)
-            .Must((command, parentId) => !parentId.HasValue)
-            .When(x => x.Level == LocationLevel.Continent)
-            .WithMessage(ValidationErrorCode.InvalidParent.ToString())
-            // 2. Validation pour les autres niveaux (Level > 1)
-            .NotNull()
-            .When(x => x.Level != LocationLevel.Continent)
-            .WithMessage(ValidationErrorCode.GepgraphicAreaMustHaveParent.ToString())
-            // 3. Validation de la hiérarchie en base de données
-            .MustAsync(
-                async (command, parentId, cancellationToken) =>
-                {
-                    if (command.Level == LocationLevel.Continent)
-                        return true;
-                    if (!parentId.HasValue)
-                        return false;
+        When(
+            x => x.Level == LocationLevel.Continent,
+            () =>
+            {
+                RuleFor(x => x.ParentId)
+                    .Must(parentId => !parentId.HasValue)
+                    .WithMessage(ValidationErrorCode.InvalidParent.ToString());
+            }
+        );
 
-                    var expectedParentLevel = (LocationLevel)((int)command.Level - 1);
+        When(
+            x => x.Level != LocationLevel.Continent,
+            () =>
+            {
+                RuleFor(x => x.ParentId)
+                    .NotNull()
+                    .WithMessage(ValidationErrorCode.GepgraphicAreaMustHaveParent.ToString())
+                    .DependentRules(() =>
+                    {
+                        RuleFor(x => x)
+                            .MustAsync(ParentHasCorrectLevelAsync)
+                            .WithMessage(ValidationErrorCode.InvalidLevel.ToString());
+                    });
+            }
+        );
+    }
 
-                    return await _context.GeographicAreas.AnyAsync(
-                        x => x.Id == parentId.Value && x.Level == expectedParentLevel,
-                        cancellationToken
-                    );
-                }
-            )
-            .When(x => x.Level != LocationLevel.Continent)
-            .WithMessage(
-                (command, parentId) =>
-                    $"Parent must be level {(LocationLevel)((int)command.Level - 1)}."
-            );
+    private async Task<bool> BeUniqueNameInParentAsync(
+        CreateGeographicAreaCommand command,
+        string name,
+        CancellationToken cancellationToken
+    )
+    {
+        return !await _context.GeographicAreas.AnyAsync(
+            x => x.Name == name && x.ParentId == command.ParentId,
+            cancellationToken
+        );
+    }
+
+    private async Task<bool> ParentHasCorrectLevelAsync(
+        CreateGeographicAreaCommand command,
+        CancellationToken cancellationToken
+    )
+    {
+        if (command.ParentId is null)
+            return false;
+
+        var parent = await _context.GeographicAreas.FirstOrDefaultAsync(
+            x => x.Id == command.ParentId.Value,
+            cancellationToken
+        );
+        if (parent is null)
+            return false;
+
+        var expectedParentLevel = (LocationLevel)((int)command.Level - 1);
+        return parent.Level == expectedParentLevel;
     }
 }
 
