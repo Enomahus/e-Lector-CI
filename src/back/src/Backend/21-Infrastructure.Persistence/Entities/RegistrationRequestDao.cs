@@ -1,7 +1,7 @@
-﻿using Application.Common.Enums;
-using Infrastructure.Persistence.Common;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Application.Common.Enums;
+using Infrastructure.Persistence.Common;
 
 namespace Infrastructure.Persistence.Entities;
 
@@ -25,5 +25,6 @@ public class RegistrationRequestDao : EntityBaseDao<Guid>
 
     [ForeignKey(nameof(ElectorId))]
     public ElectorDao Elector { get; set; }
-    public virtual ICollection<SupportingDocumentsDao> SupportingDocuments { get; set; } = [];
+    public virtual ICollection<RegistrationRequestDocumentDao> RegistrationRequestDocuments { get; set; } =
+    [];
 }

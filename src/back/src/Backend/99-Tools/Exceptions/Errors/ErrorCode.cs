@@ -19,6 +19,7 @@ public enum ErrorCode
 
     // Tech
     ConfigurationMissing,
+    IncorrectEntityTypeLinked,
     DataSeeding,
     Storage,
     Export,
