@@ -9,9 +9,29 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="FluentAssertions" Version="8.8.0" />
+    <PackageReference Include="FluentAssertions.Analyzers" Version="0.34.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="MockQueryable.NSubstitute" Version="10.0.2" />
+    <PackageReference Include="Moq.EntityFrameworkCore" Version="10.0.0" />
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
+    <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.17">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Backend\00-Web\00-Web.csproj" />
+    <ProjectReference Include="..\..\src\Backend\11-Application.Features\11-Application.Features.csproj" />
+    <ProjectReference Include="..\..\src\Backend\20-Infrastructure\20-Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Backend\22-Infrastructure.Persistence.SQLServer\22-Infrastructure.Persistence.SQLServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,13 +1,13 @@
-﻿using Application.Common.Enums;
-using Infrastructure.Persistence.Common;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Application.Common.Enums;
+using Infrastructure.Persistence.Common;
 
 namespace Infrastructure.Persistence.Entities;
 
 public class GeographicAreaDao : EntityBaseDao<long>
 {
-    [Required, MaxLength(100)]
+    [Required, MaxLength(50)]
     public string Name { get; set; }
 
     [Required]
