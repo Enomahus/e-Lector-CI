@@ -56,5 +56,33 @@ public static class GeographicAreaData
                 Level = LocationLevel.Country,
                 ParentId = 1
             },
+            new()
+            {
+                Id = 9,
+                Name = "ABIDJAN",
+                Level = LocationLevel.District,
+                ParentId = 8
+            },
+            new()
+            {
+                Id = 10,
+                Name = "ABIDJAN",
+                Level = LocationLevel.Region,
+                ParentId = 9
+            },
+            new()
+            {
+                Id = 11,
+                Name = "ABIDJAN",
+                Level = LocationLevel.Department,
+                ParentId = 10
+            },
+            new()
+            {
+                Id = 12,
+                Name = "BINGERVILLE",
+                Level = LocationLevel.SubPrefecture,
+                ParentId = 11
+            },
         ];
 }

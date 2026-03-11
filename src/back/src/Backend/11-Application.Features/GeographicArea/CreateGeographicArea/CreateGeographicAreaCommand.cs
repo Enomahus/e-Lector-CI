@@ -49,7 +49,7 @@ public class CreateGeographicAreaCommandValidator : AbstractValidator<CreateGeog
             {
                 RuleFor(x => x.ParentId)
                     .NotNull()
-                    .WithMessage(ValidationErrorCode.GepgraphicAreaMustHaveParent.ToString())
+                    .WithMessage(ValidationErrorCode.GeographicAreaMustHaveParent.ToString())
                     .DependentRules(() =>
                     {
                         RuleFor(x => x)

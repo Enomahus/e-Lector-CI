@@ -16,10 +16,12 @@ public enum ValidationErrorCode
     InvalidEnum,
     InvalidLevel,
     InvalidDate,
+    InvalidBirthDate,
     CountryMustExist,
     InvalidSearchTerm,
     DefaultRoleCannotBeAltered,
     InvalidParent,
-    GepgraphicAreaMustHaveParent,
+    GeographicAreaMustHaveParent,
     AlreadyExists,
+    PollingStationMustExist,
 }

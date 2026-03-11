@@ -13,6 +13,14 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Backend/00-Web/00-Web.csproj", "src/Backend/00-Web/"]
+COPY ["src/Backend/01-ServicesConfiguration/01-ServicesConfiguration.csproj", "src/Backend/01-ServicesConfiguration/"]
+COPY ["src/Backend/10-Application/10-Application.csproj", "src/Backend/10-Application/"]
+COPY ["src/Backend/11-Application.Features/11-Application.Features.csproj", "src/Backend/11-Application.Features/"]
+COPY ["src/Backend/12-Application.Common/12-Application.Common.csproj", "src/Backend/12-Application.Common/"]
+COPY ["src/Backend/20-Infrastructure/20-Infrastructure.csproj", "src/Backend/20-Infrastructure/"]
+COPY ["src/Backend/21-Infrastructure.Persistence/21-Infrastructure.Persistence.csproj", "src/Backend/21-Infrastructure.Persistence/"]
+COPY ["src/Backend/22-Infrastructure.Persistence.SQLServer/22-Infrastructure.Persistence.SQLServer.csproj", "src/Backend/22-Infrastructure.Persistence.SQLServer/"]
+COPY ["src/Backend/99-Tools/99-Tools.csproj", "src/Backend/99-Tools/"]
 RUN dotnet restore "./src/Backend/00-Web/00-Web.csproj"
 COPY . .
 WORKDIR "/src/src/Backend/00-Web"
