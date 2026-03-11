@@ -3,7 +3,6 @@ using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using Tools.Constants;
 using Tools.Exceptions;
@@ -13,7 +12,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders;
 public class DataSeeder(WritableDbContext context, UserManager<UserDao> userManager,
     RoleManager<RoleDao> roleManager, IOptions<DataConfiguration> dataConfig) : SeederBase(context, userManager)
 {
-    private static readonly string AdminUserName = "apollo_admin";
+    private static readonly string AdminUserName = "pcea_admin";
 
     public override async Task SeedDataAsync()
     {

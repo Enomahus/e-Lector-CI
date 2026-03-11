@@ -10,7 +10,7 @@ namespace Infrastructure.Persistence.Entities
 {
     public class ElectorDao : EntityBaseDao<Guid>
     {
-        [Key]
+        [MaxLength(50)]
         public string VoterNumber { get; set; } // V 0034 6601 11
 
         [Required, MaxLength(100)]
@@ -23,9 +23,10 @@ namespace Infrastructure.Persistence.Entities
 
         public Gender Gender { get; set; }
 
-        [DataType(DataType.Date)]
+        [Required,DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
 
+        [Required, MaxLength(100)]
         public string PlaceOfBirth { get; set; }
 
         public string Profession { get; set; }
@@ -35,7 +36,7 @@ namespace Infrastructure.Persistence.Entities
         public string PostalAddress { get; set; }
 
         // Relations
-        public long PollingStationId { get; set; }
+        public long? PollingStationId { get; set; }
         [ForeignKey(nameof(PollingStationId))]
         public PollingStationDao PollingStation { get; set; }
     }

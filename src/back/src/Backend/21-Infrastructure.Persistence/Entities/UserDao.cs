@@ -13,6 +13,7 @@ public class UserDao : IdentityUser<Guid>, IEntityBaseDao<Guid>
 
     [MaxLength(50)]
     public string LastName { get; set; }
+    public DateTimeOffset? DisabledDate { get; set; }
 
     public virtual ICollection<RefreshTokenDao> RefreshTokens { get; set; } = [];
     public virtual ICollection<UserRoleDao> UserRoles { get; set; }

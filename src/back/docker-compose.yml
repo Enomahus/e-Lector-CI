@@ -17,3 +17,41 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
       - ~/.vsdbg:/remote_debugger:rw
+    depends_on:
+      elector.database:
+        condition: service_healthy
+      elector.jaeger:
+        condition: service_started
+
+  elector.jaeger:
+    container_name: elector.jaeger
+    image: jaegertracing/all-in-one:1.58
+    environment:
+      - METRICS_STORAGE_TYPE=prometheus
+      #- PROMETHEUS_SERVER_URL=http://soren.prometheus:9090
+      - PROMETHEUS_SERVER_URL=http://localhost:43000
+      - PROMETHEUS_QUERY_SUPPORT_SPANMETRICS_CONNECTOR=${PROMETHEUS_QUERY_SUPPORT_SPANMETRICS_CONNECTOR:-true}
+      - PROMETHEUS_QUERY_NAMESPACE=${PROMETHEUS_QUERY_NAMESPACE:-}
+      - PROMETHEUS_QUERY_DURATION_UNIT=${PROMETHEUS_QUERY_DURATION_UNIT:-}
+      - PROMETHEUS_QUERY_NORMALIZE_CALLS=true
+      - PROMETHEUS_QUERY_NORMALIZE_DURATION=true
+    ports:
+      - '41100:16686'
+      - '4317:4317'
+      - '4318:4318'
+
+  elector.database:
+    container_name: 'elector.database'
+    image: 'mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04'
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=#Elector@2026
+      - MSSQL_PID=Developer
+    ports:
+      - 43100:1433
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P '#Elector@2026' -d 'master' -Q 'select 1'
+      interval: 5s
+      timeout: 5s
+      retries: 10
+

@@ -89,6 +89,18 @@ public class ApplicationDbContext : IdentityDbContext<
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder
+            .Entity<RegistrationRequestDao>()
+            .HasOne(l => l.Author)
+            .WithMany(a => a.CreatedRegistrationRequests)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .Entity<RegistrationRequestDao>()
+            .HasOne(l => l.LastUpdater)
+            .WithMany(a => a.UpdatedRegistrationRequests)
+            .OnDelete(DeleteBehavior.Restrict);
+
         // Seeding
         builder.Entity<GeographicAreaDao>().HasData(GeographicAreaData.GeographicAreas);
         

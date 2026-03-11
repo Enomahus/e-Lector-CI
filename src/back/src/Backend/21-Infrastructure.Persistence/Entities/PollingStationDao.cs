@@ -14,5 +14,5 @@ public class PollingStationDao : EntityBaseDao<long>
     [ForeignKey(nameof(GeographicAreaId))]
     public GeographicAreaDao Location { get; set; }
 
-    public ICollection<ElectorDao> Electors { get; set; }
+    public virtual ICollection<ElectorDao> Electors { get; set; }
 }
