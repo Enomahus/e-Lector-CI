@@ -9,10 +9,10 @@ public class PollingStationDao : EntityBaseDao<long>
     public string Name { get; set; } // Lieu de vote: LYON
 
     // Relation vers la localisation
-    public long GeographicAreaId { get; set; }
+    public long ConstituencyId { get; set; }
 
-    [ForeignKey(nameof(GeographicAreaId))]
-    public GeographicAreaDao Location { get; set; }
+    [ForeignKey(nameof(ConstituencyId))]
+    public ConstituencyDao Location { get; set; }
 
     public virtual ICollection<ElectorDao> Electors { get; set; }
 }

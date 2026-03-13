@@ -5,8 +5,11 @@ using Infrastructure.Persistence.Common;
 
 namespace Infrastructure.Persistence.Entities;
 
-public class GeographicAreaDao : EntityBaseDao<long>
+public class ConstituencyDao : EntityBaseDao<long>
 {
+    [Required]
+    public string Code { get; set; }
+
     [Required, MaxLength(50)]
     public string Name { get; set; }
 
@@ -17,11 +20,13 @@ public class GeographicAreaDao : EntityBaseDao<long>
     public long? ParentId { get; set; }
 
     [ForeignKey(nameof(ParentId))]
-    public virtual GeographicAreaDao Parent { get; set; }
+    public virtual ConstituencyDao Parent { get; set; }
 
     // Liste des zones enfants (ex: la France a plusieurs villes)
-    public virtual ICollection<GeographicAreaDao> Children { get; set; } = [];
+    public virtual ICollection<ConstituencyDao> Children { get; set; } = [];
 
     // Liste des bureaux de vote rattachés à cette zone précise (souvent le dernier niveau)
-    public virtual ICollection<PollingStationDao> PollingStations { get; set; } = [];
+    // public virtual ICollection<PollingStationDao> PollingStations { get; set; } = [];
+
+    public virtual ICollection<ElectorDao> Electors { get; set; } = [];
 }

@@ -7,9 +7,9 @@ using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.GeographicArea.UpdateGeographicArea
+namespace Application.Features.Constituency.UpdateConstituency
 {
-    public class UpdateGeographicAreaCommandQuery : IRequest<Result<long>>
+    public class UpdateConstituencyCommandQuery : IRequest<Result<long>>
     {
         public long Id { get; init; }
         public string Name { get; init; } = string.Empty;
@@ -17,12 +17,12 @@ namespace Application.Features.GeographicArea.UpdateGeographicArea
         public long? ParentId { get; init; }
     }
 
-    public class UpdateGeographicAreaCommandValidator
-        : AbstractValidator<UpdateGeographicAreaCommandQuery>
+    public class UpdateConstituencyCommandValidator
+        : AbstractValidator<UpdateConstituencyCommandQuery>
     {
         protected readonly ReadOnlyDbContext _context;
 
-        public UpdateGeographicAreaCommandValidator(ReadOnlyDbContext context)
+        public UpdateConstituencyCommandValidator(ReadOnlyDbContext context)
         {
             _context = context;
 
@@ -42,17 +42,17 @@ namespace Application.Features.GeographicArea.UpdateGeographicArea
 
             // RG2
             When(
-                x => x.Level == LocationLevel.Continent,
+                x => x.Level == LocationLevel.Region,
                 () =>
                 {
                     RuleFor(x => x.ParentId)
                         .Must(pid => pid is null)
-                        .WithMessage("Une zone de niveau Continent ne peut pas avoir de parent.");
+                        .WithMessage("Une zone de niveau Region ne peut pas avoir de parent.");
                 }
             );
 
             When(
-                x => x.Level != LocationLevel.Continent,
+                x => x.Level != LocationLevel.Region,
                 () =>
                 {
                     RuleFor(x => x.ParentId)
@@ -76,25 +76,25 @@ namespace Application.Features.GeographicArea.UpdateGeographicArea
         }
 
         private async Task<bool> NameUniqueInParentAsync(
-            UpdateGeographicAreaCommandQuery cmd,
+            UpdateConstituencyCommandQuery cmd,
             CancellationToken ct
         )
         {
-            return !await _context.GeographicAreas.AnyAsync(
+            return !await _context.Constituencies.AnyAsync(
                 g => g.Id != cmd.Id && g.Name == cmd.Name && g.ParentId == cmd.ParentId,
                 ct
             );
         }
 
         private async Task<bool> ParentHasCorrectLevelAsync(
-            UpdateGeographicAreaCommandQuery cmd,
+            UpdateConstituencyCommandQuery cmd,
             CancellationToken ct
         )
         {
             if (cmd.ParentId is null)
                 return false;
 
-            var parent = await _context.GeographicAreas.FirstOrDefaultAsync(
+            var parent = await _context.Constituencies.FirstOrDefaultAsync(
                 x => x.Id == cmd.ParentId.Value,
                 ct
             );
@@ -107,19 +107,19 @@ namespace Application.Features.GeographicArea.UpdateGeographicArea
         }
     }
 
-    public class UpdateGeographicAreaCommandHandler(WritableDbContext context)
-        : IRequestHandler<UpdateGeographicAreaCommandQuery, Result<long>>
+    public class UpdateConstituencyCommandHandler(WritableDbContext context)
+        : IRequestHandler<UpdateConstituencyCommandQuery, Result<long>>
     {
         public async Task<Result<long>> Handle(
-            UpdateGeographicAreaCommandQuery command,
+            UpdateConstituencyCommandQuery command,
             CancellationToken cancellationToken
         )
         {
             var entity =
-                await context.GeographicAreas.FirstOrDefaultAsync(
+                await context.Constituencies.FirstOrDefaultAsync(
                     x => x.Id == command.Id,
                     cancellationToken
-                ) ?? throw new NotFoundException(nameof(GeographicAreaDao), command.Id);
+                ) ?? throw new NotFoundException(nameof(ConstituencyDao), command.Id);
 
             entity.Name = command.Name;
             entity.Level = command.Level;

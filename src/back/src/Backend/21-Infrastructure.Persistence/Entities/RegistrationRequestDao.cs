@@ -21,10 +21,10 @@ public class RegistrationRequestDao : EntityBaseDao<Guid>
 
     [ForeignKey(nameof(LastUpdaterId))]
     public UserDao LastUpdater { get; set; }
-    public Guid? ElectorId { get; set; }
+    public Guid? CitizenId { get; set; }
 
-    [ForeignKey(nameof(ElectorId))]
-    public ElectorDao Elector { get; set; }
+    [ForeignKey(nameof(CitizenId))]
+    public CitizenDao Citizen { get; set; }
     public virtual ICollection<RegistrationRequestDocumentDao> RegistrationRequestDocuments { get; set; } =
     [];
 }

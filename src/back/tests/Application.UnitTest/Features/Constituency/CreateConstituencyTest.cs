@@ -1,6 +1,7 @@
-﻿using Application.Common.Enums;
+﻿using System;
+using Application.Common.Enums;
 using Application.Exceptions;
-using Application.Features.GeographicArea.CreateGeographicArea;
+using Application.Features.Constituency.CreateConstituency;
 using Application.Models.Errors;
 using Application.UnitTest.Common;
 using FluentAssertions;
@@ -11,11 +12,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.EntityFrameworkCore;
-using System;
 
-namespace Application.UnitTest.Features.GeographicArea
+namespace Application.UnitTest.Features.Constituency
 {
-    public class CreateGeographicAreaTest : TestBase
+    public class CreateConstituencyTest : TestBase
     {
         //private readonly CreateGeographicAreaCommandValidator _validator;
         //private readonly Mock<ReadOnlyDbContext> _mockContext;
@@ -33,16 +33,17 @@ namespace Application.UnitTest.Features.GeographicArea
         //}
 
         [Fact]
-        public async Task CreateGeographicAreaTest_ShouldFail_When_Name_Is_Empty()
+        public async Task CreateConstituencyTest_ShouldFail_When_Code_Is_Empty()
         {
             //Arrange
             var serviceProvider = CreateServiceCollection().BuildServiceProvider();
             var context = serviceProvider.GetRequiredService<WritableDbContext>();
 
-            var command = new CreateGeographicAreaCommand
+            var command = new CreateConstituencyCommand
             {
-                Name = "",
-                Level = LocationLevel.Country,
+                Name = "Name",
+                Code = "",
+                Level = LocationLevel.Region,
             };
 
             ////Act
@@ -62,22 +63,59 @@ namespace Application.UnitTest.Features.GeographicArea
             //Assert
             AssertValidationException(
                 result.Subject,
-                nameof(CreateGeographicAreaCommand.Name),
+                nameof(CreateConstituencyCommand.Code),
                 ValidationErrorCode.Required
             );
         }
 
         [Fact]
-        public async Task CreateGeographicAreaTest_ShouldFail_When_Continent_Has_Parent()
+        public async Task CreateConstituencyTest_ShouldFail_When_Name_Is_Empty()
         {
             //Arrange
             var serviceProvider = CreateServiceCollection().BuildServiceProvider();
             var context = serviceProvider.GetRequiredService<WritableDbContext>();
 
-            var command = new CreateGeographicAreaCommand
+            var command = new CreateConstituencyCommand
             {
-                Name = "Africa",
-                Level = LocationLevel.Continent,
+                Name = "",
+                Code = "BLR",
+                Level = LocationLevel.Region,
+            };
+
+            ////Act
+            //var result = await _validator.TestValidateAsync(command);
+
+            ////Assert
+            //result
+            //    .ShouldHaveValidationErrorFor(x => x.Name)
+            //    .WithErrorCode(ValidationErrorCode.Required.ToString());
+
+            //Act
+            var result = await FluentActions
+                .Invoking(() => serviceProvider.SendAsync(command))
+                .Should()
+                .ThrowAsync<ValidationException>();
+
+            //Assert
+            AssertValidationException(
+                result.Subject,
+                nameof(CreateConstituencyCommand.Name),
+                ValidationErrorCode.Required
+            );
+        }
+
+        [Fact]
+        public async Task CreateConstituencyTest_ShouldFail_When_Region_Has_Parent()
+        {
+            //Arrange
+            var serviceProvider = CreateServiceCollection().BuildServiceProvider();
+            var context = serviceProvider.GetRequiredService<WritableDbContext>();
+
+            var command = new CreateConstituencyCommand
+            {
+                Name = "BELIER",
+                Code = "BLR",
+                Level = LocationLevel.Region,
                 ParentId = 5,
             };
 
@@ -91,7 +129,7 @@ namespace Application.UnitTest.Features.GeographicArea
             AssertValidationException(
                 result.Subject,
                 new KeyValuePair<string, ValidationErrorCode>(
-                    nameof(CreateGeographicAreaCommand.ParentId),
+                    nameof(CreateConstituencyCommand.ParentId),
                     ValidationErrorCode.InvalidParent
                 )
             );
@@ -106,18 +144,23 @@ namespace Application.UnitTest.Features.GeographicArea
         }
 
         [Fact]
-        public async Task CreateGeographicAreaTest_Should_Have_Error_When_Parent_Level_Is_Wrong()
+        public async Task CreateConstituencyTest_Should_Have_Error_When_Parent_Level_Is_Wrong()
         {
             //Arrange
             var serviceProvider = CreateServiceCollection().BuildServiceProvider();
             var context = serviceProvider.GetRequiredService<WritableDbContext>();
 
-            var geographicArea = await CreateGeographicAreaAsync(context,"Afrique",LocationLevel.Continent,1);
+            var geographicArea = await CreateConstituencyAsync(
+                context,
+                "Afrique",
+                LocationLevel.Region,
+                1
+            );
             // On veut créer un District (3), donc on s'attend à un parent Country (2)
-            var command = new CreateGeographicAreaCommand
+            var command = new CreateConstituencyCommand
             {
                 Name = "Korhogo",
-                Level = LocationLevel.District,
+                Level = LocationLevel.Municipality,
                 ParentId = geographicArea.Id,
             };
             //Act
@@ -130,7 +173,7 @@ namespace Application.UnitTest.Features.GeographicArea
             AssertValidationException(
                 result.Subject,
                 new KeyValuePair<string, ValidationErrorCode>(
-                    nameof(CreateGeographicAreaCommand.ParentId),
+                    nameof(CreateConstituencyCommand.ParentId),
                     ValidationErrorCode.InvalidLevel
                 )
             );
@@ -141,7 +184,7 @@ namespace Application.UnitTest.Features.GeographicArea
             //    new() { Id = 50, Level = LocationLevel.Continent },
             //}.AsQueryable();
 
-            //_mockContext.Setup(x => x.GeographicAreas).ReturnsDbSet(data);
+            //_mockContext.Setup(x => x.Constituencies).ReturnsDbSet(data);
 
             //// Act
             //var result = await _validator.TestValidateAsync(command);
@@ -153,48 +196,49 @@ namespace Application.UnitTest.Features.GeographicArea
         }
 
         [Fact]
-        public async Task CreateGeographicAreaTest_ShouldFail_When_NameAlreadyExistsUnderSameParent()
+        public async Task CreateConstituencyTest_ShouldFail_When_NameAlreadyExistsUnderSameParent()
         {
             //Arrange
             var serviceProvider = CreateServiceCollection().BuildServiceProvider();
             var context = serviceProvider.GetRequiredService<WritableDbContext>();
 
-            var geographicAreaDistrict = await context.GeographicAreas.FirstOrDefaultAsync(x => x.Name == "ABIDJAN" && x.Level == LocationLevel.District);
+            var constituencyRegion = await context.Constituencies.FirstOrDefaultAsync(x =>
+                x.Name == "RAVIART" && x.Level == LocationLevel.SubPrefecture
+            );
 
-            var command = new CreateGeographicAreaCommand
+            var command = new CreateConstituencyCommand
             {
                 Name = "Cocody",
-                Level = LocationLevel.City,
-                ParentId = geographicAreaDistrict?.Id,
+                Level = LocationLevel.Municipality,
+                ParentId = constituencyRegion?.Id,
             };
 
-            var existingData = new List<GeographicAreaDao>
+            var existingData = new List<ConstituencyDao>
             {
                 new()
                 {
                     Name = "Cocody",
-                    ParentId = geographicAreaDistrict?.Id,
-                    Level = LocationLevel.City,
+                    ParentId = constituencyRegion?.Id,
+                    Level = LocationLevel.Municipality,
                 },
                 new()
                 {
                     Name = "Plateau",
-                    ParentId = geographicAreaDistrict?.Id,
-                    Level = LocationLevel.City,
+                    ParentId = constituencyRegion?.Id,
+                    Level = LocationLevel.Municipality,
                 },
                 new()
                 {
                     Name = "Adjamé",
-                    ParentId = geographicAreaDistrict?.Id,
-                    Level = LocationLevel.City,
+                    ParentId = constituencyRegion?.Id,
+                    Level = LocationLevel.Municipality,
                 },
             };
 
-            await context.GeographicAreas.AddRangeAsync(existingData);
+            await context.Constituencies.AddRangeAsync(existingData);
             await context.SaveChangesAsync();
 
-
-            //Act 
+            //Act
             var result = await FluentActions
                 .Invoking(() => serviceProvider.SendAsync(command))
                 .Should()
@@ -204,13 +248,12 @@ namespace Application.UnitTest.Features.GeographicArea
             AssertValidationException(
                 result.Subject,
                 new KeyValuePair<string, ValidationErrorCode>(
-                    nameof(CreateGeographicAreaCommand.Name),
+                    nameof(CreateConstituencyCommand.Name),
                     ValidationErrorCode.AlreadyExists
                 )
             );
 
-
-            //_mockContext.Setup(x => x.GeographicAreas).ReturnsDbSet(existingData);
+            //_mockContext.Setup(x => x.Constituencies).ReturnsDbSet(existingData);
 
             //// Act
             //var result = await _validator.TestValidateAsync(command);
@@ -222,24 +265,26 @@ namespace Application.UnitTest.Features.GeographicArea
         }
 
         [Fact]
-        public async Task CreateGeographicAreaTest_Validate_ShouldSucceed_When_HierarchyIsConsistent()
+        public async Task CreateConstituencyTest_Validate_ShouldSucceed_When_HierarchyIsConsistent()
         {
             //Arrange
             var serviceProvider = CreateServiceCollection().BuildServiceProvider();
             var context = serviceProvider.GetRequiredService<WritableDbContext>();
 
-            var geographicAreaDistrict = await context.GeographicAreas
-                .FirstOrDefaultAsync(x => x.Name == "BINGERVILLE" && x.Level == LocationLevel.SubPrefecture);
+            var constituencyRegion = await context.Constituencies.FirstOrDefaultAsync(x =>
+                x.Name == "DISTRICT AUTONOME D'ABIDJAN" && x.Level == LocationLevel.Region
+            );
 
             // Arrange : Création d'une ville (7) sous une sous-préfecture (6)
-            var command = new CreateGeographicAreaCommand
+            var command = new CreateConstituencyCommand
             {
-                Name = "Bingerville",
-                Level = LocationLevel.City,
-                ParentId = 12,
+                Name = "ABIDJAN",
+                Code = "ABJ",
+                Level = LocationLevel.Department,
+                ParentId = constituencyRegion?.Id,
             };
 
-            //Act 
+            //Act
             var result = await serviceProvider.SendAsync(command);
 
             //Assert
@@ -250,7 +295,7 @@ namespace Application.UnitTest.Features.GeographicArea
             //{
             //    new() { Id = 20, Level = LocationLevel.SubPrefecture },
             //};
-            //_mockContext.Setup(x => x.GeographicAreas).ReturnsDbSet(existingData);
+            //_mockContext.Setup(x => x.Constituencies).ReturnsDbSet(existingData);
 
             //// Act
             //var result = await _validator.TestValidateAsync(command);
