@@ -1,14 +1,14 @@
 ﻿using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;
 
-namespace Application.Features.GeographicArea.Common
+namespace Application.Features.Constituency.Common
 {
-    public class GeographicAreaCommandValidatorBase<T> : AbstractValidator<T>
+    public class ConstituencyCommandValidatorBase<T> : AbstractValidator<T>
         where T : class
     {
         protected readonly ReadOnlyDbContext _context;
 
-        public GeographicAreaCommandValidatorBase(ReadOnlyDbContext context)
+        public ConstituencyCommandValidatorBase(ReadOnlyDbContext context)
         {
             _context = context;
         }

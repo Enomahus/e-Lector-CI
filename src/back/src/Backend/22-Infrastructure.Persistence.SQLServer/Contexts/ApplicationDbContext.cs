@@ -8,18 +8,27 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Persistence.SQLServer.Contexts;
 
-public class ApplicationDbContext : IdentityDbContext<
-    UserDao,RoleDao,Guid,IdentityUserClaim<Guid>,
-    UserRoleDao,
-    IdentityUserLogin<Guid>,IdentityRoleClaim<Guid>, IdentityUserToken<Guid>>
+public class ApplicationDbContext
+    : IdentityDbContext<
+        UserDao,
+        RoleDao,
+        Guid,
+        IdentityUserClaim<Guid>,
+        UserRoleDao,
+        IdentityUserLogin<Guid>,
+        IdentityRoleClaim<Guid>,
+        IdentityUserToken<Guid>
+    >
 {
     public DbSet<RefreshTokenDao> RefreshTokens { get; set; }
-    public DbSet<GeographicAreaDao> GeographicAreas { get; set; }
+    public DbSet<ConstituencyDao> Constituencies { get; set; }
     public DbSet<PollingStationDao> PollingStations { get; set; }
     public DbSet<RegistrationRequestDao> RegistrationRequests { get; set; }
     public DbSet<RegistrationRequestDocumentDao> RegistrationRequestDocuments { get; set; }
     public DbSet<ElectorDao> Electors { get; set; }
     public DbSet<DocumentDao> Documents { get; set; }
+    public DbSet<FiliationDao> Filiations { get; set; }
+    public DbSet<CitizenDao> Citizens { get; set; }
 
     public ApplicationDbContext() { }
 
@@ -36,20 +45,23 @@ public class ApplicationDbContext : IdentityDbContext<
             .Properties<PersonTitle>()
             .HaveConversion<EnumToStringConverter<PersonTitle>>();
 
-        configurationBuilder.Properties<LocationLevel>()
+        configurationBuilder
+            .Properties<LocationLevel>()
             .HaveConversion<EnumToStringConverter<LocationLevel>>();
 
-        configurationBuilder
-            .Properties<Gender>()
-            .HaveConversion<EnumToStringConverter<Gender>>();
+        configurationBuilder.Properties<Gender>().HaveConversion<EnumToStringConverter<Gender>>();
 
         configurationBuilder
             .Properties<MaritalStatus>()
             .HaveConversion<EnumToStringConverter<MaritalStatus>>();
 
         configurationBuilder
+            .Properties<FiliationType>()
+            .HaveConversion<EnumToStringConverter<FiliationType>>();
+
+        configurationBuilder
             .Properties<RegistrationStatus>()
-            .HaveConversion<EnumToStringConverter<RegistrationStatus>>();       
+            .HaveConversion<EnumToStringConverter<RegistrationStatus>>();
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -60,7 +72,7 @@ public class ApplicationDbContext : IdentityDbContext<
         builder.Entity<UserDao>().Property(e => e.FirstName).HasMaxLength(100);
         builder.Entity<UserDao>().Property(e => e.LastName).HasMaxLength(100);
         builder.Entity<UserDao>().Property(e => e.Email).HasMaxLength(100);
-        
+
         builder
             .Entity<UserDao>()
             .HasMany(u => u.RefreshTokens)
@@ -101,8 +113,20 @@ public class ApplicationDbContext : IdentityDbContext<
             .WithMany(a => a.UpdatedRegistrationRequests)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder
+            .Entity<CitizenDao>()
+            .HasOne(e => e.Elector)
+            .WithOne(c => c.Citizen)
+            .HasForeignKey<ElectorDao>(e => e.CitizenId);
+
+        builder
+            .Entity<ElectorDao>()
+            .HasOne(e => e.Constituencies)
+            .WithMany(c => c.Electors)
+            .HasForeignKey(e => e.ConstituencyId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         // Seeding
-        builder.Entity<GeographicAreaDao>().HasData(GeographicAreaData.GeographicAreas);
-        
+        builder.Entity<ConstituencyDao>().HasData(ConstituencyData.Constituencies);
     }
 }

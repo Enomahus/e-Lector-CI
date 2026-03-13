@@ -2,11 +2,9 @@
 
 public enum LocationLevel
 {
-    Continent = 1,     // EX: AFRICA
-    Country = 2,       // Ex: COTE D'IVOIRE
-    District = 3,      // EX: ABIDJAN
-    Region = 4,        // EX: ABIDJAN
-    Department = 5,    // Ex: ABIDJAN
-    SubPrefecture = 6, // Ex: ABIDJAN
-    City = 7           // Ex: COCODY
+    Region = 1, // EX: BELIER
+    Department = 2, // Ex: DIDIEVI
+    SubPrefecture = 3, // Ex: BOLI
+    Municipality = 4, // Ex: BOLI
+    VotingLocation = 5, //EX: EPP ALLANIKRO
 }

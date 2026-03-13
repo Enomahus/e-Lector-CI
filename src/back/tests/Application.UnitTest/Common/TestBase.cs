@@ -1,10 +1,12 @@
-﻿using Application.Exceptions;
+﻿using Application.Common.Enums;
+using Application.Exceptions;
 using Application.Features;
 using Application.Models.Errors;
 using FluentAssertions;
 using Infrastructure.Configurations;
 using Infrastructure.Persistence.Configurations;
 using Infrastructure.Persistence.Entities;
+using Infrastructure.Persistence.SQLServer.Contexts;
 using Infrastructure.Persistence.SQLServer.Seeders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -12,8 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
 using Tools.Configuration;
-using Application.Common.Enums;
-using Infrastructure.Persistence.SQLServer.Contexts;
 
 namespace Application.UnitTest.Common
 {
@@ -97,19 +97,24 @@ namespace Application.UnitTest.Common
             return services;
         }
 
-        protected static async Task<GeographicAreaDao> CreateGeographicAreaAsync(WritableDbContext context,string name, LocationLevel level, long? parentId)
+        protected static async Task<ConstituencyDao> CreateConstituencyAsync(
+            WritableDbContext context,
+            string name,
+            LocationLevel level,
+            long? parentId
+        )
         {
-            var geographicArea = new GeographicAreaDao()
+            var constituency = new ConstituencyDao()
             {
                 Name = name ?? "Name",
                 Level = level,
-                ParentId = level == LocationLevel.Continent ? null : parentId
+                ParentId = level == LocationLevel.Region ? null : parentId,
             };
 
-            await context.GeographicAreas.AddAsync(geographicArea);
+            await context.Constituencies.AddAsync(constituency);
             await context.SaveChangesAsync();
 
-            return geographicArea;
+            return constituency;
         }
 
         #region Assert helpers

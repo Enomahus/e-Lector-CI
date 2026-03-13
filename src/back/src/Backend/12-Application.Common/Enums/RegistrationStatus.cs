@@ -3,6 +3,7 @@
 public enum RegistrationStatus
 {
     Pending,
+    Processing,
     Approuved,
     Rejected,
 }

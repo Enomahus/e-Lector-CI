@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 using Tools.Exceptions.Errors;
 
-namespace Application.Features.GeographicArea.CreateGeographicArea
+namespace Application.Features.Constituency.CreateConstituency
 {
     [ExcludeFromCodeCoverage]
     [ApiController]
     [Route("geographic-area")]
     [OpenApiTag("geographic-area")]
-    public class CreateGeographicAreaController : ApiControllerBase
+    public class CreateConstituencyController : ApiControllerBase
     {
         /// <summary>
         /// Create a new geographic area
@@ -27,7 +27,7 @@ namespace Application.Features.GeographicArea.CreateGeographicArea
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<Error>))]
         public async Task<IActionResult> CreateGeographicAreaAsync(
-            [FromBody] CreateGeographicAreaCommand command,
+            [FromBody] CreateConstituencyCommand command,
             CancellationToken token
         )
         {

@@ -8,22 +8,25 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tools.Logging;
 
-namespace Application.Features.GeographicArea.CreateGeographicArea;
+namespace Application.Features.Constituency.CreateConstituency;
 
-public class CreateGeographicAreaCommand : IRequest<Result<long>>
+public class CreateConstituencyCommand : IRequest<Result<long>>
 {
+    public string Code { get; init; } = string.Empty;
     public string Name { get; init; } = string.Empty;
     public LocationLevel Level { get; init; }
     public long? ParentId { get; init; }
 }
 
-public class CreateGeographicAreaCommandValidator : AbstractValidator<CreateGeographicAreaCommand>
+public class CreateConstituencyCommandValidator : AbstractValidator<CreateConstituencyCommand>
 {
     protected readonly ReadOnlyDbContext _context;
 
-    public CreateGeographicAreaCommandValidator(ReadOnlyDbContext context)
+    public CreateConstituencyCommandValidator(ReadOnlyDbContext context)
     {
         _context = context;
+
+        RuleFor(x => x.Code).NotEmpty().WithMessage(ValidationErrorCode.Required.ToString());
 
         RuleFor(x => x.Name)
             .NotEmpty()
@@ -34,7 +37,7 @@ public class CreateGeographicAreaCommandValidator : AbstractValidator<CreateGeog
             .WithMessage(ValidationErrorCode.AlreadyExists.ToString());
 
         When(
-            x => x.Level == LocationLevel.Continent,
+            x => x.Level == LocationLevel.Region,
             () =>
             {
                 RuleFor(x => x.ParentId)
@@ -44,7 +47,7 @@ public class CreateGeographicAreaCommandValidator : AbstractValidator<CreateGeog
         );
 
         When(
-            x => x.Level != LocationLevel.Continent,
+            x => x.Level != LocationLevel.Region,
             () =>
             {
                 RuleFor(x => x.ParentId)
@@ -61,26 +64,26 @@ public class CreateGeographicAreaCommandValidator : AbstractValidator<CreateGeog
     }
 
     private async Task<bool> BeUniqueNameInParentAsync(
-        CreateGeographicAreaCommand command,
+        CreateConstituencyCommand command,
         string name,
         CancellationToken cancellationToken
     )
     {
-        return !await _context.GeographicAreas.AnyAsync(
+        return !await _context.Constituencies.AnyAsync(
             x => x.Name == name && x.ParentId == command.ParentId,
             cancellationToken
         );
     }
 
     private async Task<bool> ParentHasCorrectLevelAsync(
-        CreateGeographicAreaCommand command,
+        CreateConstituencyCommand command,
         CancellationToken cancellationToken
     )
     {
         if (command.ParentId is null)
             return false;
 
-        var parent = await _context.GeographicAreas.FirstOrDefaultAsync(
+        var parent = await _context.Constituencies.FirstOrDefaultAsync(
             x => x.Id == command.ParentId.Value,
             cancellationToken
         );
@@ -92,23 +95,23 @@ public class CreateGeographicAreaCommandValidator : AbstractValidator<CreateGeog
     }
 }
 
-public class CreateGeographicAreaCommandHandler(WritableDbContext context)
-    : IRequestHandler<CreateGeographicAreaCommand, Result<long>>
+public class CreateConstituencyCommandHandler(WritableDbContext context)
+    : IRequestHandler<CreateConstituencyCommand, Result<long>>
 {
     public async Task<Result<long>> Handle(
-        CreateGeographicAreaCommand command,
+        CreateConstituencyCommand command,
         CancellationToken cancellationToken
     )
     {
         using var activity = ActivitySourceLog.CQRS.Start();
 
-        var newEntity = new GeographicAreaDao
+        var newEntity = new ConstituencyDao
         {
             Name = command.Name,
             Level = command.Level,
             ParentId = command.ParentId,
         };
-        context.GeographicAreas.Add(newEntity);
+        context.Constituencies.Add(newEntity);
         await context.SaveChangesAsync(cancellationToken);
 
         return Result<long>.From(newEntity.Id);
