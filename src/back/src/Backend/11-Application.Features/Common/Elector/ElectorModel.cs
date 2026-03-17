@@ -1,4 +1,5 @@
-﻿using Application.Models;
+﻿using Application.Common.Enums;
+using Application.Models;
 using Infrastructure.Persistence.Entities;
 using MediatR;
 
@@ -9,6 +10,7 @@ namespace Application.Features.Common.Elector
         public Guid? Id { get; set; }
         public string? VoterRegistrationNumber { get; set; }       
         public DateTimeOffset? RegistrationDate { get; set; }
+        public ElectorStatus Status { get; set; }
         public Guid? CitizenId { get; set; }
         
         public ElectorDao ToDao(long? pollingStationId, Guid? citizenId)
@@ -17,6 +19,7 @@ namespace Application.Features.Common.Elector
             {                
                 VoterRegistrationNumber = VoterRegistrationNumber,
                 RegistrationDate = RegistrationDate!.Value,
+                Status = Status,
                 PollingStationId = pollingStationId!.Value,
                 Id = citizenId!.Value
             };
@@ -37,8 +40,8 @@ namespace Application.Features.Common.Elector
                 Id = elector.Id,
                 VoterRegistrationNumber = elector.VoterRegistrationNumber,
                 RegistrationDate = elector.RegistrationDate,
-                CitizenId = elector.Citizen.Id,
-                
+                Status = elector.Status,
+                CitizenId = elector.Citizen.Id,               
             };
         }
     }

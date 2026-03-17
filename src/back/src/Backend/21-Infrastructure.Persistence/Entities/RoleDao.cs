@@ -7,5 +7,7 @@ public class RoleDao : IdentityRole<Guid>
     public RoleDao(): base() { }
 
     public RoleDao(string roleName) : base(roleName) { }
+
+    public virtual ICollection<AppActionDao> Actions { get; set; } = [];
     public virtual ICollection<UserConstituencyDao> UserConstituencies { get; set; } = [];
 }

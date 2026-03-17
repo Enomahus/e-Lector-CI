@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Persistence.Configurations;
 using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
+using Infrastructure.Persistence.SQLServer.Contexts.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -26,9 +27,32 @@ public class DataSeeder(WritableDbContext context, UserManager<UserDao> userMana
                 {
                     await SeedDefaultUserAsync();
                     await SeedRolesAsync();
+                    await SeedConstituenciesAsync();
                 },
                 () => Task.FromResult(true)
             );
+    }
+
+    private async Task SeedConstituenciesAsync()
+    {
+        var constituencies = ConstituencyData.GetConstituencies;
+        foreach (var constituency in constituencies)
+        {
+            var dbConstituency = await _context.Constituencies
+                .FirstOrDefaultAsync(c => c.Wording == constituency.Wording && c.Level == constituency.Level);
+
+            if (dbConstituency == null) 
+            {
+                await _context.Constituencies.AddAsync(constituency);
+            }
+            else
+            {
+                dbConstituency.Code = constituency.Code;
+
+                _context.Constituencies.Update(dbConstituency);
+            }
+        }
+        await _context.SaveChangesAsync();
     }
 
     private async Task SeedDefaultUserAsync()

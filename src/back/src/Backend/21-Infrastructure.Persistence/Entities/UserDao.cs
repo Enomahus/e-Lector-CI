@@ -15,10 +15,6 @@ public class UserDao : IdentityUser<Guid>, IEntityBaseDao<Guid>, ITimestampedEnt
     [MaxLength(50)]
     public required string LastName { get; set; }
     public DateTimeOffset? DisabledDate { get; set; }
-    //[NotMapped]
-    //public long ConstituencyId => UserConstituencies.FirstOrDefault()?.ConstituencyId ?? 0;
-    //[NotMapped]
-    //public ConstituencyDao Constituency => UserConstituencies.FirstOrDefault()?.Constituency;
 
     public virtual ICollection<RefreshTokenDao> RefreshTokens { get; set; } = [];
     public virtual ICollection<UserRoleDao> UserRoles { get; set; }

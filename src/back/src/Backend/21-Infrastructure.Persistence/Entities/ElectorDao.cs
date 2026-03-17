@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using Application.Common.Enums;
+﻿using Application.Common.Enums;
 using Infrastructure.Persistence.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Persistence.Entities
 {

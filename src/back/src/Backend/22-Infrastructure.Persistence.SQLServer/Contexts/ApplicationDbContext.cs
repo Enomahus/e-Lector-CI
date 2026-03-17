@@ -20,6 +20,8 @@ public class ApplicationDbContext
         IdentityUserToken<Guid>
     >
 {
+    public DbSet<AppActionDao> AppActions { get; set; }
+    public DbSet<AppPermissionDao> AppPermissions { get; set; }
     public DbSet<CitizenDao> Citizens { get; set; }
     public DbSet<ConstituencyDao> Constituencies { get; set; }
     public DbSet<DocumentDao> Documents { get; set; }
@@ -97,23 +99,60 @@ public class ApplicationDbContext
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder
-            .Entity<RegistrationRequestDao>()
-            .HasOne(l => l.Author)
-            .WithMany(a => a.CreatedRegistrationRequests)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<RoleDao>()
+            .HasMany(r => r.Actions)
+            .WithMany(r => r.Roles)
+            .UsingEntity(e => e.ToTable("RoleAppAction"));
 
         builder
-            .Entity<RegistrationRequestDao>()
-            .HasOne(l => l.LastUpdater)
-            .WithMany(a => a.UpdatedRegistrationRequests)
-            .OnDelete(DeleteBehavior.Restrict);
+                .Entity<AppActionDao>()
+                .HasMany(e => e.Permissions)
+                .WithMany(e => e.Actions)
+                .UsingEntity(j => j.ToTable("AppActionAppPermission"));
+
+        builder.Entity<UserConstituencyDao>()
+            .HasMany(e => e.SpecificRoles)
+            .WithMany(e => e.UserConstituencies)
+            .UsingEntity(j => j.ToTable("UserConstituencySpecificRole"));
+
+        //builder
+        //    .Entity<RegistrationRequestDao>()
+        //    .HasOne(l => l.Author)
+        //    .WithMany(a => a.CreatedRegistrationRequests)
+        //    .OnDelete(DeleteBehavior.Restrict);
+
+        //builder
+        //    .Entity<RegistrationRequestDao>()
+        //    .HasOne(l => l.LastUpdater)
+        //    .WithMany(a => a.UpdatedRegistrationRequests)
+        //    .OnDelete(DeleteBehavior.Restrict);
+
+        //builder
+        //    .Entity<RegistrationRequestDao>()
+        //    .HasOne(r => r.Constituency)
+        //    .WithMany(r => r.RegistrationRequests)
+        //    .OnDelete(DeleteBehavior.Restrict);
 
         builder
-            .Entity<RegistrationRequestDao>()
-            .HasOne(r => r.Constituency)
-            .WithMany(r => r.RegistrationRequests)
-            .OnDelete(DeleteBehavior.Restrict);
+            .Entity<RegistrationRequestDao>(entity =>
+            {
+                entity.HasOne(l => l.Author)
+                        .WithMany(a => a.CreatedRegistrationRequests)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(l => l.LastUpdater)
+                        .WithMany(a => a.UpdatedRegistrationRequests)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(r => r.Constituency)
+                        .WithMany(r => r.RegistrationRequests)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(r => r.Citizen)
+                        .WithMany(r => r.RegistrationRequests)
+                        .OnDelete(DeleteBehavior.Restrict);
+            });
+            
 
         // Contraintes Circonscription (Unicité Code/Libelle par Niveau)
         builder
@@ -172,6 +211,6 @@ public class ApplicationDbContext
         
 
         // Seeding
-        builder.Entity<ConstituencyDao>().HasData(ConstituencyData.Constituencies);
+        builder.Entity<ConstituencyDao>().HasData(ConstituencyData.GetConstituencies);
     }
 }

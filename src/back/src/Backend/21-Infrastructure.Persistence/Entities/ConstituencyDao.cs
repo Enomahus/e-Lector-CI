@@ -32,7 +32,6 @@ public class ConstituencyDao : EntityBaseDao<long>, ITimestampedEntity
     // Liste des bureaux de vote rattachés à cette zone précise (souvent le dernier niveau)
     public virtual ICollection<PollingStationDao> PollingStations { get; set; } = [];
 
-    public virtual ICollection<ElectorDao> Electors { get; set; } = [];
-
     public virtual ICollection<RegistrationRequestDao> RegistrationRequests { get; set; } = [];
+    public virtual ICollection<UserConstituencyDao> UserConstituencies { get; set; } = [];
 }

@@ -1,5 +1,4 @@
-﻿using Infrastructure.Persistence.Attributes;
-using Infrastructure.Persistence.Common;
+﻿using Infrastructure.Persistence.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -22,72 +21,7 @@ public class WritableDbContext : ApplicationDbContext
         return base.SaveChanges();
     }
 
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        UpdateTimestamps();
-        var translationIdsToDelete = GetTranslationIdsToDelete();
-
-        if (Database.IsRelational())
-        {
-            int result = 0;
-            if(Database.CurrentTransaction == null)
-            {
-                var strategy = Database.CreateExecutionStrategy();
-                await strategy.ExecuteInTransactionAsync(
-                        async () =>
-                        {
-                            result = await SaveChangesAndDeleteTranslationsAsync(translationIdsToDelete, cancellationToken);
-                        },
-                        () => Task.FromResult(true)
-                    );
-            }
-            else
-            {
-                result = await SaveChangesAndDeleteTranslationsAsync(translationIdsToDelete, cancellationToken );
-            }
-            return result;
-        }
-        return await base.SaveChangesAsync(cancellationToken);
-    }
-
-    private async Task<int> SaveChangesAndDeleteTranslationsAsync(HashSet<long> translationIdsToDelete, CancellationToken cancellationToken)
-    {
-        var result = await base.SaveChangesAsync(cancellationToken);
-        //await Translations
-        //    .Where(t => translationIdsToDelete.Contains(t))
-        //    .ExecuteDeleteAsync(cancellationToken);
-
-        return result;
-    }
-
-    private HashSet<long> GetTranslationIdsToDelete()
-    {
-        var deletedEntities = ChangeTracker
-            .Entries()
-            .Where(e => e.State == EntityState.Deleted)
-            .Select(e => e.Entity)
-            .ToList();
-
-        var translationIdsToDelete = new HashSet<long>();
-
-        foreach (var entity in deletedEntities)
-        {
-            var properties = entity
-                .GetType()
-                .GetProperties()
-                .Where(p => p.GetCustomAttributes(typeof(TranslationIdAttribute), false).Length != 0);
-            foreach (var property in properties)
-            {
-                var obj = property.GetValue(entity);
-                if (obj is not null)
-                {
-                    var translationId = (long)obj;
-                    translationIdsToDelete.Add(translationId);
-                }
-            }
-        }
-        return translationIdsToDelete;
-    }
+        
 
     private void UpdateTimestamps()
     {
