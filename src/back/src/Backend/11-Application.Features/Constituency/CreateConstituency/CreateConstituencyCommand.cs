@@ -70,7 +70,7 @@ public class CreateConstituencyCommandValidator : AbstractValidator<CreateConsti
     )
     {
         return !await _context.Constituencies.AnyAsync(
-            x => x.Name == name && x.ParentId == command.ParentId,
+            x => x.Wording == name && x.ParentId == command.ParentId,
             cancellationToken
         );
     }
@@ -107,7 +107,7 @@ public class CreateConstituencyCommandHandler(WritableDbContext context)
 
         var newEntity = new ConstituencyDao
         {
-            Name = command.Name,
+            Wording = command.Name,
             Level = command.Level,
             ParentId = command.ParentId,
         };

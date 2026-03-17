@@ -1,49 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Application.Common.Enums;
+using Infrastructure.Persistence.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using Application.Common.Enums;
-using Infrastructure.Persistence.Common;
 
 namespace Infrastructure.Persistence.Entities
 {
-    public class CitizenDao : EntityBaseDao<Guid>
+    public class CitizenDao : EntityBaseDao<Guid>, ITimestampedEntity
     {
-        public MaritalStatus? MaritalStatus { get; set; }
-
-        public string MarriedName { get; set; }
-
+        
         [Required, MaxLength(100)]
         public string LastName { get; set; }
 
         [Required, MaxLength(150)]
         public string FirstName { get; set; }
-
         public Gender Gender { get; set; }
-
-        [Required]
-        public string Nationality { get; set; } = "Ivoirienne";
-
+        public string Nationality { get; set; } 
         [Required]
         public DateOnly BirthDate { get; set; }
 
         [Required, MaxLength(100)]
         public string BirthPlace { get; set; }
+        public MaritalStatus MaritalStatus { get; set; }
+        public string MarriedName { get; set; }
 
         public string Profession { get; set; }
-
         // Adresses
         public string PhysicalAddress { get; set; }
         public string PostalAddress { get; set; }
 
-        [InverseProperty(nameof(FiliationDao.Parent))]
-        public virtual ICollection<FiliationDao> FiliationAsParent { get; set; } = [];
+        public DateTimeOffset ModifiedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
 
-        [InverseProperty(nameof(FiliationDao.Citizen))]
-        public virtual ICollection<FiliationDao> FiliationsAsSubject { get; set; } = [];
+        //Filiation
+        public Guid? FatherId { get; set; }
+        [ForeignKey(nameof(FatherId))]
+        public virtual CitizenDao Father {  get; set; }
+        public Guid? MotherId { get; set; }
+        [ForeignKey(nameof(MotherId))]
+        public virtual CitizenDao Mother { get; set; }
+
 
         // Relation un-à-un vers l'électeur
-        public ElectorDao Elector { get; set; }
+        public virtual ElectorDao ElectorProfil { get; set; }
+        public virtual ICollection<RegistrationRequestDao> RegistrationRequests { get; set; }
     }
 }

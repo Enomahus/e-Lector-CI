@@ -106,7 +106,7 @@ namespace Application.UnitTest.Common
         {
             var constituency = new ConstituencyDao()
             {
-                Name = name ?? "Name",
+                Wording = name ?? "Name",
                 Level = level,
                 ParentId = level == LocationLevel.Region ? null : parentId,
             };

@@ -11,35 +11,35 @@ public static class ConstituencyData
             {
                 Id = 1,
                 Code = "A0",
-                Name = "DIAPORA",
+                Wording = "DIAPORA",
                 Level = LocationLevel.Region,
             },
             new()
             {
                 Id = 2,
                 Code = "A1",
-                Name = "DISTRICT AUTONOME D'ABIDJAN",
+                Wording = "DISTRICT AUTONOME D'ABIDJAN",
                 Level = LocationLevel.Region,
             },
             new()
             {
                 Id = 3,
                 Code = "A2",
-                Name = "DISTRICT AUTONOME DE YAMOUSSOUKRO",
+                Wording = "DISTRICT AUTONOME DE YAMOUSSOUKRO",
                 Level = LocationLevel.Region,
             },
             new()
             {
                 Id = 4,
                 Code = "10",
-                Name = "BELIER",
+                Wording = "BELIER",
                 Level = LocationLevel.Region,
             },
             new()
             {
                 Id = 5,
                 Code = "010",
-                Name = "DIDIEVI",
+                Wording = "DIDIEVI",
                 Level = LocationLevel.Department,
                 ParentId = 4,
             },
@@ -47,7 +47,7 @@ public static class ConstituencyData
             {
                 Id = 6,
                 Code = "011",
-                Name = "TIEBISSOU",
+                Wording = "TIEBISSOU",
                 Level = LocationLevel.Department,
                 ParentId = 4,
             },
@@ -55,7 +55,7 @@ public static class ConstituencyData
             {
                 Id = 7,
                 Code = "012",
-                Name = "TOUMODI",
+                Wording = "TOUMODI",
                 Level = LocationLevel.Department,
                 ParentId = 4,
             },
@@ -63,7 +63,7 @@ public static class ConstituencyData
             {
                 Id = 8,
                 Code = "096",
-                Name = "DJEKANOU",
+                Wording = "DJEKANOU",
                 Level = LocationLevel.Department,
                 ParentId = 4,
             },
@@ -71,7 +71,7 @@ public static class ConstituencyData
             {
                 Id = 9,
                 Code = "002",
-                Name = "DIDIEVI",
+                Wording = "DIDIEVI",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 5,
             },
@@ -79,7 +79,7 @@ public static class ConstituencyData
             {
                 Id = 10,
                 Code = "003",
-                Name = "TIE-N'DIEKRO",
+                Wording = "TIE-N'DIEKRO",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 5,
             },
@@ -87,7 +87,7 @@ public static class ConstituencyData
             {
                 Id = 11,
                 Code = "004",
-                Name = "BOLI",
+                Wording = "BOLI",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 5,
             },
@@ -95,7 +95,7 @@ public static class ConstituencyData
             {
                 Id = 12,
                 Code = "005",
-                Name = "MOLONOU-BLE",
+                Wording = "MOLONOU-BLE",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 5,
             },
@@ -103,7 +103,7 @@ public static class ConstituencyData
             {
                 Id = 13,
                 Code = "006",
-                Name = "RAVIART",
+                Wording = "RAVIART",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 5,
             },
@@ -111,7 +111,7 @@ public static class ConstituencyData
             {
                 Id = 14,
                 Code = "001",
-                Name = "TIEBISSOU",
+                Wording = "TIEBISSOU",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 6,
             },
@@ -119,7 +119,7 @@ public static class ConstituencyData
             {
                 Id = 15,
                 Code = "002",
-                Name = "LOMOKANKRO",
+                Wording = "LOMOKANKRO",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 6,
             },
@@ -127,7 +127,7 @@ public static class ConstituencyData
             {
                 Id = 16,
                 Code = "003",
-                Name = "MOLONOU",
+                Wording = "MOLONOU",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 6,
             },
@@ -135,7 +135,7 @@ public static class ConstituencyData
             {
                 Id = 17,
                 Code = "004",
-                Name = "YAKPABO-SAKASSOU",
+                Wording = "YAKPABO-SAKASSOU",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 6,
             },
@@ -143,7 +143,7 @@ public static class ConstituencyData
             {
                 Id = 18,
                 Code = "001",
-                Name = "ANGONDA",
+                Wording = "ANGONDA",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 7,
             },
@@ -151,7 +151,7 @@ public static class ConstituencyData
             {
                 Id = 19,
                 Code = "003",
-                Name = "KOKUMBO",
+                Wording = "KOKUMBO",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 7,
             },
@@ -159,7 +159,7 @@ public static class ConstituencyData
             {
                 Id = 20,
                 Code = "004",
-                Name = "KPOUEBO",
+                Wording = "KPOUEBO",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 7,
             },
@@ -167,7 +167,7 @@ public static class ConstituencyData
             {
                 Id = 21,
                 Code = "005",
-                Name = "TOUMODI",
+                Wording = "TOUMODI",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 7,
             },
@@ -175,7 +175,7 @@ public static class ConstituencyData
             {
                 Id = 22,
                 Code = "001",
-                Name = "BONIKRO",
+                Wording = "BONIKRO",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 8,
             },
@@ -183,7 +183,7 @@ public static class ConstituencyData
             {
                 Id = 23,
                 Code = "002",
-                Name = "DJEKANOU",
+                Wording = "DJEKANOU",
                 Level = LocationLevel.SubPrefecture,
                 ParentId = 8,
             },
@@ -191,7 +191,7 @@ public static class ConstituencyData
             {
                 Id = 24,
                 Code = "098",
-                Name = "BOLI",
+                Wording = "BOLI",
                 Level = LocationLevel.Municipality,
                 ParentId = 11,
             },
@@ -199,7 +199,7 @@ public static class ConstituencyData
             {
                 Id = 25,
                 Code = "001",
-                Name = "EPP ALLANIKRO",
+                Wording = "EPP ALLANIKRO",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },
@@ -207,7 +207,7 @@ public static class ConstituencyData
             {
                 Id = 26,
                 Code = "002",
-                Name = "EPP ANOKOI-KOUAMEKRO",
+                Wording = "EPP ANOKOI-KOUAMEKRO",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },
@@ -215,7 +215,7 @@ public static class ConstituencyData
             {
                 Id = 27,
                 Code = "003",
-                Name = "EPP LABO",
+                Wording = "EPP LABO",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },
@@ -223,7 +223,7 @@ public static class ConstituencyData
             {
                 Id = 28,
                 Code = "004",
-                Name = "EPP ADJEBO",
+                Wording = "EPP ADJEBO",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },
@@ -231,7 +231,7 @@ public static class ConstituencyData
             {
                 Id = 29,
                 Code = "005",
-                Name = "EPP TAKIKRO",
+                Wording = "EPP TAKIKRO",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },
@@ -239,7 +239,7 @@ public static class ConstituencyData
             {
                 Id = 30,
                 Code = "006",
-                Name = "EPP AKA KOUAMEKRO",
+                Wording = "EPP AKA KOUAMEKRO",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },
@@ -247,7 +247,7 @@ public static class ConstituencyData
             {
                 Id = 31,
                 Code = "007",
-                Name = "EPP KONGOBO",
+                Wording = "EPP KONGOBO",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },
@@ -255,7 +255,7 @@ public static class ConstituencyData
             {
                 Id = 32,
                 Code = "008",
-                Name = "EPP BOLI 1",
+                Wording = "EPP BOLI 1",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },
@@ -263,7 +263,7 @@ public static class ConstituencyData
             {
                 Id = 33,
                 Code = "009",
-                Name = "EPP BOLI 3",
+                Wording = "EPP BOLI 3",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },
@@ -271,7 +271,7 @@ public static class ConstituencyData
             {
                 Id = 34,
                 Code = "010",
-                Name = "EPP YOBOUEPLISSOU",
+                Wording = "EPP YOBOUEPLISSOU",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },
@@ -279,7 +279,7 @@ public static class ConstituencyData
             {
                 Id = 35,
                 Code = "011",
-                Name = "EPP ANOKOI-DJEZOU",
+                Wording = "EPP ANOKOI-DJEZOU",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },
@@ -287,7 +287,7 @@ public static class ConstituencyData
             {
                 Id = 36,
                 Code = "012",
-                Name = "EPP GRODIEKRO",
+                Wording = "EPP GRODIEKRO",
                 Level = LocationLevel.VotingLocation,
                 ParentId = 24,
             },

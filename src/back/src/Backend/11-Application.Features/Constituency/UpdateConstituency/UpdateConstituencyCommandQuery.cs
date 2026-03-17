@@ -26,14 +26,7 @@ namespace Application.Features.Constituency.UpdateConstituency
         {
             _context = context;
 
-            //_dbContext = dbContext;
-            //_currentUser = currentUser;
-
-            // RG0 : seul SuperAdmin
-            //RuleFor(x => x)
-            //    .Must(_ => _currentUser.IsInRole("SuperAdmin"))
-            //    .WithMessage("Seul un utilisateur avec le rôle 'SuperAdmin' peut modifier une zone géographique.");
-
+            
             RuleFor(x => x.Id).GreaterThan(0);
 
             RuleFor(x => x.Name).NotEmpty().MaximumLength(50);
@@ -81,7 +74,7 @@ namespace Application.Features.Constituency.UpdateConstituency
         )
         {
             return !await _context.Constituencies.AnyAsync(
-                g => g.Id != cmd.Id && g.Name == cmd.Name && g.ParentId == cmd.ParentId,
+                g => g.Id != cmd.Id && g.Wording == cmd.Name && g.ParentId == cmd.ParentId,
                 ct
             );
         }
@@ -121,7 +114,7 @@ namespace Application.Features.Constituency.UpdateConstituency
                     cancellationToken
                 ) ?? throw new NotFoundException(nameof(ConstituencyDao), command.Id);
 
-            entity.Name = command.Name;
+            entity.Wording = command.Name;
             entity.Level = command.Level;
             entity.ParentId = command.ParentId;
 

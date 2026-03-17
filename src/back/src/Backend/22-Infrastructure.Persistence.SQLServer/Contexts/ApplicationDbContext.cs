@@ -20,15 +20,15 @@ public class ApplicationDbContext
         IdentityUserToken<Guid>
     >
 {
-    public DbSet<RefreshTokenDao> RefreshTokens { get; set; }
+    public DbSet<CitizenDao> Citizens { get; set; }
     public DbSet<ConstituencyDao> Constituencies { get; set; }
+    public DbSet<DocumentDao> Documents { get; set; }
+    public DbSet<ElectorDao> Electors { get; set; }
     public DbSet<PollingStationDao> PollingStations { get; set; }
+    public DbSet<RefreshTokenDao> RefreshTokens { get; set; }
     public DbSet<RegistrationRequestDao> RegistrationRequests { get; set; }
     public DbSet<RegistrationRequestDocumentDao> RegistrationRequestDocuments { get; set; }
-    public DbSet<ElectorDao> Electors { get; set; }
-    public DbSet<DocumentDao> Documents { get; set; }
-    public DbSet<FiliationDao> Filiations { get; set; }
-    public DbSet<CitizenDao> Citizens { get; set; }
+    public DbSet<UserConstituencyDao> UserConstituencies { get; set; }
 
     public ApplicationDbContext() { }
 
@@ -53,11 +53,7 @@ public class ApplicationDbContext
 
         configurationBuilder
             .Properties<MaritalStatus>()
-            .HaveConversion<EnumToStringConverter<MaritalStatus>>();
-
-        configurationBuilder
-            .Properties<FiliationType>()
-            .HaveConversion<EnumToStringConverter<FiliationType>>();
+            .HaveConversion<EnumToStringConverter<MaritalStatus>>();        
 
         configurationBuilder
             .Properties<RegistrationStatus>()
@@ -114,17 +110,66 @@ public class ApplicationDbContext
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
-            .Entity<CitizenDao>()
-            .HasOne(e => e.Elector)
-            .WithOne(c => c.Citizen)
-            .HasForeignKey<ElectorDao>(e => e.CitizenId);
-
-        builder
-            .Entity<ElectorDao>()
-            .HasOne(e => e.Constituencies)
-            .WithMany(c => c.Electors)
-            .HasForeignKey(e => e.ConstituencyId)
+            .Entity<RegistrationRequestDao>()
+            .HasOne(r => r.Constituency)
+            .WithMany(r => r.RegistrationRequests)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // Contraintes Circonscription (Unicité Code/Libelle par Niveau)
+        builder
+            .Entity<ConstituencyDao>(entity =>
+            {
+                entity.HasIndex(e => new { e.Code, e.Level }).IsUnique();
+                
+                entity.HasOne(c => c.Parent)
+                      .WithMany(c => c.Subconstituency)
+                      .HasForeignKey(c => c.ParentId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+        builder.Entity<PollingStationDao>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.StationNumber, e.ConstituencyId }).IsUnique();
+            entity.HasOne(e => e.Constituency)
+                .WithMany() // une circonscription à plusieur bureau
+                .HasForeignKey(e => e.ConstituencyId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+                                                             
+        
+        builder
+            .Entity<ElectorDao>(entity =>
+            {
+                entity.HasIndex(e => e.VoterRegistrationNumber).IsUnique();
+                // Relation 1:1 Citizen <-> Elector
+                entity.HasOne(e => e.Citizen)
+                      .WithOne(e => e.ElectorProfil)
+                      .HasForeignKey<ElectorDao>(e => e.Id);
+
+                entity.HasOne(e => e.PollingStation)
+                      .WithMany(e => e.Electors)
+                      .HasForeignKey(e => e.PollingStationId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+            
+
+        // Filiation (Auto-référence Citizen)
+        builder
+            .Entity<CitizenDao>(entity =>
+            {
+                entity.HasOne(c => c.Father)
+                    .WithMany()
+                    .HasForeignKey(c => c.FatherId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(c => c.Mother)
+                    .WithMany()
+                    .HasForeignKey(c => c.MotherId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+        
 
         // Seeding
         builder.Entity<ConstituencyDao>().HasData(ConstituencyData.Constituencies);
