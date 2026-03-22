@@ -1,19 +1,29 @@
 ﻿using Application.Common.Enums;
 using Application.Exceptions;
 using Application.Features;
+using Application.Interfaces.Services;
 using Application.Models.Errors;
 using FluentAssertions;
 using Infrastructure.Configurations;
 using Infrastructure.Persistence.Configurations;
 using Infrastructure.Persistence.Entities;
+using Infrastructure.Persistence.SQLServer;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Infrastructure.Persistence.SQLServer.Seeders;
-using Microsoft.AspNetCore.Authorization;
+using Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
+using Pcea.Core.Net.Authorization;
+using Pcea.Core.Net.Authorization.Application.Interfaces.Services;
+using Pcea.Core.Net.Authorization.Interfaces.Handlers;
+using Pcea.Core.Net.Authorization.Models;
+using Pcea.Core.Net.Authorization.Persistence;
+using Pcea.Core.Net.Authorization.Web.Interfaces.Services;
+using System.Globalization;
 using Tools.Configuration;
+using Web.Services;
 
 namespace Application.UnitTest.Common
 {
@@ -24,23 +34,38 @@ namespace Application.UnitTest.Common
             // Initialisation commune à tous les tests, si nécessaire
         }
 
-        public static IServiceCollection CreateServiceCollection(bool mockAuthorization = true)
+        public static IServiceCollection CreateServiceCollection(
+            Action<TimeProvider>? setupDateService = null,
+            bool mockAuthorization = true)
         {
+            var currentUserServiceSub = Substitute.For<ICurrentUserService>();
+            var tokenRoleClaimBuilderSub = Substitute.For<ITokenRoleClaimBuilder<long>>();
+            var currentUserPermissionsProviderSub = Substitute.For<ICurrentUserPermissionsProvider>();
+            var currentUserEntityPermissionsProviderSub = Substitute.For<
+                ICurrentUserEntityPermissionsProvider<long>
+            >();
+
+            var timeProviderSub = Substitute.For<TimeProvider>();
+            timeProviderSub.GetUtcNow().Returns(new DateTimeOffset(2026,1,1,10,0,0,TimeSpan.Zero));
+
+
+            setupDateService?.Invoke(timeProviderSub);
+
             var configuration = new ConfigurationBuilder().Build();
 
             var services = new ServiceCollection();
             services
                 .AddApplicationServices()
                 .AddMediator()
-                .AddDatabase()
-                //.AddInfrastructureIdentityServices(configuration)
-                //.AddApolloCoreNetAuthorization()
-                //.AddApolloCoreNetAuthorizationPersistence()
-                //.AddSingleton(currentUserServiceSub)
-                //.AddSingleton(tokenRoleClaimBuilderSub)
-                //.AddSingleton(currentUserPermissionsProviderSub)
-                //.AddSingleton(currentUserEntityPermissionsProviderSub)
-                //.AddSingleton(dateServiceSub)
+                .AddDatabase(timeProviderSub)
+                .AddInfrastructureIdentityServices(configuration)
+                .AddPceaCoreNetAuthorization()
+                .AddPceaCoreNetAuthorizationPersistence()
+                .AddSingleton(currentUserServiceSub)
+                .AddSingleton(tokenRoleClaimBuilderSub)
+                .AddSingleton(currentUserPermissionsProviderSub)
+                .AddSingleton(currentUserEntityPermissionsProviderSub)
+                .AddSingleton(timeProviderSub)
                 //.AddSingleton(blobServiceSub)
                 //.AddSingleton(emailServiceSub)
                 //.AddSingleton(templatingServiceSub)
@@ -48,11 +73,11 @@ namespace Application.UnitTest.Common
                 //.AddSingleton(siretServiceSub)
                 //.AddSingleton(cityServiceSub)
                 //.AddSingleton(stringLocalizerSub)
-                //.AddScoped<ITokenService, TokenService>()
+                .AddScoped<ITokenService, TokenService>()
                 //.AddScoped<ITokenHelper, TokenHelper>()
                 //.AddScoped<IFileService, FileService>()
                 //.AddScoped<IAddressService, AddressService>()
-                //.AddScoped<IDataIntegrationService, DataIntegrationService>()
+                .AddScoped<IDataIntegrationService, DataIntegrationService>()
                 //.AddScoped<ILogisticSchemeService, LogisticSchemeService>()
                 //.AddScoped<RemovalSchemeOptionsService>()
                 //.AddScoped<ShippingSchemeOptionsService>()
@@ -73,6 +98,11 @@ namespace Application.UnitTest.Common
                     c.DefaultUserPassword = "Secret01";
                 });
 
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.CurrentCulture;
+            CultureInfo.CurrentUICulture = CultureInfo.CurrentUICulture;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CurrentCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.CurrentUICulture;
+
             var serviceProvider = services.BuildServiceProvider();
             var seeder = ActivatorUtilities.CreateInstance<DataSeeder>(serviceProvider);
             seeder.SeedDataAsync().Wait();
@@ -80,18 +110,18 @@ namespace Application.UnitTest.Common
             if (mockAuthorization)
             {
                 var substitute = Substitute.For<IAuthorizationHandler>();
-                //substitute
-                //    .HandleAsync()
-                //    .Returns(Task.FromResult(new AuthorizationResult() { IsAuthorized = true }));
+                substitute
+                    .HandleAsync()
+                    .Returns(Task.FromResult(new AuthorizationResult() { IsAuthorized = true }));
                 var descriptor = new ServiceDescriptor(
                     typeof(IAuthorizationHandler),
                     p => substitute,
                     ServiceLifetime.Transient
                 );
                 services.Replace(descriptor);
-                //currentUserPermissionsProviderSub
-                //    .IsCurrentUserAuthenticatedAsync()
-                //    .Returns(Task.FromResult(true));
+                currentUserPermissionsProviderSub
+                    .IsCurrentUserAuthenticatedAsync()
+                    .Returns(Task.FromResult(true));
             }
 
             return services;

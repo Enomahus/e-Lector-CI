@@ -31,6 +31,7 @@ public class ApplicationDbContext
     public DbSet<RegistrationRequestDao> RegistrationRequests { get; set; }
     public DbSet<RegistrationRequestDocumentDao> RegistrationRequestDocuments { get; set; }
     public DbSet<UserConstituencyDao> UserConstituencies { get; set; }
+    public DbSet<AuditLogDao> AuditLogs { get; set; }
 
     public ApplicationDbContext() { }
 

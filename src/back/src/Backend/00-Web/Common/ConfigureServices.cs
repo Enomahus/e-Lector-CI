@@ -6,12 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using NSwag;
 using NSwag.Generation.Processors.Security;
+using Pcea.Core.Net.Authorization;
+using Pcea.Core.Net.Authorization.Application.Interfaces.Services;
+using Pcea.Core.Net.Authorization.Web.Interfaces.Services;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Tools.Constants;
+using Web.Common.Authorization;
 using Web.Common.Converters;
 using Web.Common.Filters;
 using Web.Common.Handlers;
@@ -104,6 +108,11 @@ namespace Web.Common
             });
 
             services.AddSingleton<IAuthorizationMiddlewareResultHandler, CustomAuthorizationResultHandler>();
+            services.AddScoped<ITokenRoleClaimBuilder<long>, TokenRoleClaimBuilder>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<ICurrentUserPermissionsProvider, CurrentUserService>();
+            services.AddScoped<ICurrentUserEntityPermissionsProvider<long>, CurrentUserService>();
+            services.AddPceaCoreNetAuthorization();
 
             return services;
 
@@ -156,21 +165,23 @@ namespace Web.Common
                     };
                 });
 
-            services
-                .AddAuthorizationBuilder()
-                .AddPolicy(RequirePolicy.SuperAdmin, policy => policy.RequireRole(AppConstants.SuperAdminRole))
-                .AddPolicy(
-                    RequirePolicy.Admin,
-                    policy => policy.RequireRole(AppConstants.SuperAdminRole)
-                )
-                .AddPolicy(
-                    RequirePolicy.OrganismAgent,
-                    policy => policy.RequireRole(AppConstants.OrganismAgentRole)
-                )
-                .AddPolicy(
-                    RequirePolicy.Elector, 
-                    policy => policy.RequireRole(AppConstants.ElectorRole)
-                );
+            services.AddAuthorizationBuilder();
+
+            //services
+            //    .AddAuthorizationBuilder()
+            //    .AddPolicy(RequirePolicy.SuperAdmin, policy => policy.RequireRole(AppConstants.SuperAdminRole))
+            //    .AddPolicy(
+            //        RequirePolicy.Admin,
+            //        policy => policy.RequireRole(AppConstants.SuperAdminRole)
+            //    )
+            //    .AddPolicy(
+            //        RequirePolicy.OrganismAgent,
+            //        policy => policy.RequireRole(AppConstants.OrganismAgentRole)
+            //    )
+            //    .AddPolicy(
+            //        RequirePolicy.Elector, 
+            //        policy => policy.RequireRole(AppConstants.ElectorRole)
+            //    );
         }
     }
 }

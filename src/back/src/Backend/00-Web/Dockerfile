@@ -1,5 +1,6 @@
 # Consultez https://aka.ms/customizecontainer pour savoir comment personnaliser votre conteneur de débogage et comment Visual Studio utilise ce Dockerfile pour générer vos images afin d’accélérer le débogage.
 
+# --- Phase BASE ---
 # Cet index est utilisé lors de l’exécution à partir de VS en mode rapide (par défaut pour la configuration de débogage)
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
@@ -7,7 +8,13 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+#Installation de ICU ici si ton app gère plusieurs langues/dates locales
+USER root
+RUN apk add --no-cache icu-libs icu-data-full
+USER $APP_UID
 
+
+# --- Phase BUILD ---
 # Cette phase est utilisée pour générer le projet de service
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -26,11 +33,13 @@ COPY . .
 WORKDIR "/src/src/Backend/00-Web"
 RUN dotnet build "./00-Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
+# --- Phase PUBLISH ---
 # Cette étape permet de publier le projet de service à copier dans la phase finale
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./00-Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# --- Phase FINALE ---
 # Cette phase est utilisée en production ou lors de l’exécution à partir de VS en mode normal (par défaut quand la configuration de débogage n’est pas utilisée)
 FROM base AS final
 WORKDIR /app

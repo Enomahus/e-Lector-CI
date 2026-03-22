@@ -10,6 +10,13 @@
     <Project Path="src/Backend/22-Infrastructure.Persistence.SQLServer/22-Infrastructure.Persistence.SQLServer.csproj" Id="02a33af9-81a6-4e53-987a-f3641ed96688" />
     <Project Path="src/Backend/99-Tools/99-Tools.csproj" Id="a740cf2e-455c-4e9d-b9a4-f9d9a4de1908" />
   </Folder>
+  <Folder Name="/src/Pcea.Core/">
+    <Project Path="src/Backend/Pcea.Core/Pcea.Core.Net.AuditTrail/Pcea.Core.Net.AuditTrail.csproj" Id="6e6225c6-12bb-4338-abac-b41a8d2054f8" />
+    <Project Path="src/Backend/Pcea.Core/Pcea.Core.Net.Authorization.Application/Pcea.Core.Net.Authorization.Application.csproj" Id="b05955eb-6d51-4cf6-b82e-455383814ff4" />
+    <Project Path="src/Backend/Pcea.Core/Pcea.Core.Net.Authorization.Persistence/Pcea.Core.Net.Authorization.Persistence.csproj" Id="420359be-1302-41fa-88d1-c62e521706ef" />
+    <Project Path="src/Backend/Pcea.Core/Pcea.Core.Net.Authorization.Web/Pcea.Core.Net.Authorization.Web.csproj" Id="f3aca43e-2938-492f-99eb-5cd890e17054" />
+    <Project Path="src/Backend/Pcea.Core/Pcea.Core.Net.Authorization/Pcea.Core.Net.Authorization.csproj" Id="650de0f4-8550-43f1-970e-7379410eddb8" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Application.UnitTest/Application.UnitTest.csproj" Id="0ad9ed26-1a8e-4fc7-a7c7-b9f612140162" />
   </Folder>

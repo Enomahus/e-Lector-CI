@@ -26,7 +26,7 @@ namespace Application.UnitTest.Common
             return mediator.Send(request);
         }
 
-        public static IServiceCollection AddDatabase(this IServiceCollection services)
+        public static IServiceCollection AddDatabase(this IServiceCollection services, TimeProvider timeProvider)
         {
             var databaseName = Guid.NewGuid().ToString();
             var root = new InMemoryDatabaseRoot();
@@ -46,7 +46,7 @@ namespace Application.UnitTest.Common
 
             var roContext = new ReadOnlyDbContext(dbOptions);
             services.AddSingleton(roContext);
-            var rwContext = new WritableDbContext(dbOptions);
+            var rwContext = new WritableDbContext(dbOptions, timeProvider);
             services.AddSingleton(rwContext);
 
             return services;
