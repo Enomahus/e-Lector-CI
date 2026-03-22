@@ -1,32 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using Application.Common.Enums;
+﻿using Application.Common.Enums;
 using Infrastructure.Persistence.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Persistence.Entities
 {
-    public class ElectorDao : EntityBaseDao<Guid>
+    public class ElectorDao : EntityBaseDao<Guid>, ITimestampedEntity
     {
         [MaxLength(50)]
-        public string VoterNumber { get; set; } // V 0034 6601 11
+        public string VoterRegistrationNumber { get; set; } // V 0034 6601 11
 
         public DateTimeOffset RegistrationDate { get; set; }
+        public ElectorStatus Status { get; set; } = ElectorStatus.Active;
 
-        public Guid CitizenId { get; set; }
-        public CitizenDao Citizen { get; set; }
+        public virtual CitizenDao Citizen { get; set; } = null!;
 
-        public long ConstituencyId { get; set; }
-
-        [ForeignKey(nameof(ConstituencyId))]
-        public ConstituencyDao Constituencies { get; set; }
-
-        // Relations
-        //public long? PollingStationId { get; set; }
-
-        //[ForeignKey(nameof(PollingStationId))]
-        //public PollingStationDao PollingStation { get; set; }
+        public DateTimeOffset ModifiedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public long PollingStationId { get; set; }
+        public virtual PollingStationDao PollingStation { get; set; } = null!;
+        
     }
 }

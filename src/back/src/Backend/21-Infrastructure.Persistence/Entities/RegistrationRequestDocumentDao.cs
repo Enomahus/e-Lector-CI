@@ -7,17 +7,15 @@ namespace Infrastructure.Persistence.Entities;
 
 public class RegistrationRequestDocumentDao : EntityBaseDao<Guid>
 {
-    [StringLength(60)]
-    public string DocumentNumber { get; set; }
-    public DateOnly? IssueDate { get; set; }
-    public DateOnly? ExpiryDate { get; set; }
+    public required string Reference { get; set; }
+    public required string Description { get; set; }
 
     [Required]
     public DocumentType RegistrationRequestDocumentType { get; set; }
     public Guid RegistrationRequestId { get; set; }
 
     [ForeignKey(nameof(RegistrationRequestId))]
-    public RegistrationRequestDao RegistrationRequest { get; set; }
+    public virtual RegistrationRequestDao RegistrationRequest { get; set; } = null!;
 
     public Guid DocumentId { get; set; }
 

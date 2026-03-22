@@ -5,5 +5,4 @@ public enum DocumentType
     IdentityDocument,
     Passport,
     CertificateOfNationality,
-    BirthCertificate,
 }

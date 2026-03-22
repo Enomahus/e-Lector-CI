@@ -203,7 +203,7 @@ namespace Application.UnitTest.Features.Constituency
             var context = serviceProvider.GetRequiredService<WritableDbContext>();
 
             var constituencyRegion = await context.Constituencies.FirstOrDefaultAsync(x =>
-                x.Name == "RAVIART" && x.Level == LocationLevel.SubPrefecture
+                x.Wording == "RAVIART" && x.Level == LocationLevel.SubPrefecture
             );
 
             var command = new CreateConstituencyCommand
@@ -217,19 +217,19 @@ namespace Application.UnitTest.Features.Constituency
             {
                 new()
                 {
-                    Name = "Cocody",
+                    Wording = "Cocody",
                     ParentId = constituencyRegion?.Id,
                     Level = LocationLevel.Municipality,
                 },
                 new()
                 {
-                    Name = "Plateau",
+                    Wording = "Plateau",
                     ParentId = constituencyRegion?.Id,
                     Level = LocationLevel.Municipality,
                 },
                 new()
                 {
-                    Name = "Adjamé",
+                    Wording = "Adjamé",
                     ParentId = constituencyRegion?.Id,
                     Level = LocationLevel.Municipality,
                 },
@@ -272,7 +272,7 @@ namespace Application.UnitTest.Features.Constituency
             var context = serviceProvider.GetRequiredService<WritableDbContext>();
 
             var constituencyRegion = await context.Constituencies.FirstOrDefaultAsync(x =>
-                x.Name == "DISTRICT AUTONOME D'ABIDJAN" && x.Level == LocationLevel.Region
+                x.Wording == "DISTRICT AUTONOME D'ABIDJAN" && x.Level == LocationLevel.Region
             );
 
             // Arrange : Création d'une ville (7) sous une sous-préfecture (6)

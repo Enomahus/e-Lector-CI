@@ -6,5 +6,7 @@ public interface ICurrentUserService
     string? UserEmail { get; }
     string? ClientIp { get; }
     string? LanguageCode { get; }
+    Guid? ImpersonatorId { get; }
+    string? ImpersonatorEmail { get; }
     Task<string?> GetTokenAsync(CancellationToken token = default);
 }
