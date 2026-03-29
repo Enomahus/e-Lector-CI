@@ -17,7 +17,7 @@ public class UserDao : IdentityUser<Guid>, IEntityBaseDao<Guid>, ITimestampedEnt
     public DateTimeOffset? DisabledDate { get; set; }
 
     public virtual ICollection<RefreshTokenDao> RefreshTokens { get; set; } = [];
-    public virtual ICollection<UserRoleDao> UserRoles { get; set; }
+    public virtual ICollection<UserRoleDao> UserRoles { get; set; } = [];
     public virtual ICollection<RegistrationRequestDao> CreatedRegistrationRequests { get; set; } = [];
     public virtual ICollection<RegistrationRequestDao> UpdatedRegistrationRequests { get; set; } = [];
     public virtual ICollection<UserConstituencyDao> UserConstituencies { get; set;} = [];

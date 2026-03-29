@@ -7,40 +7,44 @@ namespace Application.Features.Users.Common
     public class UserModel
     {
         public Guid Id { get; set; }
-        public required string FirstName { get; set; }
-        public required string LastName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public PersonTitle Civility { get; set; }
         public bool? IsAdmin { get; set; }
         public bool IsActive { get; set; }
         public List<Guid> Roles { get; set; } = [];
+        public long? ConstituencyId { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
 
-        public static UserModel FromDao(UserDao user, DateTimeOffset now)
+        public static UserModel FromDao(UserDao userDao, DateTimeOffset dateNow)
+        {
+            var model = new UserModel();
+            MapDaoToModel(userDao, model, dateNow);
+            return model;
+        }
+
+        public static void MapDaoToModel(UserDao user, UserModel model, DateTimeOffset dateNow)
         {
             var isAdmin = user.UserRoles?.Any(ur => 
                 ur.Role.Name == AppConstants.SuperAdminRole) ?? false;
 
-            var isActive = !user.DisabledDate.HasValue || user.DisabledDate.Value > now;
+            var isActive = user.DisabledDate is null || user.DisabledDate > dateNow;
 
-            var userRoles = user.UserRoles?.Select(ur => ur.Role)
-                                .Where(r => r.Name != AppConstants.SuperAdminRole)
-                                .Select(r => r.Id)
-                                .ToList();
+            var userRolesId = [.. user.UserRoles.Select(ur => ur.RoleId)];
 
-            return new UserModel() 
-            { 
-                Id = user.Id,
-                Civility = user.Civility,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                Email = user.Email,
-                IsAdmin = isAdmin,
-                IsActive = isActive,
-                Roles = userRoles ?? []
-            };
-
+            model.Id = user.Id;
+            model.Civility = user.Civility;
+            model.FirstName = user.FirstName;
+            model.LastName = user.LastName;
+            model.PhoneNumber = user.PhoneNumber;
+            model.Email = user.Email;
+            model.IsAdmin = isAdmin;
+            model.IsActive = isActive;
+            model.Roles = userRolesId ?? [];
+            model.ConstituencyId = user.UserConstituencies.FirstOrDefault()?.ConstituencyId;
+            model.CreatedAt = user.CreatedAt;
         }
     }
 }

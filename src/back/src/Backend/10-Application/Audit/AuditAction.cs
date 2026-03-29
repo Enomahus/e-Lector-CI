@@ -18,7 +18,10 @@ namespace Application.Audit
         UserCreated,
         UserUpdated,
         UserDeleted,
-        SuccesfullyAuthenticated
-        
+        SuccesfullyAuthenticated,
+
+        ForgotPasswordMailSent,
+        PasswordResetMailSent,
+
     }
 }
