@@ -10,8 +10,8 @@ namespace Application.Features.Constituency.CreateConstituency
 {
     [ExcludeFromCodeCoverage]
     [ApiController]
-    [Route("geographic-area")]
-    [OpenApiTag("geographic-area")]
+    [Route("constituency")]
+    [OpenApiTag("constituency")]
     public class CreateConstituencyController : ApiControllerBase
     {
         /// <summary>
@@ -21,12 +21,12 @@ namespace Application.Features.Constituency.CreateConstituency
         /// <param name="token"></param>
         /// <returns></returns>
         [HttpPost()]
-        [OpenApiOperation("CreateGeographicArea", "Enregistre une nouvelle Circonscription.", "")]
+        [OpenApiOperation("CreateConstituency", "Enregistre une nouvelle Circonscription.", "")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Result<long>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<Error>))]
-        public async Task<IActionResult> CreateGeographicAreaAsync(
+        public async Task<IActionResult> CreateConstituencyAsync(
             [FromBody] CreateConstituencyCommand command,
             CancellationToken token
         )

@@ -1,103 +1,31 @@
 ﻿using Application.Common.Enums;
 using Application.Exceptions;
+using Application.Features.Common.Constituency;
 using Application.Models;
+using Application.Models.Errors;
 using FluentValidation;
 using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Pcea.Core.Net.Authorization.Application.Attributes;
 
 namespace Application.Features.Constituency.UpdateConstituency
 {
-    public class UpdateConstituencyCommandQuery : IRequest<Result<long>>
+    [WithPermission(nameof(AppPermission.UpdateConstituency))]
+    public class UpdateConstituencyCommandQuery : ConstituencyModel, IRequest<Result<long>>
     {
-        public long Id { get; init; }
-        public string Name { get; init; } = string.Empty;
-        public LocationLevel Level { get; init; }
-        public long? ParentId { get; init; }
+        public long? Id { get; set; }
     }
 
     public class UpdateConstituencyCommandValidator
-        : AbstractValidator<UpdateConstituencyCommandQuery>
+        : ConstituencyValidatorBase<UpdateConstituencyCommandQuery>
     {
-        protected readonly ReadOnlyDbContext _context;
-
-        public UpdateConstituencyCommandValidator(ReadOnlyDbContext context)
+        public UpdateConstituencyCommandValidator(ReadOnlyDbContext context): base(context)
         {
-            _context = context;
-
-            
-            RuleFor(x => x.Id).GreaterThan(0);
-
-            RuleFor(x => x.Name).NotEmpty().MaximumLength(50);
-
-            RuleFor(x => x.Level).IsInEnum();
-
-            // RG2
-            When(
-                x => x.Level == LocationLevel.Region,
-                () =>
-                {
-                    RuleFor(x => x.ParentId)
-                        .Must(pid => pid is null)
-                        .WithMessage("Une zone de niveau Region ne peut pas avoir de parent.");
-                }
-            );
-
-            When(
-                x => x.Level != LocationLevel.Region,
-                () =>
-                {
-                    RuleFor(x => x.ParentId)
-                        .NotNull()
-                        .WithMessage("Le parent est obligatoire pour ce niveau.")
-                        .DependentRules(() =>
-                        {
-                            RuleFor(x => x)
-                                .MustAsync(ParentHasCorrectLevelAsync)
-                                .WithMessage(cmd =>
-                                    $"Le parent doit être de niveau {(LocationLevel)((int)cmd.Level - 1)}."
-                                );
-                        });
-                }
-            );
-
-            // RG1 : nom unique dans la même zone parente (en excluant l'entité courante)
-            RuleFor(x => x)
-                .MustAsync(NameUniqueInParentAsync)
-                .WithMessage("Le nom doit être unique dans la même zone parente.");
+            RuleFor(v => v.Id).NotEmpty().WithMessage(ValidationErrorCode.Required.ToString());
         }
 
-        private async Task<bool> NameUniqueInParentAsync(
-            UpdateConstituencyCommandQuery cmd,
-            CancellationToken ct
-        )
-        {
-            return !await _context.Constituencies.AnyAsync(
-                g => g.Id != cmd.Id && g.Wording == cmd.Name && g.ParentId == cmd.ParentId,
-                ct
-            );
-        }
-
-        private async Task<bool> ParentHasCorrectLevelAsync(
-            UpdateConstituencyCommandQuery cmd,
-            CancellationToken ct
-        )
-        {
-            if (cmd.ParentId is null)
-                return false;
-
-            var parent = await _context.Constituencies.FirstOrDefaultAsync(
-                x => x.Id == cmd.ParentId.Value,
-                ct
-            );
-
-            if (parent is null)
-                return false;
-
-            var expectedParentLevel = (LocationLevel)((int)cmd.Level - 1);
-            return parent.Level == expectedParentLevel;
-        }
     }
 
     public class UpdateConstituencyCommandHandler(WritableDbContext context)
@@ -114,7 +42,7 @@ namespace Application.Features.Constituency.UpdateConstituency
                     cancellationToken
                 ) ?? throw new NotFoundException(nameof(ConstituencyDao), command.Id);
 
-            entity.Wording = command.Name;
+            entity.Wording = command.Wording;
             entity.Level = command.Level;
             entity.ParentId = command.ParentId;
 

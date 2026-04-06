@@ -29,9 +29,11 @@ namespace Application.Features.Constituency.UpdateConstituency
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Result<Error>))]
         public async Task<Result> UpdateConstituencyAsync(
             [FromBody] UpdateConstituencyCommandQuery command,
+            [FromRoute] long Id,
             CancellationToken token
         )
         {
+            command.Id = Id;
             return await Mediator.Send(command, token);
         }
     }

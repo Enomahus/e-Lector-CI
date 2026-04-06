@@ -2,7 +2,7 @@
 
 # --- Phase BASE ---
 # Cet index est utilisé lors de l’exécution à partir de VS en mode rapide (par défaut pour la configuration de débogage)
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
@@ -28,8 +28,8 @@ COPY ["src/Backend/20-Infrastructure/20-Infrastructure.csproj", "src/Backend/20-
 COPY ["src/Backend/21-Infrastructure.Persistence/21-Infrastructure.Persistence.csproj", "src/Backend/21-Infrastructure.Persistence/"]
 COPY ["src/Backend/22-Infrastructure.Persistence.SQLServer/22-Infrastructure.Persistence.SQLServer.csproj", "src/Backend/22-Infrastructure.Persistence.SQLServer/"]
 COPY ["src/Backend/99-Tools/99-Tools.csproj", "src/Backend/99-Tools/"]
-RUN dotnet restore "./src/Backend/00-Web/00-Web.csproj"
-COPY . .
+RUN dotnet restore "src/Backend/00-Web/00-Web.csproj"
+COPY src/Backend/ ./src/Backend/
 WORKDIR "/src/src/Backend/00-Web"
 RUN dotnet build "./00-Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

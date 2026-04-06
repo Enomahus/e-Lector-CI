@@ -10,7 +10,7 @@ namespace Application.Features.Users.Common
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? PhoneNumber { get; set; }
-        public string? Email { get; set; }
+        public string? Email { get; set; }        
         public PersonTitle Civility { get; set; }
         public bool? IsAdmin { get; set; }
         public bool IsActive { get; set; }
@@ -25,26 +25,24 @@ namespace Application.Features.Users.Common
             return model;
         }
 
-        public static void MapDaoToModel(UserDao user, UserModel model, DateTimeOffset dateNow)
+        public static void MapDaoToModel(UserDao dao, UserModel model, DateTimeOffset dateNow)
         {
-            var isAdmin = user.UserRoles?.Any(ur => 
+            var isAdmin = dao.UserRoles?.Any(ur => 
                 ur.Role.Name == AppConstants.SuperAdminRole) ?? false;
 
-            var isActive = user.DisabledDate is null || user.DisabledDate > dateNow;
+            var isActive = dao.DisabledDate is null || dao.DisabledDate > dateNow;
 
-            var userRolesId = [.. user.UserRoles.Select(ur => ur.RoleId)];
-
-            model.Id = user.Id;
-            model.Civility = user.Civility;
-            model.FirstName = user.FirstName;
-            model.LastName = user.LastName;
-            model.PhoneNumber = user.PhoneNumber;
-            model.Email = user.Email;
+            model.Id = dao.Id;
+            model.Civility = dao.Civility;
+            model.FirstName = dao.FirstName;
+            model.LastName = dao.LastName;
+            model.PhoneNumber = dao.PhoneNumber;
+            model.Email = dao.Email;
             model.IsAdmin = isAdmin;
             model.IsActive = isActive;
-            model.Roles = userRolesId ?? [];
-            model.ConstituencyId = user.UserConstituencies.FirstOrDefault()?.ConstituencyId;
-            model.CreatedAt = user.CreatedAt;
+            model.Roles = [.. dao.UserRoles!.Select(ur => ur.RoleId)];
+            model.ConstituencyId = dao.UserConstituencies.FirstOrDefault()?.ConstituencyId;
+            model.CreatedAt = dao.CreatedAt;
         }
     }
 }

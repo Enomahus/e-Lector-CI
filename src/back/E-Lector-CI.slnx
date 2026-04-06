@@ -5,9 +5,11 @@
     <Project Path="src/Backend/10-Application/10-Application.csproj" Id="4ba5957e-fdf3-4284-99da-46ca9e961614" />
     <Project Path="src/Backend/11-Application.Features/11-Application.Features.csproj" Id="775e1dba-dd19-4cb1-b632-7d1d65df9b20" />
     <Project Path="src/Backend/12-Application.Common/12-Application.Common.csproj" Id="57fb669e-3f7f-476d-858d-c710768845cb" />
+    <Project Path="src/Backend/13-Application.Resources/13-Application.Resources.csproj" Id="a846e561-ad78-4945-a0e8-953e53db3ec5" />
     <Project Path="src/Backend/20-Infrastructure/20-Infrastructure.csproj" Id="0277a7d4-c958-42c7-968b-99cef94ff823" />
     <Project Path="src/Backend/21-Infrastructure.Persistence/21-Infrastructure.Persistence.csproj" Id="5d1b6b05-d4f3-450b-9831-e7e1a4fe0b50" />
     <Project Path="src/Backend/22-Infrastructure.Persistence.SQLServer/22-Infrastructure.Persistence.SQLServer.csproj" Id="02a33af9-81a6-4e53-987a-f3641ed96688" />
+    <Project Path="src/Backend/23-Infrastructure.Persistence.File/23-Infrastructure.Persistence.File.csproj" Id="8b55ab39-7b1e-45d8-aff0-82e2192d8086" />
     <Project Path="src/Backend/99-Tools/99-Tools.csproj" Id="a740cf2e-455c-4e9d-b9a4-f9d9a4de1908" />
   </Folder>
   <Folder Name="/src/Pcea.Core/">

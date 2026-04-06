@@ -13,6 +13,8 @@ namespace Application.Features.Users.Common
         {
             _context = context;
 
+            RuleFor(v => v.Civility).NotNull().WithMessage(ValidationErrorCode.Required.ToString());
+
             RuleFor(v => v.FirstName)
                .NotEmpty()
                .WithMessage(ValidationErrorCode.Required.ToString())
@@ -44,20 +46,15 @@ namespace Application.Features.Users.Common
                         .WithMessage(ValidationErrorCode.Unique.ToString());
                 });
 
-            When(
-                v => v.ConstituencyId is null,
-                () =>
-                {
-                    RuleFor(v => v.NewStakeholder)
-                        .NotEmpty()
-                        .WithMessage(ValidationErrorCode.Required.ToString())
-                        .DependentRules(() =>
-                        {
-                            RuleFor(v => v.NewStakeholder!)
-                                .SetValidator(new StakeholderValidatorBase<StakeholderModel>(context));
-                        });
-                }
-            );
+            RuleFor(v => v.ConstituencyId)
+            .NotEmpty()
+            .WithMessage(ValidationErrorCode.Required.ToString())
+            .DependentRules(() =>
+            {
+                RuleFor(v => v.ConstituencyId)
+                    .MustAsync(ConstituencyExistsAsync)
+                    .WithMessage(ValidationErrorCode.ConstituencyMustExist.ToString());
+            });            
 
             if (validateRoles)
             {
@@ -90,9 +87,9 @@ namespace Application.Features.Users.Common
             return existingRolesCount == rolesList.Count;
         }
 
-        private Task<bool> ConstituencyExistsAsync(long? stakeholderId, CancellationToken cancellationToken)
+        private async Task<bool> ConstituencyExistsAsync(long? constituencyId, CancellationToken cancellationToken)
         {
-            return _context.Constituencies.AnyAsync(s => s.Id == stakeholderId, cancellationToken);
+            return await _context.Constituencies.AnyAsync(c => c.Id == constituencyId, cancellationToken);
         }
     }
 }

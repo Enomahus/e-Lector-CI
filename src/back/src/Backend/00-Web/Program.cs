@@ -1,8 +1,10 @@
+using Hangfire;
 using Infrastructure.Persistence.SQLServer;
 using Microsoft.AspNetCore.Diagnostics;
 using ServicesConfiguration;
 using System.Net;
 using Web.Common;
+using Web.Common.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +51,10 @@ builder.WebHost.ConfigureKestrel(options =>
 var app = builder.Build();
 
 logger.LogInformation("Environment: {EnvironmentName}", app.Environment.EnvironmentName);
+
+app.UseHangfireDashboard(
+    options: new DashboardOptions { Authorization = [new HangfireAuthorizationFilter()] }
+);
 
 await app.Services.UseInfrastructureSQLServerServicesAsync(app.Environment.EnvironmentName);
 

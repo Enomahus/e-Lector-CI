@@ -8,17 +8,17 @@ namespace Infrastructure.Persistence.Entities
     public class CitizenDao : EntityBaseDao<Guid>, ITimestampedEntity
     {
         
-        [Required, MaxLength(100)]
+        [Required, MaxLength(50)]
         public string LastName { get; set; }
 
-        [Required, MaxLength(150)]
+        [Required, MaxLength(50)]
         public string FirstName { get; set; }
         public Gender Gender { get; set; }
         public string Nationality { get; set; } 
         [Required]
-        public DateOnly BirthDate { get; set; }
+        public DateTimeOffset BirthDate { get; set; }
 
-        [Required, MaxLength(100)]
+        [Required, MaxLength(50)]
         public string BirthPlace { get; set; }
         public MaritalStatus MaritalStatus { get; set; }
         public string MarriedName { get; set; }

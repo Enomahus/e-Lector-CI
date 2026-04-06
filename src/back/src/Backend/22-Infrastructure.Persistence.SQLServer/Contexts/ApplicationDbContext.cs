@@ -41,8 +41,8 @@ public class ApplicationDbContext
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         configurationBuilder
-            .Properties<DocumentType>()
-            .HaveConversion<EnumToStringConverter<DocumentType>>();
+            .Properties<RegistrationRequestDocumentType>()
+            .HaveConversion<EnumToStringConverter<RegistrationRequestDocumentType>>();
 
         configurationBuilder
             .Properties<PersonTitle>()

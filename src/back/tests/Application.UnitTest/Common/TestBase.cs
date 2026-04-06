@@ -1,12 +1,16 @@
 ﻿using Application.Common.Enums;
 using Application.Exceptions;
 using Application.Features;
+using Application.Features.RegistrationRequests.Common;
+using Application.Features.Security.Common;
 using Application.Interfaces.Services;
 using Application.Models.Errors;
+using Application.Resources;
 using FluentAssertions;
 using Infrastructure.Configurations;
 using Infrastructure.Persistence.Configurations;
 using Infrastructure.Persistence.Entities;
+using Infrastructure.Persistence.File.Services;
 using Infrastructure.Persistence.SQLServer;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Infrastructure.Persistence.SQLServer.Seeders;
@@ -14,6 +18,7 @@ using Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Localization;
 using NSubstitute;
 using Pcea.Core.Net.Authorization;
 using Pcea.Core.Net.Authorization.Application.Interfaces.Services;
@@ -36,6 +41,7 @@ namespace Application.UnitTest.Common
 
         public static IServiceCollection CreateServiceCollection(
             Action<TimeProvider>? setupDateService = null,
+            Action<IStringLocalizer<ApplicationResources>>? stringLocalizer = null,
             bool mockAuthorization = true)
         {
             var currentUserServiceSub = Substitute.For<ICurrentUserService>();
@@ -48,8 +54,10 @@ namespace Application.UnitTest.Common
             var timeProviderSub = Substitute.For<TimeProvider>();
             timeProviderSub.GetUtcNow().Returns(new DateTimeOffset(2026,1,1,10,0,0,TimeSpan.Zero));
 
+            var stringLocalizerSub = Substitute.For<IStringLocalizer<ApplicationResources>>();
 
             setupDateService?.Invoke(timeProviderSub);
+            stringLocalizer?.Invoke(stringLocalizerSub);
 
             var configuration = new ConfigurationBuilder().Build();
 
@@ -72,11 +80,11 @@ namespace Application.UnitTest.Common
                 //.AddSingleton(trackDechetGatewaySub)
                 //.AddSingleton(siretServiceSub)
                 //.AddSingleton(cityServiceSub)
-                //.AddSingleton(stringLocalizerSub)
+                .AddSingleton(stringLocalizerSub)
                 .AddScoped<ITokenService, TokenService>()
-                //.AddScoped<ITokenHelper, TokenHelper>()
-                //.AddScoped<IFileService, FileService>()
-                //.AddScoped<IAddressService, AddressService>()
+                .AddScoped<ITokenHelper, TokenHelper>()
+                .AddScoped<IFileService, FileService>()
+                .AddScoped<IReferenceGeneratorService, ReferenceGeneratorService>()
                 .AddScoped<IDataIntegrationService, DataIntegrationService>()
                 //.AddScoped<ILogisticSchemeService, LogisticSchemeService>()
                 //.AddScoped<RemovalSchemeOptionsService>()
