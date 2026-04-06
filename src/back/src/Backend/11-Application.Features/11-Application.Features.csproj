@@ -7,11 +7,15 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.3.9" />
     <PackageReference Include="NJsonSchema" Version="11.5.2" />
     <PackageReference Include="NSwag.Annotations" Version="14.6.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\10-Application\10-Application.csproj" />
     <ProjectReference Include="..\99-Tools\99-Tools.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Constituency\Common\" />
   </ItemGroup>
 </Project>

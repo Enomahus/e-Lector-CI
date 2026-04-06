@@ -2,60 +2,69 @@
 using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace Application.Features.Common.Elector
 {
+    public static class ElectorValidationExtensions
+    {
+        public static IRuleBuilderOptions<T, Guid> IsValidCitizen<T>(this IRuleBuilder<T, Guid> ruleBuilder)
+        {
+            return ruleBuilder
+                .NotEmpty()
+                .WithMessage(ValidationErrorCode.Required.ToString());
+        }
+
+        public static IRuleBuilderOptions<T, long> IsValidPollingStation<T>(this IRuleBuilder<T, long> ruleBuilder)
+        {
+            return ruleBuilder
+                .NotEmpty()
+                .WithMessage(ValidationErrorCode.Required.ToString());
+        }
+    }
+
     public class ElectorValidatorBase : AbstractValidator<ElectorModel>
     {
         protected readonly ReadOnlyDbContext _context;
+        protected readonly TimeProvider _timeProvider;
 
-        public ElectorValidatorBase(ReadOnlyDbContext context)
+        public ElectorValidatorBase(ReadOnlyDbContext context, TimeProvider timeProvider)
         {
             _context = context;
+            _timeProvider = timeProvider;
 
-            RuleFor(v => v.VoterRegistrationNumber).NotEmpty()
-                .WithMessage(ValidationErrorCode.Required.ToString());
+            RuleFor(x => x.CitizenId)
+            .IsValidCitizen();
 
-            //RuleFor(v => v.FirstNames).MaximumLength(150).WithMessage(ValidationErrorCode.MaxLength.ToString());
+            RuleFor(x => x.PollingStationId)
+            .IsValidPollingStation();
 
-            //RuleFor(v => v.LastName).MaximumLength(100).WithMessage(ValidationErrorCode.MaxLength.ToString());
+            // Vérifier si le citoyen n'est pas déjà un électeur (Unicité)
+            RuleFor(x => x.CitizenId)
+                .MustAsync(BeUniqueElectorAsync)
+                .WithMessage(ValidationErrorCode.AlreadyRegisteredAsElector.ToString());
 
-            //RuleFor(v => v.MarriedName).MaximumLength(50).WithMessage(ValidationErrorCode.MaxLength.ToString());
+            // Vérifier si le bureau de vote existe et est actif
+            RuleFor(x => x.PollingStationId)
+                .MustAsync(BeActivePollingStationAsync)
+                .WithMessage(ValidationErrorCode.PollingStationMustExist.ToString());
+                       
+        }
 
-            //RuleFor(v => v.DateOfBirth)
-            //    .NotEmpty()
-            //    .WithMessage(ValidationErrorCode.Required.ToString())
-            //    .DependentRules(() =>
-            //    {
-            //        RuleFor(x => x.DateOfBirth)
-            //        .Must(BeOver18)
-            //        .WithMessage(ValidationErrorCode.InvalidBirthDate.ToString());
-            //    });
+        private async Task<bool> BeUniqueElectorAsync(Guid citizenId, CancellationToken ct)
+        {
+            // On vérifie en base de données si un ElectorDao existe déjà pour ce CitizenId
+            return !await _context.Electors
+                .AnyAsync(e => e.Citizen.Id == citizenId, ct);
+        }
 
-            //RuleFor(v => v.PlaceOfBirth).MaximumLength(100).WithMessage(ValidationErrorCode.MaxLength.ToString());
+        private async Task<bool> BeActivePollingStationAsync(long stationId, CancellationToken ct)
+        {
+            var dateNow = _timeProvider.GetUtcNow();
             
-            //RuleFor(v => v.PhysicalAddress).NotEmpty()
-            //    .WithMessage(ValidationErrorCode.Required.ToString());
-
-            //RuleFor(v => v.PollingStationId)
-            //    .NotNull()
-            //    .WithMessage(ValidationErrorCode.Required.ToString())
-            //    .DependentRules(() =>
-            //    {
-            //        RuleFor(p => p)
-            //        .MustAsync(CheckPollingStationMustExistAsync)
-            //        .WithMessage(ValidationErrorCode.PollingStationMustExist.ToString());
-            //    });
+            return await _context.PollingStations
+                .AnyAsync(ps => ps.Id == stationId && (ps.DisabledDate == null || ps.DisabledDate > dateNow), ct);
+            
         }
-
-        private static bool BeOver18(DateTime birthDate)
-        {           
-            return birthDate <= DateTime.Today.AddYears(-18);            
-        }
-
-        //private async Task<bool> CheckPollingStationMustExistAsync(ElectorModel model, CancellationToken token)
-        //{
-        //    return await _context.PollingStations.AnyAsync(p => p.Id == model.PollingStationId, token);
-        //}
     }
 }

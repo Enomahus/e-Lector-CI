@@ -14,5 +14,7 @@ public class DocumentDao : EntityBaseDao<Guid>
     public required string ContentType { get; set; }
 
     [Required]
-    public required long Size { get; set; }
+    public required long FileSize { get; set; }
+
+    public DateTimeOffset UploadDate { get; set; } = DateTimeOffset.Now;
 }

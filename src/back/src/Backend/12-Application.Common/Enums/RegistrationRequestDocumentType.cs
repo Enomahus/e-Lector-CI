@@ -1,8 +1,7 @@
 ﻿namespace Application.Common.Enums;
 
-public enum DocumentType
+public enum RegistrationRequestDocumentType
 {
     IdentityDocument,
-    Passport,
     CertificateOfNationality,
 }

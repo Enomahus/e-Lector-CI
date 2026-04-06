@@ -1,7 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using Application.Features.RegistrationRequests.Common;
+using Application.Features.Security.Common;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace Application.Features
 {
@@ -21,7 +23,7 @@ namespace Application.Features
             this IServiceCollection services
         )
         {
-            //services.AddScoped<LogisticRequestService>();
+            services.AddScoped<RegistrationRequestService>();
             //services.AddScoped<WasteTrackingFormParentStatusesService>();
             //services.AddScoped<RemovalSchemeOptionsService>();
             //services.AddScoped<ShippingSchemeOptionsService>();
@@ -29,7 +31,7 @@ namespace Application.Features
             //services.AddScoped<IAddressService, AddressService>();
             //services.AddScoped<ILogisticSchemeService, LogisticSchemeService>();
             //services.AddScoped<SetRemovalLogisticRequestAlertesService>();
-            //services.AddScoped<ITokenHelper, TokenHelper>();
+            services.AddScoped<ITokenHelper, TokenHelper>();
 
             return services;
         }

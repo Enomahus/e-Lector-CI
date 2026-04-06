@@ -1,7 +1,9 @@
 ﻿using Application;
 using Application.Features;
+using Application.Resources;
 using Infrastructure;
 using Infrastructure.Persistence;
+using Infrastructure.Persistence.File;
 using Infrastructure.Persistence.SQLServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,9 +21,11 @@ public static class ConfigureServices
         services.AddMediator();
         services.AddApplicationServices();
         services.AddApplicationFeaturesServices();
+        services.AddResourcesServices();
         services.AddInfrastructureServices(configuration);
         services.AddInfrastructurePersistenceServices(configuration);
         services.AddInfrastructureSQLServerServices(configuration);
+        services.AddInfrastructureFileServices(configuration);
         services.AddInfrastructureIdentityServices(configuration);
         services.AddToolsServices(configuration);
 

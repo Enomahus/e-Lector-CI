@@ -3,13 +3,11 @@
 public enum AppAction
 {
     SuperAdmin,
-    Default,
     UsersAdministration,
-    RolesAdministration,
-    AllUsersAdministration,
-    AllConstituenciesAdministration,
     ConstituencyAdministration,
-    RegistrationRequestsManagement,
+    RegistrationRequestAdministration,
+    PollingStationAdministration,
+    RegistrationRequestManagement,
     RegistrationRequestCreation,
     RegistrationRequestConsultation,
 }

@@ -45,12 +45,12 @@ services:
     image: 'mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04'
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=#Elector@2026
+      - MSSQL_SA_PASSWORD=T@nnos#
       - MSSQL_PID=Developer
     ports:
       - 43100:1433
     healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P '#Elector@2026' -d 'master' -Q 'select 1'
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'T@nnos#' -d 'master' -Q 'select 1'
       interval: 5s
       timeout: 5s
       retries: 10

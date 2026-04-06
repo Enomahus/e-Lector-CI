@@ -7,11 +7,9 @@ namespace Infrastructure.Persistence.Entities;
 
 public class RegistrationRequestDocumentDao : EntityBaseDao<Guid>
 {
-    public required string Reference { get; set; }
-    public required string Description { get; set; }
 
     [Required]
-    public DocumentType RegistrationRequestDocumentType { get; set; }
+    public RegistrationRequestDocumentType RegistrationRequestDocumentType { get; set; }
     public Guid RegistrationRequestId { get; set; }
 
     [ForeignKey(nameof(RegistrationRequestId))]

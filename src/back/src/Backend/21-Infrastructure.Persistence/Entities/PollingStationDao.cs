@@ -1,12 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Infrastructure.Persistence.Common;
 
 namespace Infrastructure.Persistence.Entities;
 
 public class PollingStationDao : EntityBaseDao<long>, ITimestampedEntity
 {
-    public required string StationNumber { get; set; } // Bureau No: 04
-    public required string Wording { get; set; } // Lieu de vote: LYON
+    [Required]
+    public string StationNumber { get; set; } // Bureau No: 04
+    [Required]
+    public string Wording { get; set; } // Lieu de vote: LYON
+    public DateTimeOffset? DisabledDate { get; set; }
 
     // Relation vers la circonscription (ex: Lieu de vote)
     public long ConstituencyId { get; set; }

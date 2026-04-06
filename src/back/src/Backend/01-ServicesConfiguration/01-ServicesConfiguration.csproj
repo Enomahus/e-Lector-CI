@@ -16,9 +16,11 @@
   <ItemGroup>
     <ProjectReference Include="..\10-Application\10-Application.csproj" />
     <ProjectReference Include="..\11-Application.Features\11-Application.Features.csproj" />
+    <ProjectReference Include="..\13-Application.Resources\13-Application.Resources.csproj" />
     <ProjectReference Include="..\20-Infrastructure\20-Infrastructure.csproj" />
     <ProjectReference Include="..\21-Infrastructure.Persistence\21-Infrastructure.Persistence.csproj" />
     <ProjectReference Include="..\22-Infrastructure.Persistence.SQLServer\22-Infrastructure.Persistence.SQLServer.csproj" />
+    <ProjectReference Include="..\23-Infrastructure.Persistence.File\23-Infrastructure.Persistence.File.csproj" />
     <ProjectReference Include="..\99-Tools\99-Tools.csproj" />
   </ItemGroup>
 

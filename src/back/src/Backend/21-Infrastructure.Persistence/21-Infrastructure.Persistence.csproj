@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\12-Application.Common\12-Application.Common.csproj" />
+    <ProjectReference Include="..\Pcea.Core\Pcea.Core.Net.Authorization.Persistence\Pcea.Core.Net.Authorization.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

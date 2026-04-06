@@ -5,19 +5,17 @@ using MediatR;
 
 namespace Application.Features.Common.Elector
 {
-    public class ElectorModel : IRequest<Result<Guid>>
-    {
-        public Guid? Id { get; set; }
-        public string? VoterRegistrationNumber { get; set; }       
+    public class ElectorModel 
+    {       
         public DateTimeOffset? RegistrationDate { get; set; }
         public ElectorStatus Status { get; set; }
-        public Guid? CitizenId { get; set; }
+        public Guid CitizenId { get; set; }
+        public long PollingStationId { get; set; }
         
         public ElectorDao ToDao(long? pollingStationId, Guid? citizenId)
         {
             return new ElectorDao
             {                
-                VoterRegistrationNumber = VoterRegistrationNumber,
                 RegistrationDate = RegistrationDate!.Value,
                 Status = Status,
                 PollingStationId = pollingStationId!.Value,
@@ -37,11 +35,10 @@ namespace Application.Features.Common.Elector
         {
             return new ElectorModel
             {
-                Id = elector.Id,
-                VoterRegistrationNumber = elector.VoterRegistrationNumber,
                 RegistrationDate = elector.RegistrationDate,
                 Status = elector.Status,
-                CitizenId = elector.Citizen.Id,               
+                CitizenId = elector.Citizen.Id, 
+                PollingStationId = elector.PollingStationId
             };
         }
     }

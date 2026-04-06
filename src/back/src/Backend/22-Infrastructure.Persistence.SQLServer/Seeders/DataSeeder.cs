@@ -26,9 +26,9 @@ public class DataSeeder(WritableDbContext context, UserManager<UserDao> userMana
         await strategy.ExecuteInTransactionAsync(
                 async () =>
                 {
+                    await SeedConstituenciesAsync();
                     await SeedDefaultUserAsync();
                     await SeedRolesAsync();
-                    await SeedConstituenciesAsync();
                 },
                 () => Task.FromResult(true)
             );
