@@ -8,7 +8,7 @@ import { Language, Locale } from '../enums/language.enum';
 })
 export class LanguageService {
   private readonly translateService = inject(TranslateService);
-   private readonly langStorageKey = 'app_lang';
+   private readonly langStorageKey = 'chosenLanguage';
   private readonly currentLang = new BehaviorSubject<Language>(Language.en);
 
    constructor() {
