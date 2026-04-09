@@ -41,7 +41,7 @@ namespace Application.UnitTest.Features.Constituency
 
             var command = new CreateConstituencyCommand
             {
-                Name = "Name",
+                Wording = "Name",
                 Code = "",
                 Level = LocationLevel.Region,
             };
@@ -77,7 +77,7 @@ namespace Application.UnitTest.Features.Constituency
 
             var command = new CreateConstituencyCommand
             {
-                Name = "",
+                Wording = "",
                 Code = "BLR",
                 Level = LocationLevel.Region,
             };
@@ -99,7 +99,7 @@ namespace Application.UnitTest.Features.Constituency
             //Assert
             AssertValidationException(
                 result.Subject,
-                nameof(CreateConstituencyCommand.Name),
+                nameof(CreateConstituencyCommand.Wording),
                 ValidationErrorCode.Required
             );
         }
@@ -113,7 +113,7 @@ namespace Application.UnitTest.Features.Constituency
 
             var command = new CreateConstituencyCommand
             {
-                Name = "BELIER",
+                Wording = "BELIER",
                 Code = "BLR",
                 Level = LocationLevel.Region,
                 ParentId = 5,
@@ -159,7 +159,7 @@ namespace Application.UnitTest.Features.Constituency
             // On veut créer un District (3), donc on s'attend à un parent Country (2)
             var command = new CreateConstituencyCommand
             {
-                Name = "Korhogo",
+                Wording = "Korhogo",
                 Level = LocationLevel.Municipality,
                 ParentId = geographicArea.Id,
             };
@@ -208,7 +208,7 @@ namespace Application.UnitTest.Features.Constituency
 
             var command = new CreateConstituencyCommand
             {
-                Name = "Cocody",
+                Wording = "Cocody",
                 Level = LocationLevel.Municipality,
                 ParentId = constituencyRegion?.Id,
             };
@@ -248,7 +248,7 @@ namespace Application.UnitTest.Features.Constituency
             AssertValidationException(
                 result.Subject,
                 new KeyValuePair<string, ValidationErrorCode>(
-                    nameof(CreateConstituencyCommand.Name),
+                    nameof(CreateConstituencyCommand.Wording),
                     ValidationErrorCode.AlreadyExists
                 )
             );
@@ -278,7 +278,7 @@ namespace Application.UnitTest.Features.Constituency
             // Arrange : Création d'une ville (7) sous une sous-préfecture (6)
             var command = new CreateConstituencyCommand
             {
-                Name = "ABIDJAN",
+                Wording = "ABIDJAN",
                 Code = "ABJ",
                 Level = LocationLevel.Department,
                 ParentId = constituencyRegion?.Id,

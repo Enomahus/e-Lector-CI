@@ -52,7 +52,11 @@ namespace Application.Features.RegistrationRequests.Common
                     .SetValidator(new UserCommandValidatorBase<UserModel>(_context, true))
             );
 
-            RuleFor(r => r.RegistrationRequestAttachments)
+            RuleFor(r => r.RegistrationRequestCertificateAttachments)
+                .Must(p => p.Count <= 10)
+                .WithMessage(ValidationErrorCode.TooManyAttachments.ToString());
+
+            RuleFor(r => r.RegistrationRequestCniAttachments)
                 .Must(p => p.Count <= 10)
                 .WithMessage(ValidationErrorCode.TooManyAttachments.ToString());
         }

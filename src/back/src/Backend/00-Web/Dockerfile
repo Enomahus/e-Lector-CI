@@ -27,6 +27,8 @@ COPY ["src/Backend/12-Application.Common/12-Application.Common.csproj", "src/Bac
 COPY ["src/Backend/20-Infrastructure/20-Infrastructure.csproj", "src/Backend/20-Infrastructure/"]
 COPY ["src/Backend/21-Infrastructure.Persistence/21-Infrastructure.Persistence.csproj", "src/Backend/21-Infrastructure.Persistence/"]
 COPY ["src/Backend/22-Infrastructure.Persistence.SQLServer/22-Infrastructure.Persistence.SQLServer.csproj", "src/Backend/22-Infrastructure.Persistence.SQLServer/"]
+COPY ["src/Backend/23-Infrastructure.Persistence.File/23-Infrastructure.Persistence.File.csproj", "src/Backend/23-Infrastructure.Persistence.File/"]
+COPY ["src/Backend/24-Infrastructure.ExternalAuth/24-Infrastructure.ExternalAuth.csproj", "src/Backend/24-Infrastructure.ExternalAuth/"]
 COPY ["src/Backend/99-Tools/99-Tools.csproj", "src/Backend/99-Tools/"]
 RUN dotnet restore "src/Backend/00-Web/00-Web.csproj"
 COPY src/Backend/ ./src/Backend/

@@ -17,6 +17,7 @@ namespace Application.Features.Users.Common
         public List<Guid> Roles { get; set; } = [];
         public long? ConstituencyId { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
+        public AuthProvider? AuthProvider { get; set; }
 
         public static UserModel FromDao(UserDao userDao, DateTimeOffset dateNow)
         {
@@ -43,6 +44,7 @@ namespace Application.Features.Users.Common
             model.Roles = [.. dao.UserRoles!.Select(ur => ur.RoleId)];
             model.ConstituencyId = dao.UserConstituencies.FirstOrDefault()?.ConstituencyId;
             model.CreatedAt = dao.CreatedAt;
+            model.AuthProvider = dao.AuthProvider;
         }
     }
 }

@@ -473,3 +473,7 @@ FodyWeavers.xsd
 *.gcdump
 *.nettrace
 k6/*.html
+
+*.env
+*.env.local
+*.env.development

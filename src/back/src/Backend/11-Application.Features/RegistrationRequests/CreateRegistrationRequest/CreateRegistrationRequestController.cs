@@ -15,7 +15,9 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
     [ApiController]
     [Route("registration-requests")]
     [OpenApiTag("registration-requests")]
-    public class CreateRegistrationRequestController(IOptions<JsonOptions> jsonOptions) : ApiControllerBase
+    public class CreateRegistrationRequestController(
+       // IOptions<JsonOptions> jsonOptions
+    ) : ApiControllerBase
     {
 
         /// <summary>
@@ -36,14 +38,14 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
         )
         {
             // Sécurité : on s'assure que les options de sérialisation sont bien récupérées
-            var serializerOptions = jsonOptions.Value.JsonSerializerOptions;
+            //var serializerOptions = jsonOptions.Value.JsonSerializerOptions;
 
             var command = new CreateRegistrationRequestCommand()
             {
                 RegistrationRequest = !string.IsNullOrWhiteSpace(formData.RegistrationRequestJson)
                 ? JsonSerializer.Deserialize<RegistrationRequestModel>(
-                    formData.RegistrationRequestJson,
-                    serializerOptions
+                    formData.RegistrationRequestJson
+                    //serializerOptions
                 ) : null,
                 RegistrationRequestCertificateAttachments = formData.RegistrationRequestCertificateAttachments,
                 RegistrationRequestCniAttachments = formData.RegistrationRequestCniAttachments,

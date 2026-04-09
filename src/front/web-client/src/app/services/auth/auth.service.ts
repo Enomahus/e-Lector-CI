@@ -1,0 +1,237 @@
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
+import {
+  BehaviorSubject,
+  catchError,
+  filter,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  ReplaySubject,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
+import { ApiBaseService } from '../api/api-base.service';
+import { ConfigService } from '../config.service';
+
+const refreshTokenKey = 'refreshTokenKey';
+const currentUserKey = 'currentUserKey';
+const currentEmailKey = 'currentEmailKey';
+const currentUserIdKey = 'currentUserIdKey';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthService extends ApiBaseService {
+  private readonly accessToken$ = new BehaviorSubject<string | undefined>(undefined);
+  private permissions$ = new ReplaySubject<AppPermission[]>(1);
+  private readonly refreshing$ = new BehaviorSubject<boolean>(false);
+  private readonly needsTermsOfUseValidation$ = new BehaviorSubject<boolean>(false);
+  private readonly needsProfileCompletion$ = new BehaviorSubject<boolean>(false);
+
+  private config = inject(ConfigService);
+  private router = inject(Router);
+
+  private readonly googleAuthScopes = [
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/user.phone_numbers.read',
+  ];
+  private readonly microsoftAuthScopes = ['openid', 'profile', 'offline_access', 'User.Read'];
+
+  constructor() {
+    super();
+    this.getAccessToken().subscribe();
+  }
+
+  login(): void {}
+
+  getOAuthQuery(
+    clientId: string,
+    scopes: string,
+    redirectUri: string,
+    routerState?: string,
+  ): URLSearchParams {
+    const params = new URLSearchParams();
+    params.append('client_id', clientId);
+    params.append('scope', scopes);
+    params.append('redirect_uri', redirectUri);
+    if (routerState) {
+      params.append('state', routerState);
+    }
+    return params;
+  }
+
+  requestGoogleAuthCode(routerState?: string): void {
+    const searchParams = this.getOAuthQuery(
+      this.config.getConfig().googleClientId,
+      this.googleAuthScopes.join(' '),
+      `${window.location.origin}/login/google`,
+      routerState,
+    );
+    searchParams.append('response_type', 'code');
+    searchParams.append('access_type', 'offline');
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?&${searchParams.toString()}`;
+  }
+
+  getAccessToken(): Observable<string | undefined> {
+    return this.accessToken$.pipe(
+      switchMap((token) => {
+        if (!token) {
+          return this.refreshToken();
+        }
+
+        const data = jwtDecode(token);
+        const expirationDate = new Date((data.exp ?? 0) * 1000);
+        const dateDiff = expirationDate.getTime() - new Date().getTime();
+        const isTokenValid = dateDiff > 5000;
+
+        // If less than 5 seconds before expiry
+        if (!isTokenValid) {
+          return this.refreshToken();
+        }
+
+        return of(token);
+      }),
+      take(1),
+    );
+  }
+
+  isAuthenticated(): Observable<boolean> {
+    return this.getAccessToken().pipe(map((token) => !!token));
+  }
+
+  termsOfUseValidated(): void {
+    this.needsTermsOfUseValidation$.next(false);
+    this.router.navigate(['/home']);
+  }
+
+  needsProfileCompletion(): Observable<boolean> {
+    return this.needsProfileCompletion$.pipe(take(1));
+  }
+
+  profileCompleted(): void {
+    this.needsProfileCompletion$.next(false);
+    this.router.navigate(['/home']);
+  }
+
+  isAdmin(): Observable<boolean> {
+    return this.permissions$.pipe(
+      take(1),
+      map((perms) => perms.includes('superAdmin')),
+    );
+  }
+
+  getCurrentUser(): string | null {
+    return localStorage.getItem(currentUserKey);
+  }
+
+  getCurrentUserEmail(): string | null {
+    return localStorage.getItem(currentEmailKey);
+  }
+
+  getCurrentUserId(): string | null {
+    return localStorage.getItem(currentUserIdKey);
+  }
+
+  logout(): void {
+    this.accessToken$.next(undefined);
+    this.refreshing$.next(false);
+    this.needsTermsOfUseValidation$.next(false);
+    this.needsProfileCompletion$.next(false);
+    this.permissions$ = new ReplaySubject<AppPermission[]>(1);
+    //this.currentUserService.changeCurrentUserName('');
+    localStorage.removeItem(refreshTokenKey);
+    localStorage.removeItem(currentUserKey);
+  }
+
+  private refreshToken(): Observable<string | undefined> {
+    if (this.refreshing$.value) {
+      return this.refreshing$.pipe(
+        filter((r) => !r), // Wait until other refresh has happened
+        switchMap(() => this.accessToken$),
+      );
+    }
+    this.refreshing$.next(true);
+    const refreshToken = this.getRefreshToken();
+    const userName = this.getCurrentUser();
+    if (!refreshToken || !userName) {
+      this.logout();
+      return of(undefined);
+    }
+    return this.apiClient
+      .refreshToken({
+        refreshToken,
+        userName,
+      })
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          this.logout();
+          return of(undefined);
+        }),
+        tap((result) => {
+          this.storeTokens(result);
+        }),
+        map((result) => result?.data?.accessToken ?? undefined),
+        take(1),
+      );
+  }
+
+  private async storeTokens(result: ResultOfTokenResponse | undefined): Promise<void> {
+    this.accessToken$.next(result?.data?.accessToken);
+    this.setRefreshToken(result?.data?.refreshToken);
+    if (result?.data?.accessToken) {
+      const payload = jwtDecode<{
+        name: string | undefined;
+        email: string | undefined;
+        lastName: string | undefined;
+        firstName: string | undefined;
+        needsTermsOfUseValidation: string | undefined;
+        needsProfileCompletion: string | undefined;
+        sub: string | undefined;
+      }>(result?.data?.accessToken);
+      const name = payload.name;
+      const email = payload.email;
+      const id = payload.sub;
+      if (!name || !email || !id) {
+        this.logout();
+        return;
+      }
+      if (payload.needsTermsOfUseValidation === 'True') {
+        this.needsTermsOfUseValidation$.next(true);
+      }
+      if (payload.needsProfileCompletion === 'True') {
+        this.needsProfileCompletion$.next(true);
+      }
+      this.currentUserService.changeCurrentUserName(`${payload.firstName} ${payload.lastName}`);
+      localStorage.setItem(currentUserKey, name);
+      localStorage.setItem(currentEmailKey, email);
+      localStorage.setItem(currentUserIdKey, id);
+    }
+    await this.fetchPermissions();
+
+    this.refreshing$.next(false);
+  }
+
+  private async fetchPermissions(): Promise<void> {
+    const currentUser = await firstValueFrom(this.userApiService.getCurrentUser());
+    const permissions = currentUser.permissions ?? [];
+    this.permissions$.next(permissions);
+  }
+
+  private setRefreshToken(token: string | undefined): void {
+    if (token) {
+      localStorage.setItem(refreshTokenKey, token);
+    } else {
+      localStorage.removeItem(refreshTokenKey);
+    }
+  }
+
+  private getRefreshToken(): string | null {
+    return localStorage.getItem(refreshTokenKey);
+  }
+}

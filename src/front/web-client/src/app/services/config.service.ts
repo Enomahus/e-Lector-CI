@@ -30,4 +30,7 @@ interface Config {
   authUrl: string;
   clientId: string;
   scope: string;
+  googleClientId: string;
+  microsoftClientId: string;
+  microsoftTenantId: string;
 }

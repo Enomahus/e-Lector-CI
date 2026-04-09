@@ -2,6 +2,7 @@
 using Application.Features;
 using Application.Resources;
 using Infrastructure;
+using Infrastructure.ExternalAuth;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.File;
 using Infrastructure.Persistence.SQLServer;
@@ -26,6 +27,7 @@ public static class ConfigureServices
         services.AddInfrastructurePersistenceServices(configuration);
         services.AddInfrastructureSQLServerServices(configuration);
         services.AddInfrastructureFileServices(configuration);
+        services.AddInfrastructureExternalAuthServices(configuration);
         services.AddInfrastructureIdentityServices(configuration);
         services.AddToolsServices(configuration);
 

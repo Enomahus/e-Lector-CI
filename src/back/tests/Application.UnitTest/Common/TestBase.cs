@@ -8,6 +8,8 @@ using Application.Models.Errors;
 using Application.Resources;
 using FluentAssertions;
 using Infrastructure.Configurations;
+using Infrastructure.ExternalAuth;
+using Infrastructure.ExternalAuth.Interfaces;
 using Infrastructure.Persistence.Configurations;
 using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.File.Services;
@@ -55,6 +57,7 @@ namespace Application.UnitTest.Common
             timeProviderSub.GetUtcNow().Returns(new DateTimeOffset(2026,1,1,10,0,0,TimeSpan.Zero));
 
             var stringLocalizerSub = Substitute.For<IStringLocalizer<ApplicationResources>>();
+            var externalAuthSub = Substitute.For<IExternalAuthService>();
 
             setupDateService?.Invoke(timeProviderSub);
             stringLocalizer?.Invoke(stringLocalizerSub);
@@ -93,6 +96,8 @@ namespace Application.UnitTest.Common
                 //.AddScoped<ManualLogisticSchemeService>()
                 //.AddScoped<WasteTrackingFormParentStatusesService>()
                 //.AddScoped<SetRemovalLogisticRequestAlertesService>()
+                .AddKeyedSingleton(ExternalAuthServiceKeys.GoogleAuthService, externalAuthSub)
+                .AddKeyedSingleton(ExternalAuthServiceKeys.MicrosoftAuthService, externalAuthSub)
                 .Configure<TokenConfiguration>(c =>
                     c.Secret = "DEV_SECRET_JWT_KEY_VERY_LONG_FOR_SECURITY_PURPOSES"
                 )

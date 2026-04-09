@@ -47,12 +47,41 @@
     "myRequestsForAdmin": "Demandes",
     "faq": "FAQ",
     "Administration": "Administration",
-    "pollingStation" :"Bureau de vote",
+    "pollingStation": "Bureau de vote",
     "geagraphicArea": "Circonscription"
   },
   "roles": {
     "OrganismAgentRole": "Agent d'organisme",
     "DefaultRole": "Electeur",
     "SuperAdmin": "Administrateur CEI"
+  },
+  "errors": {
+    "backendCodes": {
+      "accessRights": "Droits insuffisants",
+      "notFound": "L'élément demandé n'existe pas",
+      "validation": "",
+      "validationCodes": {
+        "BrandLinked": "La marque ne peut pas être supprimée car des références de panneau sont liées à celle-ci. Vous pouvez cependant la désactiver.",
+        "BrandMustExist": "La marque n'a pas été trouvée.",
+        "CountryMustExist": "Le pays n'a pas été trouvé.",
+        "InvalidEmail": "Le champ {{field}} n'est pas un email valide.",
+        "InvalidPassword": "Le mot de passe est invalide.",
+        "InvalidPostcode": "Le code postal est invalide.",
+        "MaxLength": "La valeur saisie dans le champ {{field}} est trop longue.",
+        "PanelReferenceMustExist": "La référence de panneau n'a pas été trouvée.",
+        "PositiveNumber": "La valeur saisie dans le champ {{field}} doit être positive.",
+        "RequesterMustExist": "Le demandeur n'a pas été trouvé.",
+        "Required": "Le champ {{field}} est requis.",
+        "ScaleVersionMustExist": "La version de barème d'éco modulation n'a pas été trouvée.",
+        "SiretOrTvaNumberRequired": "Le SIRET ou le N° de TVA intracommunautaire est requis.",
+        "StakeholderLinked": "La société ne peut pas être supprimée car des éléments lui sont liés. Vous pouvez cependant la désactiver.",
+        "StakeholderMustExist": "La société n'a pas été trouvée.",
+        "StakeholderNotDuplicated": "L'une des sociétés n'est pas en doublon.",
+        "Unique": "La valeur saisie dans le champ {{field}} existe déjà.",
+        "UserMustExist": "L'utilisateur n'a pas été trouvé."
+      }
+    },
+    "gridError": "Une erreur est survenue lors de la récupération des données de la grille",
+    "serverError": "Erreur serveur"
   }
 }
