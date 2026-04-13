@@ -11,9 +11,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Pcea.Core.Net.AuditTrail.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Web;
 using Tools.Configuration;
 using Tools.Constants;
@@ -45,8 +42,9 @@ namespace Application.Features.Security.ForgotPassword
     public class ForgotPasswordQueryHandler(
         UserManager<UserDao> userManager,
         ReadOnlyDbContext context,
-        IEmailService emailService,
-        IOptions<AppConfiguration> config
+        //IEmailService emailService,
+        IOptions<AppConfiguration> config,
+        TimeProvider timeProvider
     ) : IRequestHandler<ForgotPasswordQuery, Result>
     {
         public async Task<Result> Handle(ForgotPasswordQuery request, CancellationToken cancellationToken)
@@ -55,11 +53,19 @@ namespace Application.Features.Security.ForgotPassword
 
             try
             {
+                var dateNow = timeProvider.GetUtcNow();
+
                 var user =
                     await context.Users.FirstOrDefaultAsync(
-                        u => u.Email == request.UserEmail,
+                        u => u.Email == request.UserEmail 
+                        && (u.DisabledDate == null || u.DisabledDate > dateNow),
                         cancellationToken
                     ) ?? throw new NotFoundException(nameof(UserDao), request.UserEmail);
+
+                if (user.AuthProvider is not null)
+                {
+                    return Result.Default();
+                }
 
                 var pwdToken = await userManager.GeneratePasswordResetTokenAsync(user);
                 var urlEncodedToken = HttpUtility.UrlEncode(pwdToken);
@@ -71,7 +77,7 @@ namespace Application.Features.Security.ForgotPassword
                     urlEncodedEmail
                 );
 
-                await emailService.SendResetPasswordEmail(link, user.Email!);
+                //await emailService.SendResetPasswordEmail(link, user.Email!);
                 return AuditResult.From(user.UserName);
             }
             catch (Exception)

@@ -74,6 +74,11 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
                     registrationRequest.Status = RegistrationStatus.ToBeProcessed;
                     registrationRequest.LastUpdaterId = registrationRequest.AuthorId;
                     registrationRequest.SoumissionDate = dateNow;
+
+                    await context.RegistrationRequests.AddAsync(registrationRequest, cancellationToken);
+                    await context.SaveChangesAsync(cancellationToken);
+
+                    activity.AddParameter(registrationRequest, r => r.Id);
                 },
                 () => Task.FromResult(true)
             );

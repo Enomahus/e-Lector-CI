@@ -53,13 +53,11 @@ namespace Application.Features.Security.RefreshToken
 
             Guid? tokenId = Base64Helper.GetGuidFromBase64(request.RefreshToken!);
 
-            var tokenQuery = context.RefreshTokens.Where(rf => rf.Id == tokenId);
+            var tokenQuery = context.RefreshTokens.Where(
+                rt => rt.Id == tokenId && rt.User != null && rt.User.UserName == request.UserName
+            );
 
-            tokenQuery = tokenQuery.Where(rt => rt.User != null && rt.User.UserName == request.UserName);
-            
             var user = await tokenHelper.GetUserForAuthenticationAsync(request.UserName!);
-            var roles = await userManager.GetRolesAsync(user);
-
             var tokenDb = await tokenQuery.SingleOrDefaultAsync(cancellationToken);
 
             if(tokenDb is null || tokenDb.Expiry < dateNow)

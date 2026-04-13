@@ -11,9 +11,13 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
     {
         IConfigurationRoot configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("designsettings.json")
             .Build();
+
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+
         var designTimeConnectionString = configuration.GetConnectionString("AppDbDesign");
+
         optionsBuilder.UseSqlServer(designTimeConnectionString);
 
         return new ApplicationDbContext(optionsBuilder.Options);

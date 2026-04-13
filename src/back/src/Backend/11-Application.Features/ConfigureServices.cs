@@ -1,5 +1,6 @@
 ﻿using Application.Features.RegistrationRequests.Common;
 using Application.Features.Security.Common;
+using Application.Interfaces.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
@@ -29,7 +30,7 @@ namespace Application.Features
             //services.AddScoped<ShippingSchemeOptionsService>();
             //services.AddScoped<ManualLogisticSchemeService>();
             //services.AddScoped<IAddressService, AddressService>();
-            //services.AddScoped<ILogisticSchemeService, LogisticSchemeService>();
+            services.AddScoped<IReferenceGeneratorService,ReferenceGeneratorService>();
             //services.AddScoped<SetRemovalLogisticRequestAlertesService>();
             services.AddScoped<ITokenHelper, TokenHelper>();
 

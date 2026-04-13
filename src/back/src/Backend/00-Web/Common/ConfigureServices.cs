@@ -97,16 +97,17 @@ namespace Web.Common
             {
                 options.Filters.Add<ApiExceptionFilterAttribute>();
             })
-            .AddJsonOptions(o =>
+            .AddJsonOptions(opt =>
             {
                 foreach (var converter in converters)
                 {
-                    o.JsonSerializerOptions.Converters.Add(converter);
+                    opt.JsonSerializerOptions.Converters.Add(converter);
                 }
-                o.JsonSerializerOptions.NumberHandling = options.NumberHandling;
-                o.JsonSerializerOptions.DefaultIgnoreCondition = options.DefaultIgnoreCondition;
+                opt.JsonSerializerOptions.NumberHandling = options.NumberHandling;
+                opt.JsonSerializerOptions.DefaultIgnoreCondition = options.DefaultIgnoreCondition;
             });
 
+            services.AddScoped<ITokenService, TokenService>();
             services.AddSingleton<IAuthorizationMiddlewareResultHandler, CustomAuthorizationResultHandler>();
             services.AddScoped<ITokenRoleClaimBuilder<long>, TokenRoleClaimBuilder>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();

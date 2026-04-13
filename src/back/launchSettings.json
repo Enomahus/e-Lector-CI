@@ -3,6 +3,9 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
+      "composeLauchAction": "LanchBrowser",
+      "composeLaunchServiceName": "elector.backend",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
       "serviceActions": {
         "00-web": "StartDebugging",
         "elector.database": "StartWithoutDebugging",

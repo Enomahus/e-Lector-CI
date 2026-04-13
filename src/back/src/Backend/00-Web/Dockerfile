@@ -11,6 +11,7 @@ EXPOSE 8081
 #Installation de ICU ici si ton app gère plusieurs langues/dates locales
 USER root
 RUN apk add --no-cache icu-libs icu-data-full
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 USER $APP_UID
 
 

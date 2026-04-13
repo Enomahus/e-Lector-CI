@@ -37,6 +37,14 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddWebServices(builder.Configuration);
 builder.Services.ConfigureAllServices(builder.Configuration);
 
+//builder.Services.AddHangfire(config => config
+//    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+//    .UseSimpleAssemblyNameTypeSerializer()
+//    .UseRecommendedSerializerSettings()
+//    .UseSqlServerStorage(builder.Configuration.GetConnectionString("AppDb")));
+
+//builder.Services.AddHangfireServer();
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHealthChecks();
@@ -52,9 +60,9 @@ var app = builder.Build();
 
 logger.LogInformation("Environment: {EnvironmentName}", app.Environment.EnvironmentName);
 
-app.UseHangfireDashboard(
-    options: new DashboardOptions { Authorization = [new HangfireAuthorizationFilter()] }
-);
+//app.UseHangfireDashboard(
+//    options: new DashboardOptions { Authorization = [new HangfireAuthorizationFilter()] }
+//);
 
 await app.Services.UseInfrastructureSQLServerServicesAsync(app.Environment.EnvironmentName);
 

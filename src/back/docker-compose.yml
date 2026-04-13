@@ -18,8 +18,10 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
       - ~/.vsdbg:/remote_debugger:rw
     depends_on:
-      elector.database:
-        condition: service_healthy
+      elector.database.init:
+        condition: service_completed_successfully
+     # elector.database:
+     #   condition: service_healthy
       elector.jaeger:
         condition: service_started
 
@@ -41,17 +43,30 @@ services:
 
   elector.database:
     container_name: 'elector.database'
-    image: 'mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04'
+    image: 'mcr.microsoft.com/mssql/server:2025-CU2-ubuntu-22.04'
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Pce@Elector26!
+      - MSSQL_SA_PASSWORD=Pce@Elector26
       - MSSQL_PID=Developer
     ports:
       - 43100:1433
     healthcheck:
-      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "Pce@Elector26!" -C -Q "SELECT 1" | grep -q "1"
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 20s
+      test: /opt/mssql-tools18/bin/sqlcmd -No -S localhost -U sa -P "Pce@Elector26" -d 'master' -Q 'selct 1'
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  elector.database.init:
+    container_name: elector.database.init
+    image: 'mcr.microsoft.com/mssql/server:2025-CU2-ubuntu-22.04'
+    volumes:
+      - ../dbinit:/docker-entrypoint-initdb.d
+    depends_on:
+      elector.database:
+        condition: service_healthy
+    command: >
+      bash -c '
+      /opt/mssql-tools18/bin/sqlcmd -No -S elector.database -U sa -P Pce@Elector26 -d master -i docker-entrypoint-initdb.d/init.sql;
+      echo "All done!";
+      '
 
