@@ -2,47 +2,45 @@
 using Application.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using NSwag.Annotations;
 using System.Diagnostics.CodeAnalysis;
 using Tools.Exceptions.Errors;
 
-namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
+namespace Application.Features.RegistrationRequests.UpdateRegistrationRequest
 {
     [ExcludeFromCodeCoverage]
     [ApiController]
     [Route("registration-requests")]
     [OpenApiTag("registration-requests")]
-    public class CreateRegistrationRequestController : ApiControllerBase
+    public class UpdateRegistrationRequestController : ApiControllerBase
     {
-
         /// <summary>
-        /// Create a new registration request
+        /// Update a registrationRequest
         /// </summary>
         /// <param name="formData"></param>
-        /// <param name="token"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [HttpPost()]
-        [OpenApiOperation("CreateRegistrationRequest", "Enregistre une nouvelle demande d'enrôlement.", "")]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Result<Guid>))]
+        [HttpPut("{Id}")]
+        [OpenApiOperation("UpdateRegistrationRequest", "Met à jour une demande.", "")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<Guid>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<Error>))]
-        public async Task<IActionResult> CreateRegistrationRequestAsync(
-            [FromForm] CreateRegistrationRequestFromData formData,
-            CancellationToken token
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Result<Error>))]
+        public Task<Result<Guid>> UpdateRegistrationRequestAsync(
+            [FromForm] UpdateRegistrationRequestFromData formData,
+            CancellationToken cancellationToken
         )
         {
-
-            var command = new CreateRegistrationRequestCommand()
+            var command = new UpdateRegistrationRequestCommand()
             {
+                Id = formData.Id,
                 RegistrationRequest = formData.GetRegistrationRequest(),
                 RegistrationRequestCertificateAttachments = formData.RegistrationRequestCertificateAttachments,
                 RegistrationRequestCniAttachments = formData.RegistrationRequestCniAttachments,
             };
-
-            var result = await Mediator.Send(command, token);
-
-            return StatusCode(StatusCodes.Status201Created, result);
+            return Mediator.Send(command, cancellationToken);
         }
     }
 }

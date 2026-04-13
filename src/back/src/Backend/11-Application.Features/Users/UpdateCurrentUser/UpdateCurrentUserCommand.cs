@@ -45,11 +45,11 @@ public class UpdateCurrentUserCommandHandler(
     WritableDbContext context,
     UserManager<UserDao> userManager,
     IOptions<AppConfiguration> config,
-    IEmailService emailService,
+    //IEmailService emailService,
     TimeProvider timeProvider,
     ICurrentUserService currentUserService
 )
-    : UserCommandHandlerBase(context, userManager, config, emailService, timeProvider),
+    : UserCommandHandlerBase(context, userManager, config, timeProvider),
         IRequestHandler<UpdateCurrentUserCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(
