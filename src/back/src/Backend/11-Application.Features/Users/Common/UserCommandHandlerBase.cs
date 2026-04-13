@@ -16,7 +16,7 @@ namespace Application.Features.Users.Common
         WritableDbContext context,
         UserManager<UserDao> userManager,
         IOptions<AppConfiguration> config,
-        IEmailService emailService,
+        //IEmailService emailService,
         TimeProvider timeProvider
     )
     {

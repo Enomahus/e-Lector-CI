@@ -43,9 +43,9 @@ namespace Application.Features.Users.CreateUser
         WritableDbContext context,
         UserManager<UserDao> userManager,
         IOptions<AppConfiguration> config,
-        IEmailService emailService,
+        //IEmailService emailService,
         TimeProvider timeProvider
-    ) : UserCommandHandlerBase(context, userManager,config,emailService,timeProvider), 
+    ) : UserCommandHandlerBase(context, userManager,config,timeProvider), 
             IRequestHandler<CreateUserCommand, Result<Guid>>
     {
         

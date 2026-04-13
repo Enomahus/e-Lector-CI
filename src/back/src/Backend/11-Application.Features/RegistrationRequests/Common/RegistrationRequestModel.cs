@@ -7,9 +7,7 @@ namespace Application.Features.RegistrationRequests.Common
 {
     public class RegistrationRequestModel
     {
-        public Guid? Id { get; set; }
-        //public DateTimeOffset SoumissionDate { get; set; }
-        //public RegistrationStatus Status { get; set; }
+        public Guid? Id { get; set; }        
         public string? ReasonForRejection { get; set; }
         public long? ConstituencyId { get; set; }
         public UserModel? Author { get; set; }
@@ -41,8 +39,6 @@ namespace Application.Features.RegistrationRequests.Common
             return new RegistrationRequestDao()
             {
                 Id = Id ?? Guid.NewGuid(),
-                //SoumissionDate = SoumissionDate,
-                //Status = Status,
                 ReasonForRejection = ReasonForRejection,
                 ConstituencyId = constituencyId,
                 Citizen = Citizen?.ToDao(),

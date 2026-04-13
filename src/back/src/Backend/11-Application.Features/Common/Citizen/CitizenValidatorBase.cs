@@ -16,7 +16,7 @@ namespace Application.Features.Common.Citizen
                 .WithMessage(ValidationErrorCode.MaxLength.ToString());
         }
 
-        public static IRuleBuilderOptions<T, DateTimeOffset> IsAdult<T>(this IRuleBuilder<T, DateTimeOffset> ruleBuilder, TimeProvider timeProvider)
+        public static IRuleBuilderOptions<T, DateTimeOffset> MustBeAdult<T>(this IRuleBuilder<T, DateTimeOffset> ruleBuilder, TimeProvider timeProvider)
         {
             return ruleBuilder
                 .NotEmpty().WithMessage(ValidationErrorCode.Required.ToString())
@@ -45,37 +45,39 @@ namespace Application.Features.Common.Citizen
                 .NotEmpty()
                 .WithMessage(ValidationErrorCode.Required.ToString());
 
+            var parentValidator = new CitizenModelValidator(_timeProvider);
+
             RuleFor(v => v.Father)
-                .SetValidator(new InternalParentValidator(_timeProvider))
+                .SetValidator(parentValidator!)
                 .When(v => v.Father != null && !v.FatherId.HasValue);
 
-            RuleFor(v => v.Mother)
-                .SetValidator(new InternalParentValidator(_timeProvider))
+           RuleFor(v => v.Mother)
+                .SetValidator(parentValidator!)
                 .When(v => v.Mother != null && !v.MotherId.HasValue);
         }
 
         protected void ApplyBaseRules()
         {
             RuleFor(v => v.Gender).NotNull().WithMessage(ValidationErrorCode.Required.ToString());
-            RuleFor(v => v.FirstName).IsRequiredName(100); 
-            RuleFor(v => v.LastName).IsRequiredName();
-            RuleFor(v => v.BirthDate).IsAdult(_timeProvider);
+            RuleFor(v => v.FirstName!).IsRequiredName(100); 
+            RuleFor(v => v.LastName!).IsRequiredName();
+            RuleFor(v => v.BirthDate).MustBeAdult(_timeProvider);
             RuleFor(v => v.BirthPlace).NotEmpty().WithMessage(ValidationErrorCode.Required.ToString());
         }
 
     }
 
-    internal class InternalParentValidator : AbstractValidator<CitizenModel>
+    public class CitizenModelValidator : AbstractValidator<CitizenModel>
     {
-        public InternalParentValidator(TimeProvider timeProvider) 
+        public CitizenModelValidator(TimeProvider timeProvider) 
         {
             RuleFor(v => v.Gender).NotNull().WithMessage(ValidationErrorCode.Required.ToString());
 
-            RuleFor(v => v.FirstName).IsRequiredName(100);
+            RuleFor(v => v.FirstName!).IsRequiredName(100);
 
-            RuleFor(v => v.LastName).IsRequiredName();
+            RuleFor(v => v.LastName!).IsRequiredName();
 
-            RuleFor(x => x.BirthDate).IsAdult(timeProvider);
+            RuleFor(x => x.BirthDate).MustBeAdult(timeProvider);
 
             RuleFor(v => v.BirthPlace)
                 .NotEmpty()

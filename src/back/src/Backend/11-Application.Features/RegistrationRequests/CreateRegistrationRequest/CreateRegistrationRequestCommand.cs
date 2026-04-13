@@ -62,7 +62,7 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
                 throw new UserAccessException();
             }
 
-            RegistrationRequestDao registrationRequest = null;
+            RegistrationRequestDao? registrationRequest = null;
             var strategy = context.Database.CreateExecutionStrategy();
             await strategy.ExecuteInTransactionAsync(
                 async() =>
@@ -71,7 +71,7 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
                     
                     registrationRequest.Reference = await referenceGeneratorService.GenerateRequestReferenceAsync(context, timeProvider, cancellationToken);
                     registrationRequest.AuthorId = currentUserId;
-                    registrationRequest.Status = RegistrationStatus.Pending;
+                    registrationRequest.Status = RegistrationStatus.ToBeProcessed;
                     registrationRequest.LastUpdaterId = registrationRequest.AuthorId;
                     registrationRequest.SoumissionDate = dateNow;
                 },

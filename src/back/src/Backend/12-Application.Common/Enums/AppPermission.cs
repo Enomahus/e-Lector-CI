@@ -43,6 +43,7 @@ public enum AppPermission
     CheckRegistrationReferenceBeUnique,
     AccessRegistrationRequestsPage,
     UploadRegistrationRequestTempDocument,
+    UpdateRegistrationRequestDraft,
 
     ImportExcelData,
     ExportExcelData,
