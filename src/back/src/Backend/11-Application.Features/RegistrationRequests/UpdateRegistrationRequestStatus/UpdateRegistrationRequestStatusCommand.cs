@@ -1,7 +1,5 @@
 ﻿using Application.Common.Enums;
 using Application.Exceptions;
-using Application.Features.RegistrationRequests.Common;
-using Application.Features.RegistrationRequests.GetRegistrationRequest;
 using Application.Interfaces.Services;
 using Application.Models;
 using Application.Models.Errors;
@@ -20,19 +18,33 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
         public Guid RegistrationRequestId { get; set; }
         public RegistrationStatus NewStatus { get; set; }
         public string? ReasonForRejection { get; set; }
+        public long? PollingStationId { get; set; }
     }
 
     public class UpdateRegistrationRequestStatusCommandValidator
         :AbstractValidator<UpdateRegistrationRequestStatusCommand>
     {
-        public UpdateRegistrationRequestStatusCommandValidator() 
+        public UpdateRegistrationRequestStatusCommandValidator(ReadOnlyDbContext context) 
         {
             RuleFor(r => r.RegistrationRequestId).NotEmpty()
                 .WithMessage(ValidationErrorCode.Required.ToString());
+
             RuleFor(r => r.NewStatus).IsInEnum();
+
             RuleFor(r => r.ReasonForRejection).NotEmpty()
                 .When(r => r.NewStatus == RegistrationStatus.Rejected)
-                .WithMessage(ValidationErrorCode.Required.ToString());
+                .WithMessage(ValidationErrorCode.Required.ToString())
+                .MaximumLength(500);
+
+            RuleFor(r => r.PollingStationId).NotEmpty()
+                .When(r => r.NewStatus == RegistrationStatus.Approuved)
+                .WithMessage(ValidationErrorCode.Required.ToString())
+                .MustAsync(async (id, token) =>
+                {
+                    if (!id.HasValue) return false;
+                    return await context.PollingStations.AnyAsync(ps => ps.Id == id.Value, token);
+                })
+                .WithMessage(ValidationErrorCode.PollingStationMustExist.ToString());
         }
     }
 
@@ -50,25 +62,28 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
                 .Start().AddParameter(command, r => r.RegistrationRequestId);
 
             var dateNow = timeProvider.GetUtcNow();
-
             var currentUserId = currentUserService.UserId;
-            var currentUser = await context.Users
-                .Include(u => u.UserConstituencies)
-                .ThenInclude(c => c.Constituency)
-                .FirstOrDefaultAsync(u => u.Id == currentUserId, cancellationToken)
-                ?? throw new NotFoundException(nameof(UserDao), currentUserId);
+
+            //var currentUser = await context.Users
+            //    .Include(u => u.UserConstituencies)
+            //    .ThenInclude(c => c.Constituency)
+            //    .FirstOrDefaultAsync(u => u.Id == currentUserId, cancellationToken)
+            //    ?? throw new NotFoundException(nameof(UserDao), currentUserId);
 
             var registrationDao = await context.RegistrationRequests
                 .Include(r => r.Citizen)
                 .Include(r => r.Constituency)
                 .FirstOrDefaultAsync(r => r.Id == command.RegistrationRequestId 
-                    && r.Status != RegistrationStatus.ToBeProcessed, cancellationToken)
+                    && r.Status == RegistrationStatus.ToBeProcessed, cancellationToken)
                 ?? throw new NotFoundException(nameof(RegistrationRequestDao), command.RegistrationRequestId);
             
 
             if(command.NewStatus == RegistrationStatus.Approuved)
             {
-                await HandleApprovalAsync(registrationDao, currentUser.Id,dateNow, cancellationToken);
+                await ProcessApprovalAsync(registrationDao, 
+                    command.PollingStationId!.Value,  
+                    dateNow, 
+                    cancellationToken);
             }
             else if(command.NewStatus == RegistrationStatus.Rejected)
             {
@@ -86,7 +101,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
 
         }
 
-        private async Task HandleApprovalAsync(RegistrationRequestDao dao, Guid userId,DateTimeOffset now, CancellationToken token) 
+        private async Task ProcessApprovalAsync(RegistrationRequestDao dao, long pollingSationId, DateTimeOffset now, CancellationToken token) 
         {
             // Logique métier : Un citoyen ne peut pas avoir deux profils électeurs actifs
             var alreadyElector = await context.Electors
@@ -94,13 +109,8 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
 
             if (alreadyElector) throw new Exception("Le citoyen est déjà inscrit comme électeur.");
 
-            string voterNumber = await referenceGeneratorService.GenerateElectorNumberAsync(context,9, token);
-
-            // Attribution d'un bureau de vote par défaut (le premier de la circonscription)
-            var defaultStation = await context.PollingStations
-                .FirstOrDefaultAsync(ps => ps.ConstituencyId == dao.ConstituencyId, token)
-                ?? throw new Exception("Aucun bureau de vote disponible pour cette circonscription.");
-
+            string voterNumber = await referenceGeneratorService.GenerateElectorNumberAsync(context, pollingSationId, token);
+                        
             // Création du profil Électeur
             var elector = new ElectorDao
             {
@@ -108,7 +118,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
                 VoterRegistrationNumber = voterNumber,
                 RegistrationDate = now,
                 Status = ElectorStatus.Active,
-                PollingStationId = defaultStation.Id,
+                PollingStationId = pollingSationId,
                 CreatedAt = now,
                 ModifiedAt = now,
             };

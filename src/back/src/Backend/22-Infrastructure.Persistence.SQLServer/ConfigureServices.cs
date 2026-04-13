@@ -1,11 +1,13 @@
 ﻿using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
+using Infrastructure.Persistence.SQLServer.Providers;
 using Infrastructure.Persistence.SQLServer.Seeders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Pcea.Core.Net.Authorization.Persistence.Interfaces.Services;
 
 namespace Infrastructure.Persistence.SQLServer;
 
@@ -58,6 +60,8 @@ public static class ConfigureServices
             });
         }
 
+        services.AddScoped<IPermissionsProvider<Guid>, PermissionProvider>();
+
         return services;
     }
 
@@ -69,7 +73,7 @@ public static class ConfigureServices
     {
         services.AddDataProtection();
 
-        services.Configure<DataProtectionTokenProviderOptions>(
+        services.Configure<Providers.DataProtectionTokenProviderOptions>(
             configuration.GetSection("DataProtectionTokenProviderOptions")
         );
 
@@ -83,7 +87,7 @@ public static class ConfigureServices
 
                 opts.Tokens.PasswordResetTokenProvider = "DataProtectorTokenProvider";
             })
-            .AddTokenProvider<DataProtectorTokenProvider<UserDao>>("DataProtectorTokenProvider")
+            .AddTokenProvider<Providers.DataProtectorTokenProvider<UserDao>>("DataProtectorTokenProvider")
             .AddRoles<RoleDao>()
             .AddEntityFrameworkStores<WritableDbContext>();
 

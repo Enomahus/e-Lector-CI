@@ -2,9 +2,9 @@
 
 public enum LocationLevel
 {
-    Region = 1, // EX: BELIER
-    Department = 2, // Ex: DIDIEVI
-    SubPrefecture = 3, // Ex: BOLI
-    Municipality = 4, // Ex: BOLI
-    VotingLocation = 5, //EX: EPP ALLANIKRO
+    Region, // EX: BELIER
+    Department, // Ex: DIDIEVI
+    SubPrefecture, // Ex: BOLI
+    Municipality, // Ex: BOLI
+    VotingLocation, //EX: EPP ALLANIKRO
 }
