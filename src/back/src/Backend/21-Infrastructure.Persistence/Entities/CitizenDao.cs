@@ -28,6 +28,8 @@ namespace Infrastructure.Persistence.Entities
         public string PhysicalAddress { get; set; }
         public string PostalAddress { get; set; }
 
+        public byte[] Photo { get; set; }
+
         public DateTimeOffset ModifiedAt { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
 

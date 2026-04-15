@@ -15,6 +15,7 @@ namespace Application.Features.RegistrationRequests.Common
 
         public ICollection<Guid>? CertificateOfNationalityDocumentIds { get; set; }
         public ICollection<Guid>? IdentityDocumentIds { get; set; }
+        public ICollection<Guid>? PhotoIds { get; set; }
 
 
         public static RegistrationRequestModel FromDao(RegistrationRequestDao dao, TimeProvider timeProvider)  

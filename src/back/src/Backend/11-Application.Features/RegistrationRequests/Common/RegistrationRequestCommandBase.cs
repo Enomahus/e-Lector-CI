@@ -10,6 +10,8 @@ namespace Application.Features.RegistrationRequests.Common
         public ICollection<IFormFile> RegistrationRequestCertificateAttachments { get; set; } = [];
         [JsonIgnore]
         public ICollection<IFormFile> RegistrationRequestCniAttachments { get; set; } = [];
+        [JsonIgnore]
+        public ICollection<IFormFile> Photo {  get; set; } = [];
          
     }
 }

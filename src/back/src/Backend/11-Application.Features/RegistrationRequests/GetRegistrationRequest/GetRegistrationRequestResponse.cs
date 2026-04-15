@@ -3,9 +3,6 @@ using Application.Features.Common.Citizen;
 using Application.Features.RegistrationRequests.Common;
 using Application.Features.Users.Common;
 using Infrastructure.Persistence.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.RegistrationRequests.GetRegistrationRequest
 {
@@ -35,6 +32,10 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
                     .Where(d => d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.IdentityDocument)
                     .Select(d => d.DocumentId)
                     .ToList(),
+                PhotoIds = dao.RegistrationRequestDocuments
+                    .Where(d => d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.Photo)
+                    .Select(d => d.DocumentId)
+                    .ToList()
             };            
         }
     }

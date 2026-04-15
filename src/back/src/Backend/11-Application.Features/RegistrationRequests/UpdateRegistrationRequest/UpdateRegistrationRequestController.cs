@@ -39,6 +39,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequest
                 RegistrationRequest = formData.GetRegistrationRequest(),
                 RegistrationRequestCertificateAttachments = formData.RegistrationRequestCertificateAttachments,
                 RegistrationRequestCniAttachments = formData.RegistrationRequestCniAttachments,
+                Photo = formData.Photo,
             };
             return Mediator.Send(command, cancellationToken);
         }
