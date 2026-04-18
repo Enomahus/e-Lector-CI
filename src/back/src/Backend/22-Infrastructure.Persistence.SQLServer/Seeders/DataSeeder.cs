@@ -26,9 +26,9 @@ public class DataSeeder(WritableDbContext context, UserManager<UserDao> userMana
         await strategy.ExecuteInTransactionAsync(
                 async () =>
                 {
+                    await SeedRolesAsync();
                     await SeedConstituenciesAsync();
                     await SeedDefaultUserAsync();
-                    await SeedRolesAsync();
                 },
                 () => Task.FromResult(true)
             );
@@ -62,30 +62,186 @@ public class DataSeeder(WritableDbContext context, UserManager<UserDao> userMana
         {
             throw new ConfigurationMissingException("Missing configuration : DataConfig.DefaultUserConfig");
         }
-        await SeedUserAsync(AdminUserName,"Pcea", "Admin", "dev@pcea.com", dataConfig.Value.DefaultUserPassword, [AppConstants.SuperAdminRole]);
+        await SeedUserAsync(
+            AdminUserName,
+            "Pcea", 
+            "Admin", 
+            "dev@pcea.com",
+            "01 23 45 67 89",
+            dataConfig.Value.DefaultUserPassword, 
+            [AppConstants.SuperAdminRole]
+        );
     }
 
     private async Task SeedRolesAsync()
     {
-        // First, update the list of permissions and actions
-        var newPermissions = Enum.GetValues<AppPermission>();
-        var existingPermissionsArray = string.Join(", ", newPermissions.Select(p => $"'{p.ToString()}'"));
-        var deleteSqlCommand =
-            $"DELETE FROM AppPermission WHERE PermissionCode NOT IN ({existingPermissionsArray})";
-        if (_context.Database.IsRelational())
-        {
-            await _context.Database.ExecuteSqlRawAsync(deleteSqlCommand);
-        }
-        var existingPermissions = await _context.AppPermissions.ToListAsync();
-        _context.AddRange(
-            newPermissions
-                .Where(pNew => !existingPermissions.Any(pEx => pEx.PermissionCode == pNew))
-                .Select(perm => new AppPermissionDao() { PermissionCode = perm })
+
+        // 1. Synchronisation des tables de référence (Enum -> DB)
+        // Grâce à tes ConfigureConventions, l'insertion se fera en string
+        await SynchronizeEnumTableAsync(
+            _context.AppPermissions,
+            p => p.PermissionCode,
+            code => new AppPermissionDao { PermissionCode = code }
         );
+
+        await SynchronizeEnumTableAsync(
+            _context.AppActions,
+            a => a.ActionCode,
+            code => new AppActionDao { ActionCode = code }
+        );
+
+        await _context.SaveChangesAsync();
+        _context.ChangeTracker.Clear();
+
+        // 2. Chargement optimisé (Eager Loading)
+        var allActions = await _context.AppActions
+            .Include(a => a.Permissions)
+            .ToListAsync();
+
+        var allPermissions = await _context.AppPermissions
+            .ToDictionaryAsync(p => p.PermissionCode);
+
+        // 3. Update Action <-> Permission (Many-to-Many)
+        foreach (var seed in RolesData.ActionsSeed)
+        {
+            var actionDao = allActions.First(a => a.ActionCode == seed.Key);
+
+            // On transforme les codes du seed en objets trackés
+            var targetPerms = seed.Value
+                .Select(code => allPermissions.GetValueOrDefault(code))
+                .OfType<AppPermissionDao>()
+                .ToHashSet();
+
+            // Synchro des relations
+            actionDao.Permissions.RomoveWhere(p => !targetPerms.Contains(p));
+
+            foreach (var p in targetPerms.Where(p => !actionDao.Permissions.Contains(p)))
+            {
+                actionDao.Permissions.Add(p);
+            }
+        }
+
+        // 4. Update Role <-> Action (Many-to-Many)
+        // Note: On utilise le RoleManager pour la création pour respecter la logique Identity
+        var existingRoles = await _context.Roles
+            .Include(r => r.Actions)
+            .ToListAsync();
+
+        foreach (var seed in RolesData.RolesSeed)
+        {
+            var roleDao = existingRoles.FirstOrDefault(r => r.Name == seed.Key);
+
+            if (roleDao == null)
+            {
+                roleDao = new RoleDao(seed.Key);
+                var result = await roleManager.CreateAsync(roleDao);
+                if (!result.Succeeded) throw new Exception($"Failed to create role {seed.Key}");
+
+                // On recharge pour activer le tracking des relations
+                roleDao = await _context.Roles.Include(r => r.Actions).FirstAsync(r => r.Name == seed.Key);
+            }
+
+            var targetActions = allActions
+                .Where(a => seed.Value.Contains(a.ActionCode))
+                .ToHashSet();
+
+            roleDao.Actions.RomoveWhere(a => !targetActions.Contains(a));
+
+            foreach (var a in targetActions.Where(a => !roleDao.Actions.Contains(a)))
+            {
+                roleDao.Actions.Add(a);
+            }
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Méthode générique pour synchroniser une table à partir d'un Enum
+    /// </summary>
+    private static async Task SynchronizeEnumTableAsync<TEnum, TEntity>(
+        DbSet<TEntity> dbSet,
+        Func<TEntity, TEnum> propertySelector,
+        Func<TEnum, TEntity> factory
+    )
+        where TEnum: struct, Enum where TEntity : class
+    {
+        var enumValues = Enum.GetValues<TEnum>().ToHashSet();
+        var existingEntities = await dbSet.ToListAsync();
+
+        // Supprimer les entrées en base qui ne sont plus dans l'Enum (Code cleanup)
+        var toDelete = existingEntities.Where(e => !enumValues.Contains(propertySelector(e))).ToList();
+        if (toDelete.Count != 0) dbSet.RemoveRange(toDelete);
+
+        // Ajouter les nouvelles entrées de l'Enum
+        var existingCodes = existingEntities.Select(propertySelector).ToHashSet();
+        var toAdd = enumValues
+            .Where(v => !existingCodes.Contains(v))
+            .Select(factory)
+            .ToList();
+
+        if (toAdd.Count != 0) dbSet.AddRange(toAdd);
+    }
+
+    private async Task SeedRolesAsync_old()
+    {
+        // First, update the list of permissions and actions
+        //var newPermissions = Enum.GetValues<AppPermission>();       
+        //var existingPermissionsArray = string.Join(", ", newPermissions.Select(p => $"'{p.ToString()}'"));        
+        //var deleteSqlCommand =
+        //    $"DELETE FROM AppPermission WHERE PermissionCode NOT IN ({existingPermissionsArray})";
+        //if (_context.Database.IsRelational())
+        //{
+        //    await _context.Database.ExecuteSqlRawAsync(deleteSqlCommand);
+        //}
+        //var existingPermissions = await _context.AppPermissions.ToListAsync();
+        //_context.AddRange(
+        //    newPermissions
+        //        .Where(pNew => !existingPermissions.Any(pEx => pEx.PermissionCode == pNew))
+        //        .Select(perm => new AppPermissionDao() { PermissionCode = perm })
+        //);
+
+
+        // 1. Récupération des valeurs de l'Enum
+        var newPermissions = Enum.GetValues<AppPermission>().Cast<AppPermission>().ToList();
+
+        // --- PARTIE 1 : SUPPRESSION DES ANCIENNES PERMISSIONS ---
+
+        // Note : On utilise les valeurs ENTIÈRES pour le SQL brut car par défaut 
+        // EF Core stocke les enums en tant qu'int.
+        var enumValuesAsInt = newPermissions.Select(p => (int)p).ToList();
+        var sqlInClause = string.Join(", ", enumValuesAsInt);
+
+        if (_context.Database.IsRelational() && enumValuesAsInt.Any())
+        {
+            var deleteSqlCommand0 = $"DELETE FROM AppPermission WHERE PermissionCode NOT IN ({sqlInClause})";
+            await _context.Database.ExecuteSqlRawAsync(deleteSqlCommand0);
+        }
+
+        // --- PARTIE 2 : AJOUT DES NOUVELLES PERMISSIONS ---
+
+        // On récupère ce qui reste en base après suppression
+        var existingPermissions = await _context.AppPermissions.ToListAsync();
+
+        var toAdd = newPermissions
+            .Where(pNew => !existingPermissions.Any(pEx => pEx.PermissionCode == pNew))
+            .Select(perm => new AppPermissionDao
+            {
+                PermissionCode = perm
+            })
+            .ToList();
+
+        if (toAdd.Any())
+        {
+            await _context.AppPermissions.AddRangeAsync(toAdd);
+        }
+
+        // Sauvegarde finale
+        await _context.SaveChangesAsync();
 
         var newActions = Enum.GetValues<AppAction>().Select(perm => new AppActionDao() { ActionCode = perm });
         var existingActionsArray = string.Join(", ", newActions.Select(p => $"'{p.ToString()}'"));
-        deleteSqlCommand = $"DELETE FROM AppAction WHERE ActionCode NOT IN ({existingActionsArray})";
+        var deleteSqlCommand = $"DELETE FROM AppAction WHERE ActionCode NOT IN ({existingActionsArray})";
         if (_context.Database.IsRelational())
         {
             await _context.Database.ExecuteSqlRawAsync(deleteSqlCommand);
@@ -134,13 +290,6 @@ public class DataSeeder(WritableDbContext context, UserManager<UserDao> userMana
             }
             var roleDao = await _context.Roles.Include(r => r.Actions).FirstAsync(r => r.Name == role.Key);
 
-            //if (Enum.TryParse<ActivityCode>(role.Key, out var activityCode))
-            //{
-            //    roleDao.ActivityId = await _context
-            //        .Activities.Where(r => r.ActivityCode == activityCode)
-            //        .Select(a => a.Id)
-            //        .SingleAsync();
-            //}
 
             var correspondingActions = allActions.Where(a => role.Value.Contains(a.ActionCode)).ToList();
 
@@ -155,5 +304,23 @@ public class DataSeeder(WritableDbContext context, UserManager<UserDao> userMana
         }
         await _context.SaveChangesAsync();
 
+    }
+}
+
+public static class CollectionExtensions
+{
+    public static void RomoveWhere<T>(this ICollection<T> collection, Func<T, bool> predicate)
+    {
+        if (collection is List<T> list)
+        {
+            list.RemoveAll(new Predicate<T>(predicate));
+            return;
+        } 
+
+        var itemsToRemove = collection.Where(predicate).ToList();
+        foreach (var item in itemsToRemove)
+        {
+            collection.Remove(item);
+        }
     }
 }

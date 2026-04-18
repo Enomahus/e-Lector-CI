@@ -18,6 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Constituency\Common\" />
+    <Folder Include="Constituency\GetConstituency\" />
     <Folder Include="PollingStation\" />
   </ItemGroup>
 </Project>

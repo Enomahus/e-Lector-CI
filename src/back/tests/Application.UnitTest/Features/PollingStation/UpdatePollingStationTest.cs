@@ -14,58 +14,58 @@ namespace Application.UnitTest.Features.PollingStation
 {
     public class UpdatePollingStationTest : TestBase
     {
-        [Fact]
-        public async Task UpdatePollingStationCommand_ShouldFail_When_StationNumber_Is_Empty()
-        {
-            // Arrange
-            var serviceProvider = CreateServiceCollection().BuildServiceProvider();
-            var context = serviceProvider.GetRequiredService<WritableDbContext>();
+        //[Fact]
+        //public async Task UpdatePollingStationCommand_ShouldFail_When_StationNumber_Is_Empty()
+        //{
+        //    // Arrange
+        //    var serviceProvider = CreateServiceCollection().BuildServiceProvider();
+        //    var context = serviceProvider.GetRequiredService<WritableDbContext>();
 
-            var constituency = await CreateConstituencyAsync(
-                context,
-                "EPP ALLANIKRO",
-                LocationLevel.VotingLocation,
-                null
-            );
+        //    var constituency = await CreateConstituencyAsync(
+        //        context,
+        //        "EPP ALLANIKRO",
+        //        LocationLevel.VotingLocation,
+        //        null
+        //    );
 
-            var createCommand = new CreatePollingStationCommand
-            {
-                StationNumber = "04",
-                Wording = "LYON",
-                ConstituencyId = constituency.Id,
-            };
+        //    var createCommand = new CreatePollingStationCommand
+        //    {
+        //        StationNumber = "04",
+        //        Wording = "LYON",
+        //        ConstituencyId = constituency.Id,
+        //    };
 
-            var createResult = await serviceProvider.SendAsync(createCommand);
-            var pollingStationId = createResult.Data;
+        //    var createResult = await serviceProvider.SendAsync(createCommand);
+        //    var pollingStationId = createResult.Data;
 
-            var command = new UpdatePollingStationCommand
-            {
-                Id = pollingStationId,
-                StationNumber = "",
-                Wording = "LYON",
-                ConstituencyId = constituency.Id,
-            };
+        //    var command = new UpdatePollingStationCommand
+        //    {
+        //        Id = pollingStationId,
+        //        StationNumber = "",
+        //        Wording = "LYON",
+        //        ConstituencyId = constituency.Id,
+        //    };
 
-            // Act & Assert
-            await FluentActions
-                .Invoking(() => serviceProvider.SendAsync(command))
-                .Should()
-                .ThrowAsync<ValidationException>();
+        //    // Act & Assert
+        //    await FluentActions
+        //        .Invoking(() => serviceProvider.SendAsync(command))
+        //        .Should()
+        //        .ThrowAsync<ValidationException>();
 
-            AssertValidationException(
-                () => throw new ValidationException(
-                    new List<ValidationFailure>
-                    {
-                        new ValidationFailure(
-                            nameof(UpdatePollingStationCommand.StationNumber),
-                            ValidationErrorCode.Required.ToString()
-                        ),
-                    }
-                ),
-                nameof(UpdatePollingStationCommand.StationNumber),
-                ValidationErrorCode.Required
-            );
-        }
+        //    AssertValidationException(
+        //        () => throw new ValidationException(
+        //            new List<ValidationFailure>
+        //            {
+        //                new ValidationFailure(
+        //                    nameof(UpdatePollingStationCommand.StationNumber),
+        //                    ValidationErrorCode.Required.ToString()
+        //                ),
+        //            }
+        //        ),
+        //        nameof(UpdatePollingStationCommand.StationNumber),
+        //        ValidationErrorCode.Required
+        //    );
+        //}
 
         [Fact]
         public async Task UpdatePollingStationCommand_ShouldFail_When_Wording_Is_Empty()

@@ -14,7 +14,7 @@ public abstract class SeederBase(WritableDbContext context, UserManager<UserDao>
     protected readonly UserManager<UserDao> _userManager = userManager;
 
     protected async Task SeedUserAsync(string userName, string firstName, string lastName, 
-        string email, string password, IEnumerable<string> roles)
+        string email, string phoneNumber, string password, IEnumerable<string> roles)
     {
         if(!await _context.Users.AnyAsync(u => u.UserName == userName)) 
         {
@@ -24,6 +24,7 @@ public abstract class SeederBase(WritableDbContext context, UserManager<UserDao>
                 FirstName = firstName,
                 LastName = lastName,
                 Email = email,
+                PhoneNumber = phoneNumber
             };
             await SeedUserAsync(userDao, password, roles);
         }
@@ -38,7 +39,7 @@ public abstract class SeederBase(WritableDbContext context, UserManager<UserDao>
             {
                 throw new DataSeedException($"Could not create user : {user.UserName}");
             }
-            //await _userManager.AddToRolesAsync(user, roles);
+
             foreach (var role in roles)
             {
                 await _userManager.AddToRoleAsync(user, role);
