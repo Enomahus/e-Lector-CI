@@ -26,11 +26,13 @@
   },
   "login": {
     "email": "E-mail",
+    "username": "Identifiant (email)",
     "password": "Mot de passe",
     "title": "Connexion",
     "forgotPassword": "J'ai oublié mon mot de passe",
     "noAccount": "Vous n'avez pas de compte ?",
-    "signUp": "Inscrivez-vous"
+    "signUp": "Inscrivez-vous",
+    "externalLoginFailed": "Une erreur est survenue lors de la connexion, veuillez réessayer."
   },
   "footer": {
     "text": "© 2026 Commission Électorale Indépendante (CEI) - Côte d'Ivoire.",

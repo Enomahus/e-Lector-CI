@@ -30,8 +30,8 @@ namespace Web {
             );
             builder.Configuration.AddEnvironmentVariables();
 
-            //logger.LogInformation("Connection string loaded: {ConnectionString}",
-            //    builder.Configuration.GetConnectionString("AppDb") ?? "NOT FOUND");
+            logger.LogInformation("Connection string loaded: {ConnectionString}",
+                builder.Configuration.GetConnectionString("AppDb") ?? "NOT FOUND");
 
             builder.Services.AddWebServices(builder.Configuration);
             builder.Services.ConfigureAllServices(builder.Configuration);
@@ -40,7 +40,7 @@ namespace Web {
 
             builder.Services.AddHealthChecks();
 
-            builder.AddTelemetryServices(logger);
+            //builder.AddTelemetryServices(logger);
 
             builder.WebHost.ConfigureKestrel(options =>
             {
@@ -52,7 +52,7 @@ namespace Web {
             logger.LogInformation("Environment: {EnvironmentName}", app.Environment.EnvironmentName);
 
             await app.Services.UseInfrastructureSQLServerServicesAsync(app.Environment.EnvironmentName);
-           
+
             await app.UseWebServicesAsync();
 
             app.Use(

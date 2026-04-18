@@ -15,7 +15,10 @@ import {
   tap,
 } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
+import { UsersApiService } from '../api/users.api.service';
 import { ConfigService } from '../config.service';
+import { CurrentUserService } from '../current-user.service';
+import { AppPermission, ResultOfTokenResponse } from '../nswag/api-nswag-client';
 
 const refreshTokenKey = 'refreshTokenKey';
 const currentUserKey = 'currentUserKey';
@@ -32,6 +35,8 @@ export class AuthService extends ApiBaseService {
   private readonly needsTermsOfUseValidation$ = new BehaviorSubject<boolean>(false);
   private readonly needsProfileCompletion$ = new BehaviorSubject<boolean>(false);
 
+  private currentUserService = inject(CurrentUserService);
+  private userApiService = inject(UsersApiService);
   private config = inject(ConfigService);
   private router = inject(Router);
 
@@ -47,7 +52,14 @@ export class AuthService extends ApiBaseService {
     this.getAccessToken().subscribe();
   }
 
-  login(): void {}
+  login(userName: string, password: string): Observable<ResultOfTokenResponse> {
+    this.refreshing$.next(true);
+    return this.apiClient.authenticate({ userName, password }).pipe(
+      tap((result) => {
+        this.storeTokens(result);
+      }),
+    );
+  }
 
   getOAuthQuery(
     clientId: string,
@@ -75,6 +87,34 @@ export class AuthService extends ApiBaseService {
     searchParams.append('response_type', 'code');
     searchParams.append('access_type', 'offline');
     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?&${searchParams.toString()}`;
+  }
+
+  loginGoogle(authCode: string): Observable<ResultOfTokenResponse> {
+    return this.apiClient.authenticateGoogle(authCode).pipe(
+      tap((result) => {
+        this.storeTokens(result);
+      }),
+    );
+  }
+
+  async requestMicrosoftAuthCodeAsync(routerState?: string): Promise<void> {
+    const searchParams = this.getOAuthQuery(
+      this.config.getConfig().microsoftClientId,
+      this.microsoftAuthScopes.join(' '),
+      `${window.location.origin}/login/microsoft`,
+      routerState,
+    );
+    searchParams.append('response_mode', 'query');
+    searchParams.append('response_type', 'code');
+    window.location.href = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?&${searchParams.toString()}`;
+  }
+
+  loginMicrosoft(authCode: string): Observable<ResultOfTokenResponse> {
+    return this.apiClient.authenticateMicrosoft(authCode).pipe(
+      tap((result) => {
+        this.storeTokens(result);
+      }),
+    );
   }
 
   getAccessToken(): Observable<string | undefined> {
@@ -118,6 +158,10 @@ export class AuthService extends ApiBaseService {
     this.router.navigate(['/home']);
   }
 
+  getPermissions(): Observable<AppPermission[]> {
+    return this.permissions$;
+  }
+
   isAdmin(): Observable<boolean> {
     return this.permissions$.pipe(
       take(1),
@@ -143,7 +187,7 @@ export class AuthService extends ApiBaseService {
     this.needsTermsOfUseValidation$.next(false);
     this.needsProfileCompletion$.next(false);
     this.permissions$ = new ReplaySubject<AppPermission[]>(1);
-    //this.currentUserService.changeCurrentUserName('');
+    this.currentUserService.changeCurrentUserName('');
     localStorage.removeItem(refreshTokenKey);
     localStorage.removeItem(currentUserKey);
   }

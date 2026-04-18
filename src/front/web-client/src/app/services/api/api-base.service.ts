@@ -11,7 +11,7 @@ import {
   throwError,
   UnaryFunction,
 } from 'rxjs';
-import { ServerClient } from '../nswag/api-nswag-client';
+import { ErrorDto, ServerClient } from '../nswag/api-nswag-client';
 import { ToastService } from '../toast.service';
 import { ApiToastOptions } from './models/api-toast-options';
 import { DataResult } from './models/data-result';
