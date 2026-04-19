@@ -32,8 +32,6 @@ export class AuthService extends ApiBaseService {
   private readonly accessToken$ = new BehaviorSubject<string | undefined>(undefined);
   private permissions$ = new ReplaySubject<AppPermission[]>(1);
   private readonly refreshing$ = new BehaviorSubject<boolean>(false);
-  private readonly needsTermsOfUseValidation$ = new BehaviorSubject<boolean>(false);
-  private readonly needsProfileCompletion$ = new BehaviorSubject<boolean>(false);
 
   private currentUserService = inject(CurrentUserService);
   private userApiService = inject(UsersApiService);
@@ -144,20 +142,6 @@ export class AuthService extends ApiBaseService {
     return this.getAccessToken().pipe(map((token) => !!token));
   }
 
-  termsOfUseValidated(): void {
-    this.needsTermsOfUseValidation$.next(false);
-    this.router.navigate(['/home']);
-  }
-
-  needsProfileCompletion(): Observable<boolean> {
-    return this.needsProfileCompletion$.pipe(take(1));
-  }
-
-  profileCompleted(): void {
-    this.needsProfileCompletion$.next(false);
-    this.router.navigate(['/home']);
-  }
-
   getPermissions(): Observable<AppPermission[]> {
     return this.permissions$;
   }
@@ -184,8 +168,6 @@ export class AuthService extends ApiBaseService {
   logout(): void {
     this.accessToken$.next(undefined);
     this.refreshing$.next(false);
-    this.needsTermsOfUseValidation$.next(false);
-    this.needsProfileCompletion$.next(false);
     this.permissions$ = new ReplaySubject<AppPermission[]>(1);
     this.currentUserService.changeCurrentUserName('');
     localStorage.removeItem(refreshTokenKey);
@@ -234,8 +216,6 @@ export class AuthService extends ApiBaseService {
         email: string | undefined;
         lastName: string | undefined;
         firstName: string | undefined;
-        needsTermsOfUseValidation: string | undefined;
-        needsProfileCompletion: string | undefined;
         sub: string | undefined;
       }>(result?.data?.accessToken);
       const name = payload.name;
@@ -244,12 +224,6 @@ export class AuthService extends ApiBaseService {
       if (!name || !email || !id) {
         this.logout();
         return;
-      }
-      if (payload.needsTermsOfUseValidation === 'True') {
-        this.needsTermsOfUseValidation$.next(true);
-      }
-      if (payload.needsProfileCompletion === 'True') {
-        this.needsProfileCompletion$.next(true);
       }
       this.currentUserService.changeCurrentUserName(`${payload.firstName} ${payload.lastName}`);
       localStorage.setItem(currentUserKey, name);

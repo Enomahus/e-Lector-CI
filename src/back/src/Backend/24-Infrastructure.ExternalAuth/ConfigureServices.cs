@@ -22,7 +22,7 @@ namespace Infrastructure.ExternalAuth
 
             // Register default configuration for ExternalAuthConfiguration
             // This is required for IOptionsFactory<ExternalAuthConfiguration> to be resolved
-            services.Configure<ExternalAuthConfiguration>(configuration.GetSection("GoogleAuth"));
+            //services.Configure<ExternalAuthConfiguration>(configuration.GetSection("GoogleAuth"));
             
             // Register named configurations
             services.Configure<ExternalAuthConfiguration>(

@@ -28,14 +28,11 @@ export class Login implements OnInit {
 
   returnUrl = signal('' as string | undefined);
   loginModel = signal({
-    //email: '',
     userName: '',
     password: '',
   });
 
   loginForm = form(this.loginModel, (schemaPath) => {
-    //required(schemaPath.email, { message: this.translateService.instant('formError.required') });
-    //email(schemaPath.email, { message: this.translateService.instant('formError.emailInvalid') });
     required(schemaPath.userName, { message: this.translateService.instant('formError.required') });
     required(schemaPath.password, { message: this.translateService.instant('formError.required') });
     minLength(schemaPath.password, 8, {
@@ -68,23 +65,11 @@ export class Login implements OnInit {
       });
   }
 
-  onSubmit(): void {
-    //event.stopPropagation();
-    this.isLoggingIn.set(true);
-
-    const creadentials = this.loginModel();
-
+  loginEmail(): void {
     if (this.loginForm().invalid()) {
       this.loginForm().markAsTouched();
       return;
     }
-
-    console.log('Logging with :', creadentials);
-    //this.router.navigate(['/home']);
-  }
-
-  loginEmail(): void {
-    if (this.loginForm().invalid()) return;
     this.handleLogin(
       this.authService.login(this.loginModel().userName, this.loginModel().password),
     );
@@ -97,7 +82,7 @@ export class Login implements OnInit {
       next: () => {
         this.isLoggingIn.set(false);
         this.isLoggingInExternal.set(false);
-        this.router.navigateByUrl(this.returnUrl() || '/home');
+        this.router.navigateByUrl(this.returnUrl() ?? '/home');
       },
       error: () => {
         this.isLoggingIn.set(false);
