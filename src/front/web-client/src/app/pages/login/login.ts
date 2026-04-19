@@ -65,11 +65,13 @@ export class Login implements OnInit {
       });
   }
 
-  loginEmail(): void {
+  loginEmail(event: Event): void {
+    event?.preventDefault();
     if (this.loginForm().invalid()) {
       this.loginForm().markAsTouched();
       return;
     }
+
     this.handleLogin(
       this.authService.login(this.loginModel().userName, this.loginModel().password),
     );

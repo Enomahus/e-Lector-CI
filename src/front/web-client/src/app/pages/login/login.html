@@ -19,9 +19,9 @@
     </div>
   }
 
-   <div class="text-with-bars login-separator">{{ 'login.continueWithEmail' | translate }}</div>
+  <div class="text-with-bars login-separator">{{ 'login.continueWithEmail' | translate }}</div>
 
-  <form class="basic-form login-form" (submit)="loginEmail()">
+  <form class="basic-form login-form" (submit)="loginEmail($event)">
     <div class="input-block required">
       <label for="username">{{ 'login.username' | translate }}</label>
       <input id="username" type="text" [formField]="loginForm.userName" />
