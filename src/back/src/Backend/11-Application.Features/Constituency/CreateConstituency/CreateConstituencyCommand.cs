@@ -34,7 +34,7 @@ public class CreateConstituencyCommandHandler(WritableDbContext context)
 
         var newEntity = new ConstituencyDao
         {
-            Code = command.Code,
+            //Code = command.Code,
             Wording = command.Wording,
             Level = command.Level,
             ParentId = command.ParentId,

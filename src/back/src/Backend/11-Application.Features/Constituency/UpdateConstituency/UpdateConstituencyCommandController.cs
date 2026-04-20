@@ -10,8 +10,8 @@ namespace Application.Features.Constituency.UpdateConstituency
 {
     [ExcludeFromCodeCoverage]
     [ApiController]
-    [Route("constituency")]
-    [OpenApiTag("constituency")]
+    [Route("constituencies")]
+    [OpenApiTag("constituencies")]
     public class UpdateConstituencyCommandController : ApiControllerBase
     {
         /// <summary>
