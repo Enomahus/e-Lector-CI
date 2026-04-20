@@ -1,3 +1,24 @@
+.social-login {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+
+  .social-login-btn {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 24px;
+    background: transparent;
+    border-radius: 10px;
+    border: solid 1px var(--border-color);
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
 .login-form {
   width: 100%;
 
@@ -32,20 +53,20 @@
 }
 
 .forgot-password {
-    display: flex;
-    justify-content: end;    
-    font-size: 0.9rem;
-    a {
-        color: #ff8800;
-        text-decoration: none;
-    }
+  display: flex;
+  justify-content: end;
+  font-size: 0.9rem;
+  a {
+    color: #ff8800;
+    text-decoration: none;
+  }
 }
 
 .sign-up {
   font-size: 0.9rem;
   color: #707070;
   a {
-    color:  #ff8800;
+    color: #ff8800;
     text-decoration: none;
   }
 }

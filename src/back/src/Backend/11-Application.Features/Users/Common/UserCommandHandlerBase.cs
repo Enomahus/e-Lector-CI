@@ -1,11 +1,7 @@
-﻿using Application.Interfaces.Services;
-using Infrastructure.Persistence.Entities;
+﻿using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Web;
 using Tools.Configuration;
 using Tools.Constants;

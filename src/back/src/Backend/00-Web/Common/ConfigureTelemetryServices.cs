@@ -1,5 +1,4 @@
-﻿using Azure.Monitor.OpenTelemetry.Exporter;
-using OpenTelemetry;
+﻿using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -17,10 +16,11 @@ namespace Web.Common
         {
             var metricEnable = builder.Configuration.GetValue<bool>("Metric:Enable");
             var endpoint = builder.Configuration.GetValue<string>("Metric:TracerEndpoint");
-            var appInsightConnectionString = builder.Configuration.GetValue<string>(
-                "APPLICATIONINSIGHTS_CONNECTION_STRING"
-            );
+            //var appInsightConnectionString = builder.Configuration.GetValue<string>(
+            //    "APPLICATIONINSIGHTS_CONNECTION_STRING"
+            //);
 
+            // Application Insights classique (pas Azure Monitor Exporter)
             builder.Services.AddApplicationInsightsTelemetry();
 
             if (metricEnable && !string.IsNullOrEmpty(endpoint))
@@ -28,11 +28,12 @@ namespace Web.Common
                 log.LogInformation($"[Metric] Enabled");
 
                 var resourceAttributes = new Dictionary<string, object>
-            {
-                { "service.namespace", "PortailELECTORCI" },
-                { "span.kind", "SERVER" },
-            };
+                {
+                    { "service.namespace", "PortailELECTORCI" },
+                    { "span.kind", "SERVER" },
+                };
 
+                // LOGGING → OTLP
                 builder.Logging.AddOpenTelemetry(logging =>
                 {
                     // The rest of your setup code goes here
@@ -43,8 +44,10 @@ namespace Web.Common
                     });
                 });
 
-                var otBuilder = builder
-                    .Services.AddOpenTelemetry()
+                // TRACES + METRICS → OTLP
+                //var otBuilder = builder
+                builder.Services
+                    .AddOpenTelemetry()
                     .ConfigureResource(resourceBuilder =>
                         resourceBuilder.AddService("App").AddAttributes(resourceAttributes)
                     )
@@ -54,7 +57,7 @@ namespace Web.Common
                             .AddHttpClientInstrumentation()
                             .AddOtlpExporter(opt =>
                             {
-                                opt.Endpoint = new System.Uri(endpoint);
+                                opt.Endpoint = new Uri(endpoint);
                                 opt.Protocol = OtlpExportProtocol.Grpc;
                             })
                     )
@@ -66,20 +69,19 @@ namespace Web.Common
                             .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
                             .AddOtlpExporter(opt =>
                             {
-                                opt.Endpoint = new System.Uri(endpoint);
+                                opt.Endpoint = new Uri(endpoint);
                                 opt.Protocol = OtlpExportProtocol.Grpc;
                             })
                     );
 
-                if (!string.IsNullOrEmpty(appInsightConnectionString))
-                {
-                    otBuilder.UseAzureMonitorExporter();
-                }
+                //if (!string.IsNullOrEmpty(appInsightConnectionString))
+                //{
+                //    otBuilder.UseAzureMonitorExporter();
+                //}
 
                 AddTracerProvider(
                         "REPOSITORY",
                         endpoint,
-                        appInsightConnectionString,
                         resourceAttributes,
                         ActivitySourceLog.REPOSITORY.Name
                     )
@@ -87,7 +89,6 @@ namespace Web.Common
                 AddTracerProvider(
                         "CONTROLLER",
                         endpoint,
-                        appInsightConnectionString,
                         resourceAttributes,
                         ActivitySourceLog.CONTROLLER.Name
                     )
@@ -95,7 +96,6 @@ namespace Web.Common
                 AddTracerProvider(
                         "INFRASTRUCTURE",
                         endpoint,
-                        appInsightConnectionString,
                         resourceAttributes,
                         ActivitySourceLog.INFRASTRUCTURE.Name
                     )
@@ -103,7 +103,6 @@ namespace Web.Common
                 AddTracerProvider(
                         "TOOLS",
                         endpoint,
-                        appInsightConnectionString,
                         resourceAttributes,
                         ActivitySourceLog.TOOLS.Name
                     )
@@ -111,7 +110,6 @@ namespace Web.Common
                 AddTracerProvider(
                         "CQRS",
                         endpoint,
-                        appInsightConnectionString,
                         resourceAttributes,
                         ActivitySourceLog.CQRS.Name
                     )
@@ -119,7 +117,6 @@ namespace Web.Common
                 AddTracerProvider(
                         "WEB",
                         endpoint,
-                        appInsightConnectionString,
                         resourceAttributes,
                         ActivitySourceLog.WEB.Name
                     )
@@ -128,7 +125,6 @@ namespace Web.Common
                 AddTracerProvider(
                         "EF",
                         endpoint,
-                        appInsightConnectionString,
                         resourceAttributes,
                         ActivitySourceLog.EF.Name
                     )
@@ -155,7 +151,6 @@ namespace Web.Common
         private static TracerProviderBuilder AddTracerProvider(
             string name,
             string endpoint,
-            string appInsightConnectionString,
             Dictionary<string, object> resourceAttributes,
             params string[] sources
         )
@@ -174,50 +169,15 @@ namespace Web.Common
                     opt.Protocol = OtlpExportProtocol.Grpc;
                 });
 
-            if (!string.IsNullOrEmpty(appInsightConnectionString))
-            {
-                builder = builder.AddAzureMonitorTraceExporter(opt =>
-                {
-                    opt.ConnectionString = appInsightConnectionString;
-                });
-            }
+            //if (!string.IsNullOrEmpty(appInsightConnectionString))
+            //{
+            //    builder = builder.AddAzureMonitorTraceExporter(opt =>
+            //    {
+            //        opt.ConnectionString = appInsightConnectionString;
+            //    });
+            //}
 
             return builder;
-        }
-
-        private static MeterProviderBuilder AddMeterProvider(
-            string name,
-            string endpoint,
-            string appInsightConnectionString,
-            Dictionary<string, object> resourceAttributes,
-            params string[] sources
-        )
-        {
-            var resourceBuilder = ResourceBuilder
-                .CreateDefault()
-                .AddService(name)
-                .AddAttributes(resourceAttributes);
-
-            var builder = Sdk.CreateMeterProviderBuilder()
-                .SetResourceBuilder(resourceBuilder)
-                .AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation()
-                //.AddMeter(sources)
-                .AddOtlpExporter(opt =>
-                {
-                    opt.Endpoint = new System.Uri(endpoint);
-                    opt.Protocol = OtlpExportProtocol.Grpc;
-                });
-
-            if (!string.IsNullOrEmpty(appInsightConnectionString))
-            {
-                builder = builder.AddAzureMonitorMetricExporter(opt =>
-                {
-                    opt.ConnectionString = appInsightConnectionString;
-                });
-            }
-
-            return builder;
-        }
+        }        
     }
 }

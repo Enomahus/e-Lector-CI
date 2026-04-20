@@ -38,6 +38,7 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
                 RegistrationRequest = formData.GetRegistrationRequest(),
                 RegistrationRequestCertificateAttachments = formData.RegistrationRequestCertificateAttachments,
                 RegistrationRequestCniAttachments = formData.RegistrationRequestCniAttachments,
+                Photo = formData.Photo,
             };
 
             var result = await Mediator.Send(command, token);

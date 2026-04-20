@@ -19,11 +19,6 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
     public class GetRegistrationRequestQuery(Guid id) : IRequest<Result<GetRegistrationRequestResponse>>
     {
         public Guid Id { get; set; } = id;
-
-        //public GetRegistrationRequestQuery(Guid id) 
-        //{
-        //    Id = id;
-        //}
     }
 
     public class GetRegistrationRequestQueryValidator : AbstractValidator<GetRegistrationRequestQuery>

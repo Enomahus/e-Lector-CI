@@ -1,7 +1,4 @@
 ﻿using Application.Common.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Tools.Constants;
 
 namespace Infrastructure.Persistence.SQLServer.Contexts.Data

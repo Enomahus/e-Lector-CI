@@ -26,11 +26,14 @@
   },
   "login": {
     "email": "E-mail",
+    "username": "Identifiant (email)",
     "password": "Mot de passe",
     "title": "Connexion",
     "forgotPassword": "J'ai oublié mon mot de passe",
     "noAccount": "Vous n'avez pas de compte ?",
-    "signUp": "Inscrivez-vous"
+    "signUp": "Inscrivez-vous",
+    "externalLoginFailed": "Une erreur est survenue lors de la connexion, veuillez réessayer.",
+    "continueWithEmail": "Ou continuez avec votre adresse e-mail"
   },
   "footer": {
     "text": "© 2026 Commission Électorale Indépendante (CEI) - Côte d'Ivoire.",
@@ -75,10 +78,11 @@
         "ScaleVersionMustExist": "La version de barème d'éco modulation n'a pas été trouvée.",
         "SiretOrTvaNumberRequired": "Le SIRET ou le N° de TVA intracommunautaire est requis.",
         "StakeholderLinked": "La société ne peut pas être supprimée car des éléments lui sont liés. Vous pouvez cependant la désactiver.",
-        "StakeholderMustExist": "La société n'a pas été trouvée.",
+        "ConstituencyMustExist": "La circonscription n'a pas été trouvée.",
         "StakeholderNotDuplicated": "L'une des sociétés n'est pas en doublon.",
         "Unique": "La valeur saisie dans le champ {{field}} existe déjà.",
-        "UserMustExist": "L'utilisateur n'a pas été trouvé."
+        "UserMustExist": "L'utilisateur n'a pas été trouvé.",
+        "PollingStationMustExist": "Le bureau de vote n'a pas été trouvé."
       }
     },
     "gridError": "Une erreur est survenue lors de la récupération des données de la grille",

@@ -15,7 +15,10 @@ import {
   tap,
 } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
+import { UsersApiService } from '../api/users.api.service';
 import { ConfigService } from '../config.service';
+import { CurrentUserService } from '../current-user.service';
+import { AppPermission, ResultOfTokenResponse } from '../nswag/api-nswag-client';
 
 const refreshTokenKey = 'refreshTokenKey';
 const currentUserKey = 'currentUserKey';
@@ -29,9 +32,9 @@ export class AuthService extends ApiBaseService {
   private readonly accessToken$ = new BehaviorSubject<string | undefined>(undefined);
   private permissions$ = new ReplaySubject<AppPermission[]>(1);
   private readonly refreshing$ = new BehaviorSubject<boolean>(false);
-  private readonly needsTermsOfUseValidation$ = new BehaviorSubject<boolean>(false);
-  private readonly needsProfileCompletion$ = new BehaviorSubject<boolean>(false);
 
+  private currentUserService = inject(CurrentUserService);
+  private userApiService = inject(UsersApiService);
   private config = inject(ConfigService);
   private router = inject(Router);
 
@@ -47,7 +50,14 @@ export class AuthService extends ApiBaseService {
     this.getAccessToken().subscribe();
   }
 
-  login(): void {}
+  login(userName: string, password: string): Observable<ResultOfTokenResponse> {
+    this.refreshing$.next(true);
+    return this.apiClient.authenticate({ userName, password }).pipe(
+      tap((result) => {
+        this.storeTokens(result);
+      }),
+    );
+  }
 
   getOAuthQuery(
     clientId: string,
@@ -77,6 +87,34 @@ export class AuthService extends ApiBaseService {
     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?&${searchParams.toString()}`;
   }
 
+  loginGoogle(authCode: string): Observable<ResultOfTokenResponse> {
+    return this.apiClient.authenticateGoogle(authCode).pipe(
+      tap((result) => {
+        this.storeTokens(result);
+      }),
+    );
+  }
+
+  async requestMicrosoftAuthCodeAsync(routerState?: string): Promise<void> {
+    const searchParams = this.getOAuthQuery(
+      this.config.getConfig().microsoftClientId,
+      this.microsoftAuthScopes.join(' '),
+      `${window.location.origin}/login/microsoft`,
+      routerState,
+    );
+    searchParams.append('response_mode', 'query');
+    searchParams.append('response_type', 'code');
+    window.location.href = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?&${searchParams.toString()}`;
+  }
+
+  loginMicrosoft(authCode: string): Observable<ResultOfTokenResponse> {
+    return this.apiClient.authenticateMicrosoft(authCode).pipe(
+      tap((result) => {
+        this.storeTokens(result);
+      }),
+    );
+  }
+
   getAccessToken(): Observable<string | undefined> {
     return this.accessToken$.pipe(
       switchMap((token) => {
@@ -104,18 +142,8 @@ export class AuthService extends ApiBaseService {
     return this.getAccessToken().pipe(map((token) => !!token));
   }
 
-  termsOfUseValidated(): void {
-    this.needsTermsOfUseValidation$.next(false);
-    this.router.navigate(['/home']);
-  }
-
-  needsProfileCompletion(): Observable<boolean> {
-    return this.needsProfileCompletion$.pipe(take(1));
-  }
-
-  profileCompleted(): void {
-    this.needsProfileCompletion$.next(false);
-    this.router.navigate(['/home']);
+  getPermissions(): Observable<AppPermission[]> {
+    return this.permissions$;
   }
 
   isAdmin(): Observable<boolean> {
@@ -140,10 +168,8 @@ export class AuthService extends ApiBaseService {
   logout(): void {
     this.accessToken$.next(undefined);
     this.refreshing$.next(false);
-    this.needsTermsOfUseValidation$.next(false);
-    this.needsProfileCompletion$.next(false);
     this.permissions$ = new ReplaySubject<AppPermission[]>(1);
-    //this.currentUserService.changeCurrentUserName('');
+    this.currentUserService.changeCurrentUserName('');
     localStorage.removeItem(refreshTokenKey);
     localStorage.removeItem(currentUserKey);
   }
@@ -190,8 +216,6 @@ export class AuthService extends ApiBaseService {
         email: string | undefined;
         lastName: string | undefined;
         firstName: string | undefined;
-        needsTermsOfUseValidation: string | undefined;
-        needsProfileCompletion: string | undefined;
         sub: string | undefined;
       }>(result?.data?.accessToken);
       const name = payload.name;
@@ -200,12 +224,6 @@ export class AuthService extends ApiBaseService {
       if (!name || !email || !id) {
         this.logout();
         return;
-      }
-      if (payload.needsTermsOfUseValidation === 'True') {
-        this.needsTermsOfUseValidation$.next(true);
-      }
-      if (payload.needsProfileCompletion === 'True') {
-        this.needsProfileCompletion$.next(true);
       }
       this.currentUserService.changeCurrentUserName(`${payload.firstName} ${payload.lastName}`);
       localStorage.setItem(currentUserKey, name);

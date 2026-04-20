@@ -77,6 +77,11 @@ namespace Application.Features.RegistrationRequests.Common
                 RegistrationRequestDocumentType.IdentityDocument,
                 registrationRequestDao, cancellationToken
             );
+            await RemoveObsoleteDocuments(
+                [.. command.RegistrationRequest?.PhotoIds ?? []],
+                RegistrationRequestDocumentType.Photo,
+                registrationRequestDao, cancellationToken
+            );
 
             //Upload documents
             await UploadRegistrationRequestDocumentsByType(
@@ -88,6 +93,12 @@ namespace Application.Features.RegistrationRequests.Common
             await UploadRegistrationRequestDocumentsByType(
                 [.. command.RegistrationRequestCniAttachments],
                 RegistrationRequestDocumentType.IdentityDocument,
+                registrationRequestDao, cancellationToken
+            );
+
+            await UploadRegistrationRequestDocumentsByType(
+                [.. command.Photo],
+                RegistrationRequestDocumentType.Photo,
                 registrationRequestDao, cancellationToken
             );
         }

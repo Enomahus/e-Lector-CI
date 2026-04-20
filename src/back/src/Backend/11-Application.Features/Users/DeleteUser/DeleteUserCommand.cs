@@ -55,8 +55,9 @@ public class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand>
 
     private Task<bool> CheckUserLinksAsync(Guid? userId, CancellationToken cancellationToken)
     {
-        return _context.Users.AnyAsync(
-            u => u.Id == userId && u.CreatedRegistrationRequests.Count == 0,
+        return _context.Users
+            .Include(u => u.CreatedRegistrationRequests)
+            .AnyAsync(u => u.Id == userId && u.CreatedRegistrationRequests.Count == 0,
             cancellationToken
         );
     }

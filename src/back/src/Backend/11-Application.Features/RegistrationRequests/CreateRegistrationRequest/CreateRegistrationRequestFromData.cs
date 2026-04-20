@@ -17,6 +17,8 @@ public class CreateRegistrationRequestFromData
     public ICollection<IFormFile> RegistrationRequestCertificateAttachments { get; set; } = [];
     [FromForm]
     public ICollection<IFormFile> RegistrationRequestCniAttachments { get; set; } = [];
+    [FromForm]
+    public ICollection<IFormFile> Photo { get; set; } = [];
 
     public RegistrationRequestModel? GetRegistrationRequest()
     {

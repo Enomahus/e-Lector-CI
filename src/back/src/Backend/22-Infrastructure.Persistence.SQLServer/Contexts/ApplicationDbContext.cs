@@ -61,6 +61,22 @@ public class ApplicationDbContext
         configurationBuilder
             .Properties<RegistrationStatus>()
             .HaveConversion<EnumToStringConverter<RegistrationStatus>>();
+        configurationBuilder
+            .Properties<AppAction>()
+            .HaveConversion<EnumToStringConverter<AppAction>>();
+        configurationBuilder
+            .Properties<AppPermission>()
+            .HaveConversion<EnumToStringConverter<AppPermission>>();
+        configurationBuilder
+            .Properties<AuthProvider>()
+            .HaveConversion<EnumToStringConverter<AuthProvider>>();
+
+        configurationBuilder
+            .Properties<ElectorStatus>()
+            .HaveConversion<EnumToStringConverter<ElectorStatus>>();
+        configurationBuilder
+            .Properties<FiliationType>()
+            .HaveConversion<EnumToStringConverter<FiliationType>>();
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

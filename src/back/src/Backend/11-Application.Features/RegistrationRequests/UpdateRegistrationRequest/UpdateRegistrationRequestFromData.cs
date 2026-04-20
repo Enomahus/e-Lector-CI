@@ -19,6 +19,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequest
         public ICollection<IFormFile> RegistrationRequestCertificateAttachments { get; set; } = [];
         [FromForm]
         public ICollection<IFormFile> RegistrationRequestCniAttachments { get; set; } = [];
+        public ICollection<IFormFile> Photo { get; set; } = [];
 
         public RegistrationRequestModel? GetRegistrationRequest()
         {

@@ -26,6 +26,7 @@
   },
   "login": {
     "email": "E-mail",
+    "username": "Username (e-mail)",
     "password": "Password",
     "title": "Login",
     "forgotPassword": "I have forgotten my password",

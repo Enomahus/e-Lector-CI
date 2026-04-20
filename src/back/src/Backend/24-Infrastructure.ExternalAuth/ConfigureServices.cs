@@ -20,6 +20,11 @@ namespace Infrastructure.ExternalAuth
                 ExternalAuthServiceKeys.MicrosoftAuthService
             );
 
+            // Register default configuration for ExternalAuthConfiguration
+            // This is required for IOptionsFactory<ExternalAuthConfiguration> to be resolved
+            //services.Configure<ExternalAuthConfiguration>(configuration.GetSection("GoogleAuth"));
+            
+            // Register named configurations
             services.Configure<ExternalAuthConfiguration>(
                 ExternalAuthServiceKeys.GoogleConfiguration,
                 configuration.GetSection("GoogleAuth")
