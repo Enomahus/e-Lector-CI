@@ -1,14 +1,14 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { Breadcrumb } from '@app/models/breadcrumb.model';
+import { Breadcrumbs } from '@app/models/breadcrumb.model';
 import { BehaviorSubject, distinctUntilChanged, filter, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BreadcrumbService {
-  breadcrumbs$ = new BehaviorSubject<Breadcrumb[]>([]);
+  breadcrumbs$ = new BehaviorSubject<Breadcrumbs[]>([]);
 
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -30,7 +30,7 @@ export class BreadcrumbService {
     return url.split('?')[0];
   }
 
-  setBreadcrumbs(breadcrumbs: Breadcrumb[]): void {
+  setBreadcrumbs(breadcrumbs: Breadcrumbs[]): void {
     this.breadcrumbs$.next(breadcrumbs);
   }
 }
