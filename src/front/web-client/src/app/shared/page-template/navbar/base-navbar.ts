@@ -10,7 +10,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, Observable, tap } from 'rxjs';
+import { AuthService } from '@app/services/auth/auth.service';
+import { filter, map, Observable, tap } from 'rxjs';
 import { Language } from '../../../enums/language.enum';
 import { LanguageService } from '../../../services/language.service';
 
@@ -25,6 +26,7 @@ export abstract class BaseNavbar {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly languageService = inject(LanguageService);
+  private readonly authService = inject(AuthService);
 
   dropdownOpen = signal(false);
   showAdminRequestsText = signal(false);
@@ -40,6 +42,23 @@ export abstract class BaseNavbar {
           this.dropdownOpen.set(false);
         }),
         takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+
+    this.authService
+      .getPermissions()
+      .pipe(
+        map((permissions) => {
+          if (permissions.includes('accessRegistrationRequestsForAdminPage')) {
+            this.showAdminRequestsText.set(true);
+          }
+          // if(permissions.includes('accessRegistrationRequestsForOrganismPage')) {
+          //   this.showOrganismRequestsText.set(true);
+          // }
+          // if(permissions.includes('accessRegistrationRequestsForElectorPage')) {
+          //   this.showElectorRequestsText.set(true);
+          // }
+        }),
       )
       .subscribe();
   }

@@ -31,7 +31,9 @@
     "title": "Login",
     "forgotPassword": "I have forgotten my password",
     "noAccount": "Don't have an account ?",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "externalLoginFailed": "An error occurred during login, please try again.",
+    "continueWithEmail": "Or continue with your email address"
   },
   "footer": {
     "text": "© 2026 Independent Electoral Commission (IEC) - Côte d'Ivoire.",

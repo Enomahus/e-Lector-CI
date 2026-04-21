@@ -73,7 +73,7 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.DeleteRegistrationRequest,
                     AppPermission.GetRegistrationRequests,
                     AppPermission.AccessRegistrationRequestsPage,
-                ] 
+                ]
             },
             {
                 // C'est avoir tous les droits sur toutes les demandes
@@ -99,7 +99,7 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
             },
             {
                 AppConstants.ElectorRole,
-                [                    
+                [
                     AppAction.RegistrationRequestCreation,
                     AppAction.RegistrationRequestConsultation,
                 ]

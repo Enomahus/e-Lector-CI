@@ -1854,7 +1854,7 @@ export class ServerClient extends CustomApiClient {
      * Met à jour une Circonscrption.
      */
     updateConstituency(id: number, command: UpdateConstituencyCommandQuery): Observable<ResultOfLong> {
-        let url_ = this.baseUrl + "/constituency";
+        let url_ = this.baseUrl + "/constituencies";
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{Id}", encodeURIComponent("" + id));
@@ -1935,7 +1935,7 @@ export class ServerClient extends CustomApiClient {
      * Enregistre une nouvelle Circonscription.
      */
     createConstituency(command: CreateConstituencyCommand): Observable<ResultOfLong> {
-        let url_ = this.baseUrl + "/constituency";
+        let url_ = this.baseUrl + "/constituencies";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = this.customStringify(command);
@@ -2004,10 +2004,87 @@ export class ServerClient extends CustomApiClient {
     }
 
     /**
+     * Récupère une circonscription par son identifiant.
+     */
+    getConstituency(id: number): Observable<ResultOfGetConstituencyResponse> {
+        let url_ = this.baseUrl + "/constituencies/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetConstituency(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetConstituency(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfGetConstituencyResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfGetConstituencyResponse>;
+        }));
+    }
+
+    protected processGetConstituency(response: HttpResponseBase): Observable<ResultOfGetConstituencyResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfGetConstituencyResponse;
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result401: any = null;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result403: any = null;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            result404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * Supprime une circonscription.
      */
     deleteConstituency(id: number): Observable<Result> {
-        let url_ = this.baseUrl + "/constituency/{id}";
+        let url_ = this.baseUrl + "/constituencies/{id}";
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -2059,6 +2136,84 @@ export class ServerClient extends CustomApiClient {
             let result401: any = null;
             result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
             return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Récupère les circonscription.
+     */
+    getConstituencies(query: GetConstituenciesQuery): Observable<GetConstituenciesResponse[]> {
+        let url_ = this.baseUrl + "/constituencies/get-constituencies";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = this.customStringify(query);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetConstituencies(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetConstituencies(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetConstituenciesResponse[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetConstituenciesResponse[]>;
+        }));
+    }
+
+    protected processGetConstituencies(response: HttpResponseBase): Observable<GetConstituenciesResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as GetConstituenciesResponse[];
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result401: any = null;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result403: any = null;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            result404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -2285,6 +2440,26 @@ export interface UpdateConstituencyCommandQuery extends ConstituencyModel {
 }
 
 export type LocationLevel = "region" | "department" | "subPrefecture" | "municipality" | "votingLocation";
+
+export interface ResultOfGetConstituencyResponse extends Result {
+    data?: GetConstituencyResponse | undefined;
+}
+
+export interface GetConstituencyResponse extends ConstituencyModel {
+    code?: string | undefined;
+    createdAt?: string;
+}
+
+export interface GetConstituenciesResponse {
+    id?: number;
+    code?: string;
+    wording?: string;
+    level?: LocationLevel;
+    subConstituencies?: GetConstituenciesResponse[];
+}
+
+export interface GetConstituenciesQuery {
+}
 
 export interface CreateConstituencyCommand extends ConstituencyModel {
 }

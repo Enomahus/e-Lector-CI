@@ -8,7 +8,7 @@ namespace Application.Features.Common.Constituency
 {
     public class ConstituencyModel
     {
-        //public string? Code { get; set; } 
+        public string? Code { get; set; } 
         public string? Wording { get; set; } 
         public LocationLevel Level { get; set; }
         public long? ParentId { get; set; }
@@ -18,7 +18,7 @@ namespace Application.Features.Common.Constituency
         {
             return new ConstituencyModel
             {
-                //Code = dao.Code,
+                Code = dao.Code,
                 Wording = dao.Wording,
                 Level = dao.Level,
                 ParentId = dao.ParentId,
@@ -30,7 +30,7 @@ namespace Application.Features.Common.Constituency
         {
             return new ConstituencyDao()
             {
-                //Code = Code,
+                Code = Code,
                 Wording = Wording,
                 Level = Level,
                 ParentId = ParentId,                

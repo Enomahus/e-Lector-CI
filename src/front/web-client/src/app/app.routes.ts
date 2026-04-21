@@ -1,4 +1,7 @@
 import { Routes } from '@angular/router';
+import { Constituency } from './pages/administration/constituency/constituency';
+import { PollingStation } from './pages/administration/polling-station/polling-station';
+import { Home } from './pages/home/home';
 import { PageTemplate } from './shared/page-template/page-template';
 
 export const routes: Routes = [
@@ -30,24 +33,24 @@ export const routes: Routes = [
     children: [
       {
         path: 'home',
-        loadComponent: () => import('./pages/home/home').then((m) => m.Home),
+        component: Home,
         title: 'Home',
       },
       {
         path: 'admin',
         children: [
           {
-            path: 'geographic-area',
-            loadComponent: () => import('./pages/administration/geographic-area/geographic-area').then((m) => m.GeographicArea),
-            title: 'Geographic area'
+            path: 'constituency',
+            component: Constituency,
+            title: 'Constituency',
           },
           {
             path: 'polling-station',
-            loadComponent: () => import('./pages/administration/polling-station/polling-station').then((m) => m.PollingStation),
-            title: 'Polling station'
-          }
-        ]
-      }
+            component: PollingStation,
+            title: 'Polling station',
+          },
+        ],
+      },
     ],
   },
 ];
