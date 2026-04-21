@@ -30,8 +30,8 @@ namespace Web {
             );
             builder.Configuration.AddEnvironmentVariables();
 
-            logger.LogInformation("Connection string loaded: {ConnectionString}",
-                builder.Configuration.GetConnectionString("AppDb") ?? "NOT FOUND");
+            //logger.LogInformation("Connection string loaded: {ConnectionString}",
+            //    builder.Configuration.GetConnectionString("AppDb") ?? "NOT FOUND");
 
             builder.Services.AddWebServices(builder.Configuration);
             builder.Services.ConfigureAllServices(builder.Configuration);
@@ -54,6 +54,14 @@ namespace Web {
             await app.Services.UseInfrastructureSQLServerServicesAsync(app.Environment.EnvironmentName);
 
             await app.UseWebServicesAsync();
+
+            app.UseRouting();
+
+            app.UseCors();
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
 
             app.Use(
                 async (context, next) =>
@@ -85,7 +93,7 @@ namespace Web {
 
             app.UseHealthChecks("/health");
 
-            app.UseCors();
+            //app.UseCors();
 
             app.MapControllers();
 

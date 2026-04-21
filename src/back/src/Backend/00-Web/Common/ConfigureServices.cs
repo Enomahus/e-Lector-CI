@@ -57,8 +57,8 @@ namespace Web.Common
                 options.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
             });
 
-            var allowedOrigins = configuration.GetValue<string>("ApiConfig:AllowedOrigins")?.Split(';');
-            if (allowedOrigins is not null)
+            var allowedOrigins = configuration.GetValue<string>("ApiConfig:AllowedOrigins")?.Split(';', StringSplitOptions.RemoveEmptyEntries);
+            if (allowedOrigins is { Length: > 0})
             {
                 services.AddCors(options =>
                 {
@@ -72,7 +72,7 @@ namespace Web.Common
                     });
                 });
             }
-
+           
             services.ConfigureJWT(configuration);
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -129,7 +129,7 @@ namespace Web.Common
                 app.UseSwaggerUi();
             }
 
-            var supportedCultures = new[] { "fr-FR" };
+            var supportedCultures = new[] { "en-GB", "fr-FR" };
             var localizationOptions = new RequestLocalizationOptions()
                 .SetDefaultCulture(supportedCultures[0])
                 .AddSupportedCultures(supportedCultures)
@@ -167,22 +167,6 @@ namespace Web.Common
                 });
 
             services.AddAuthorizationBuilder();
-
-            //services
-            //    .AddAuthorizationBuilder()
-            //    .AddPolicy(RequirePolicy.SuperAdmin, policy => policy.RequireRole(AppConstants.SuperAdminRole))
-            //    .AddPolicy(
-            //        RequirePolicy.Admin,
-            //        policy => policy.RequireRole(AppConstants.SuperAdminRole)
-            //    )
-            //    .AddPolicy(
-            //        RequirePolicy.OrganismAgent,
-            //        policy => policy.RequireRole(AppConstants.OrganismAgentRole)
-            //    )
-            //    .AddPolicy(
-            //        RequirePolicy.Elector, 
-            //        policy => policy.RequireRole(AppConstants.ElectorRole)
-            //    );
         }
     }
 }

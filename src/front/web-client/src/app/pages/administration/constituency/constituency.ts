@@ -1,5 +1,5 @@
 import { Tree, TreeItem, TreeItemGroup } from '@angular/aria/tree';
-import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ConstituencyNode } from '@app/models/constituency.model';
 import { ConstituencyApiService } from '@app/services/api/constituency.api.service';
@@ -7,7 +7,7 @@ import { GetConstituenciesResponse } from '@app/services/nswag/api-nswag-client'
 
 @Component({
   selector: 'app-constituency',
-  imports: [Tree, TreeItem, TreeItemGroup, NgTemplateOutlet, JsonPipe],
+  imports: [Tree, TreeItem, TreeItemGroup, NgTemplateOutlet],
   templateUrl: './constituency.html',
   styleUrl: './constituency.scss',
 })

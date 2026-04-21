@@ -38,9 +38,8 @@ namespace Application.Features.Security.RefreshToken
         }
     }
 
-    public class RefreshCOmmandHandler(
+    public class RefreshCommandHandler(
         WritableDbContext context,
-        UserManager<UserDao> userManager,
         ITokenHelper tokenHelper,
         TimeProvider timeProvider
     ) : IRequestHandler<RefreshTokenCommand, Result<TokenResponse>>
