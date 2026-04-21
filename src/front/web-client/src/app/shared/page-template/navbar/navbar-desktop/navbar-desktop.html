@@ -7,8 +7,8 @@
         <div class="stripe green"></div>
       </div>
       <span class="brand-name">
-        {{'navbar.projectName' | translate}}
-        <span class="ci-text">{{'navbar.projectCountryCode' | translate}}</span>
+        {{ 'navbar.projectName' | translate }}
+        <span class="ci-text">{{ 'navbar.projectCountryCode' | translate }}</span>
       </span>
     </div>
 
@@ -44,14 +44,17 @@
         <a routerLink="/faq">{{ 'navbar.faq' | translate }}</a>
       </li>
       <li class="menu-item" [class.active]="isRouteMatching('admin')">
-        <button class="btn btn-no-style dropbtn menu-item-interaction" (click)="dropdownOpen.set(!dropdownOpen())">
+        <button
+          class="btn btn-no-style dropbtn menu-item-interaction"
+          (click)="dropdownOpen.set(!dropdownOpen())"
+        >
           <span>{{ 'navbar.Administration' | translate }}</span>
           <i class="ph ph-caret-down"></i>
         </button>
         @if (dropdownOpen()) {
           <div class="dropdown-content">
-            <a routerLink="admin/geographic-area" [routerLinkActive]="'active'">
-              <span>{{'navbar.geagraphicArea' | translate}}</span>
+            <a routerLink="admin/constituency" [routerLinkActive]="'active'">
+              <span>{{ 'navbar.constituency' | translate }}</span>
             </a>
             <a routerLink="admin/polling-station" [routerLinkActive]="'active'">
               <span>{{ 'navbar.pollingStation' | translate }}</span>

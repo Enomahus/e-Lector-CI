@@ -1,13 +1,16 @@
-﻿using Application.Models;
+﻿using Application.Common.Enums;
+using Application.Models;
 using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Pcea.Core.Net.Authorization.Application.Attributes;
 using Tools.Logging;
 
 namespace Application.Features.Constituency.GetConstituencies
 {
-    public class GetConstituenciesQuery : IRequest<IEnumerable<GetConstituenciesResponse>>
+    [WithPermission(nameof(AppPermission.GetConstituencies))]
+    public class GetConstituenciesQuery : IRequest<Result<IEnumerable<GetConstituenciesResponse>>>
     {
 
     }
@@ -17,39 +20,27 @@ namespace Application.Features.Constituency.GetConstituencies
         public GetConstituenciesQueryValidator() { }
     }
 
-    public class GetConstituenciesQueryHandler(ReadOnlyDbContext context)
-        : IRequestHandler<GetConstituenciesQuery, IEnumerable<GetConstituenciesResponse>>
+    public class GetConstituenciesQueryHandler(
+        ReadOnlyDbContext context,
+        TimeProvider timeProvider
+    )
+        : IRequestHandler<GetConstituenciesQuery, Result<IEnumerable<GetConstituenciesResponse>>>
     {
-        public async Task<IEnumerable<GetConstituenciesResponse>> Handle(GetConstituenciesQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<GetConstituenciesResponse>>> Handle(GetConstituenciesQuery request, CancellationToken cancellationToken)
         {
             using var activity = ActivitySourceLog.CQRS.Start();
-            //var dateNow = timeProvider.GetUtcNow();
+            var dateNow = timeProvider.GetUtcNow();
 
-            var constituencies = await context.Constituencies
+            var rootConstituencies = await context.Constituencies
                 .Include(c => c.Subconstituency)
-                .Include(c => c.PollingStations)
-                .AsNoTracking()
+                .ThenInclude(s => s.Subconstituency)
+                .Include(c => c.PollingStations)  
+                .Where(c => c.ParentId == null)
                 .ToListAsync(cancellationToken);
 
-            var lookup = constituencies.ToDictionary(x => x.Id,
-                x => new GetConstituenciesResponse(x.Id, x.Code, x.Wording, x.Level,[]));
-
-            var rootNodes = new List<GetConstituenciesResponse>();
-
-            foreach (var node in constituencies) 
-            {
-                var data = lookup[node.Id];
-                if(node.ParentId.HasValue && lookup.TryGetValue(node.ParentId.Value, out var parent))
-                {
-                    parent.SubConstituencies.Add(data);
-                }
-                else
-                {
-                    rootNodes.Add(data);
-                }
-            }
-
-            return rootNodes;
+            var response = rootConstituencies.Select(c => GetConstituenciesResponse.From(c, dateNow));
+             
+            return Result<IEnumerable<GetConstituenciesResponse>>.From(response);
         }
     }
 }

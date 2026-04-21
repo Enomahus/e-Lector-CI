@@ -1639,7 +1639,7 @@ export class ServerClient extends CustomApiClient {
     /**
      * Récupère un Bureau de Vote par son ID.
      */
-    getPollingStationById(id: number): Observable<ResultOfObject> {
+    getPollingStationById(id: number): Observable<ResultOfPollingStationModel> {
         let url_ = this.baseUrl + "/polling-station/{id}";
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
@@ -1661,14 +1661,14 @@ export class ServerClient extends CustomApiClient {
                 try {
                     return this.processGetPollingStationById(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ResultOfObject>;
+                    return _observableThrow(e) as any as Observable<ResultOfPollingStationModel>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ResultOfObject>;
+                return _observableThrow(response_) as any as Observable<ResultOfPollingStationModel>;
         }));
     }
 
-    protected processGetPollingStationById(response: HttpResponseBase): Observable<ResultOfObject> {
+    protected processGetPollingStationById(response: HttpResponseBase): Observable<ResultOfPollingStationModel> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1678,25 +1678,25 @@ export class ServerClient extends CustomApiClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfObject;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfPollingStationModel;
             return _observableOf(result200);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfObject;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
             return throwException("A server side error occurred.", status, _responseText, _headers, result401);
             }));
         } else if (status === 403) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfObject;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
             return throwException("A server side error occurred.", status, _responseText, _headers, result403);
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result404: any = null;
-            result404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfObject;
+            result404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
             return throwException("A server side error occurred.", status, _responseText, _headers, result404);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1710,7 +1710,7 @@ export class ServerClient extends CustomApiClient {
     /**
      * Récupère tous les Bureaux de Vote d'une circonscription.
      */
-    getPollingStationsByConstituencyId(constituencyId: number): Observable<ResultOfListOfObject> {
+    getPollingStationsByConstituencyId(constituencyId: number): Observable<ResultOfListOfGetPollingStationsByConstituencyIdResponse> {
         let url_ = this.baseUrl + "/polling-station/constituency/{constituencyId}";
         if (constituencyId === undefined || constituencyId === null)
             throw new globalThis.Error("The parameter 'constituencyId' must be defined.");
@@ -1732,14 +1732,14 @@ export class ServerClient extends CustomApiClient {
                 try {
                     return this.processGetPollingStationsByConstituencyId(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ResultOfListOfObject>;
+                    return _observableThrow(e) as any as Observable<ResultOfListOfGetPollingStationsByConstituencyIdResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ResultOfListOfObject>;
+                return _observableThrow(response_) as any as Observable<ResultOfListOfGetPollingStationsByConstituencyIdResponse>;
         }));
     }
 
-    protected processGetPollingStationsByConstituencyId(response: HttpResponseBase): Observable<ResultOfListOfObject> {
+    protected processGetPollingStationsByConstituencyId(response: HttpResponseBase): Observable<ResultOfListOfGetPollingStationsByConstituencyIdResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1749,25 +1749,25 @@ export class ServerClient extends CustomApiClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfListOfObject;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfListOfGetPollingStationsByConstituencyIdResponse;
             return _observableOf(result200);
             }));
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfObject;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
             return throwException("A server side error occurred.", status, _responseText, _headers, result400);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfObject;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
             return throwException("A server side error occurred.", status, _responseText, _headers, result401);
             }));
         } else if (status === 403) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfObject;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
             return throwException("A server side error occurred.", status, _responseText, _headers, result403);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2148,7 +2148,7 @@ export class ServerClient extends CustomApiClient {
     /**
      * Récupère les circonscription.
      */
-    getConstituencies(query: GetConstituenciesQuery): Observable<GetConstituenciesResponse[]> {
+    getConstituencies(query: GetConstituenciesQuery): Observable<ResultOfIEnumerableOfGetConstituenciesResponse> {
         let url_ = this.baseUrl + "/constituencies/get-constituencies";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2171,14 +2171,14 @@ export class ServerClient extends CustomApiClient {
                 try {
                     return this.processGetConstituencies(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<GetConstituenciesResponse[]>;
+                    return _observableThrow(e) as any as Observable<ResultOfIEnumerableOfGetConstituenciesResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<GetConstituenciesResponse[]>;
+                return _observableThrow(response_) as any as Observable<ResultOfIEnumerableOfGetConstituenciesResponse>;
         }));
     }
 
-    protected processGetConstituencies(response: HttpResponseBase): Observable<GetConstituenciesResponse[]> {
+    protected processGetConstituencies(response: HttpResponseBase): Observable<ResultOfIEnumerableOfGetConstituenciesResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -2188,7 +2188,7 @@ export class ServerClient extends CustomApiClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as GetConstituenciesResponse[];
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfIEnumerableOfGetConstituenciesResponse;
             return _observableOf(result200);
             }));
         } else if (status === 400) {
@@ -2420,11 +2420,16 @@ export interface UpdatePollingStationCommand extends PollingStationModel {
     id?: number;
 }
 
-export interface ResultOfListOfObject extends Result {
-    data?: any[] | undefined;
+export interface ResultOfPollingStationModel extends Result {
+    data?: PollingStationModel | undefined;
 }
 
-export interface CreatePollingStationCommand extends PollingStationModel {
+export interface ResultOfListOfGetPollingStationsByConstituencyIdResponse extends Result {
+    data?: GetPollingStationsByConstituencyIdResponse[] | undefined;
+}
+
+export interface GetPollingStationsByConstituencyIdResponse extends PollingStationModel {
+    constituency?: ConstituencyModel | undefined;
 }
 
 export interface ConstituencyModel {
@@ -2435,11 +2440,14 @@ export interface ConstituencyModel {
     isActive?: boolean;
 }
 
+export type LocationLevel = "region" | "department" | "subPrefecture" | "municipality" | "votingLocation";
+
+export interface CreatePollingStationCommand extends PollingStationModel {
+}
+
 export interface UpdateConstituencyCommandQuery extends ConstituencyModel {
     id?: number | undefined;
 }
-
-export type LocationLevel = "region" | "department" | "subPrefecture" | "municipality" | "votingLocation";
 
 export interface ResultOfGetConstituencyResponse extends Result {
     data?: GetConstituencyResponse | undefined;
@@ -2450,12 +2458,17 @@ export interface GetConstituencyResponse extends ConstituencyModel {
     createdAt?: string;
 }
 
+export interface ResultOfIEnumerableOfGetConstituenciesResponse extends Result {
+    data?: GetConstituenciesResponse[] | undefined;
+}
+
 export interface GetConstituenciesResponse {
     id?: number;
     code?: string;
     wording?: string;
     level?: LocationLevel;
-    subConstituencies?: GetConstituenciesResponse[];
+    children?: GetConstituenciesResponse[];
+    pollingStations?: PollingStationModel[];
 }
 
 export interface GetConstituenciesQuery {

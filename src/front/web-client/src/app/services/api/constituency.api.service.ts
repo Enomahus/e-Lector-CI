@@ -3,8 +3,9 @@ import { Observable } from 'rxjs';
 import {
   CreateConstituencyCommand,
   GetConstituenciesQuery,
-  GetConstituencyResponse,
+  Result,
   ResultOfGetConstituencyResponse,
+  ResultOfIEnumerableOfGetConstituenciesResponse,
   ResultOfLong,
   UpdateConstituencyCommandQuery,
 } from '../nswag/api-nswag-client';
@@ -36,10 +37,14 @@ export class ConstituencyApiService extends ApiBaseService {
     return this.apiClient.getConstituency(id).pipe(this.handleResult(options));
   }
 
-  getConstituencies(
+  getConstituencyTree(
     query: GetConstituenciesQuery,
     options: ApiToastOptions = {},
-  ): Observable<GetConstituencyResponse[]> {
+  ): Observable<ResultOfIEnumerableOfGetConstituenciesResponse> {
     return this.apiClient.getConstituencies(query).pipe(this.handleResult(options));
+  }
+
+  deleteConstituency(id: number, options: ApiToastOptions = {}): Observable<Result> {
+    return this.apiClient.deleteConstituency(id).pipe(this.handleResult(options));
   }
 }

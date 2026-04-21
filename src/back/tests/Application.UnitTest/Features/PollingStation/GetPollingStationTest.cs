@@ -1,6 +1,7 @@
 using Application.Common.Enums;
 using Application.Features.PollingStation.CreatePollingStation;
 using Application.Features.PollingStation.GetPollingStation;
+using Application.Features.PollingStation.GetPollingStations;
 using Application.UnitTest.Common;
 using FluentAssertions;
 using Infrastructure.Persistence.SQLServer.Contexts;
@@ -77,11 +78,8 @@ namespace Application.UnitTest.Features.PollingStation
                 null
             );
 
-            var query = new GetPollingStationsByConstituencyIdQuery
-            {
-                ConstituencyId = constituency.Id,
-            };
-
+            var query = new GetPollingStationsByConstituencyIdQuery(constituency.Id);
+            
             // Act
             var result = await serviceProvider.SendAsync(query);
 
@@ -122,11 +120,8 @@ namespace Application.UnitTest.Features.PollingStation
             await serviceProvider.SendAsync(command1);
             await serviceProvider.SendAsync(command2);
 
-            var query = new GetPollingStationsByConstituencyIdQuery
-            {
-                ConstituencyId = constituency.Id,
-            };
-
+            var query = new GetPollingStationsByConstituencyIdQuery(constituency.Id);
+            
             // Act
             var result = await serviceProvider.SendAsync(query);
 
@@ -176,11 +171,8 @@ namespace Application.UnitTest.Features.PollingStation
             await serviceProvider.SendAsync(command1);
             await serviceProvider.SendAsync(command2);
 
-            var query = new GetPollingStationsByConstituencyIdQuery
-            {
-                ConstituencyId = constituency1.Id,
-            };
-
+            var query = new GetPollingStationsByConstituencyIdQuery(constituency1.Id);
+           
             // Act
             var result = await serviceProvider.SendAsync(query);
 

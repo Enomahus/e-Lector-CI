@@ -51,7 +51,7 @@
     "faq": "FAQ",
     "Administration": "Administration",
     "pollingStation": "Bureau de vote",
-    "geagraphicArea": "Circonscription"
+    "constituency": "Circonscription"
   },
   "roles": {
     "OrganismAgentRole": "Agent d'organisme",

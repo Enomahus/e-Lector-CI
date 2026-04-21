@@ -22,12 +22,12 @@ namespace Application.Features.Constituency.GetConstituencies
         /// <returns></returns>
         [HttpPost("get-constituencies")]
         [OpenApiOperation("GetConstituencies", "Récupère les circonscription.", "")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GetConstituenciesResponse>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<IEnumerable<GetConstituenciesResponse>>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Result<Error>))]
-        public Task<IEnumerable<GetConstituenciesResponse>> GetConstituenciesAsync(
+        public Task<Result<IEnumerable<GetConstituenciesResponse>>> GetConstituenciesAsync(
             [FromBody] GetConstituenciesQuery query,
             CancellationToken cancellationToken
         )
