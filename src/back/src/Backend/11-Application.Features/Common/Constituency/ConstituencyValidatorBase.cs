@@ -16,9 +16,9 @@ namespace Application.Features.Common.Constituency
         {
             _context = context;
 
-            RuleFor(v => v.Code)
-               .NotEmpty()
-               .WithMessage(ValidationErrorCode.Required.ToString());
+            //RuleFor(v => v.Code)
+            //   .NotEmpty()
+            //   .WithMessage(ValidationErrorCode.Required.ToString());
 
             RuleFor(x => x.Wording)
             .NotEmpty()

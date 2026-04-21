@@ -1,36 +1,34 @@
 ﻿using Application.Api;
-using Application.Features.Security.Common;
 using Application.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 using System.Diagnostics.CodeAnalysis;
 using Tools.Exceptions.Errors;
 
-namespace Application.Features.Security.RefreshToken
+namespace Application.Features.Constituency.GetConstituencies
 {
     [ExcludeFromCodeCoverage]
     [ApiController]
-    [Route("auth")]
-    [OpenApiTag("auth")]
-    public class RefreshTokenController : ApiControllerBase
+    [Route("constituencies")]
+    [OpenApiTag("constituencies")]
+    public class GetConstituenciesController : ApiControllerBase
     {
         /// <summary>
-        /// Get a new access token with a refresh token
+        /// Get constituencies 
         /// </summary>
         /// <param name="query"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [HttpPost("refreshtoken")]
-        [AllowAnonymous]
-        [OpenApiOperation("RefreshToken", "Renouvelle un access token.", "")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<TokenResponse>))]
+        [HttpPost("get-constituencies")]
+        [OpenApiOperation("GetConstituencies", "Récupère les circonscription.", "")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<IEnumerable<GetConstituenciesResponse>>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<Error>))]
-        public Task<Result<TokenResponse>> RefreshToken(
-            [FromBody] RefreshTokenCommand query,
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Result<Error>))]
+        public Task<Result<IEnumerable<GetConstituenciesResponse>>> GetConstituenciesAsync(
+            [FromBody] GetConstituenciesQuery query,
             CancellationToken cancellationToken
         )
         {

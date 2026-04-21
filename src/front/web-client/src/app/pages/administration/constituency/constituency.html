@@ -1,0 +1,46 @@
+<ul ngTree [(values)]="selected" #tree="ngTree">
+  <ng-template
+    [ngTemplateOutlet]="treeNodes"
+    [ngTemplateOutletContext]="{ nodes: nodes(), parent: tree }"
+  />
+</ul>
+
+<ng-template #treeNodes let-nodes="nodes" let-parent="parent">
+  @for (node of nodes; track node.id) {
+    <li
+      ngTreeItem
+      [parent]="parent"
+      [value]="node.id"
+      [label]="node.wording"
+      [(expanded)]="node.expanded"
+      #treeItem="ngTreeItem"
+    >
+      <span class="tree-item-content">
+        @if (node.children?.length) {
+          <button
+            class="tree-toggle"
+            [attr.aria-expanded]="treeItem.expanded()"
+            (click)="$event.stopPropagation()"
+          >
+            {{ treeItem.expanded() ? '▾' : '▸' }}
+          </button>
+        } @else {
+          <span class="tree-toggle-placeholder"></span>
+        }
+        <span class="tree-item-label">{{ node.wording }}</span>
+        <span class="tree-item-level">{{ node.level }}</span>
+      </span>
+
+      @if (node.children?.length) {
+        <ul role="group">
+          <ng-template ngTreeItemGroup [ownedBy]="treeItem" #group="ngTreeItemGroup">
+            <ng-template
+              [ngTemplateOutlet]="treeNodes"
+              [ngTemplateOutletContext]="{ nodes: node.children, parent: group }"
+            />
+          </ng-template>
+        </ul>
+      }
+    </li>
+  }
+</ng-template>
