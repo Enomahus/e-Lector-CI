@@ -4,7 +4,7 @@ import { AuthService } from '@app/services/auth/auth.service';
 import { APP_BASE_URL } from '@app/services/nswag/api-nswag-client';
 import { Observable, switchMap } from 'rxjs';
 
-export function AuthInterceptor(
+export function authInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
 ): Observable<HttpEvent<unknown>> {

@@ -8,10 +8,10 @@ import { Language, Locale } from '../enums/language.enum';
 })
 export class LanguageService {
   private readonly translateService = inject(TranslateService);
-   private readonly langStorageKey = 'chosenLanguage';
+  private readonly langStorageKey = 'chosenLanguage';
   private readonly currentLang = new BehaviorSubject<Language>(Language.en);
 
-   constructor() {
+  constructor() {
     this.translateService.use(Language.en);
     const storedLanguage: string | null = localStorage.getItem(this.langStorageKey);
     if (storedLanguage) {
@@ -57,39 +57,4 @@ export class LanguageService {
       }),
     );
   }
-
-  // readonly STOCKAGE_KEY = 'app_lang';
-  // private readonly availableLangs = ['fr', 'en'];
-
-  // constructor() {
-  //   const stored = localStorage.getItem(this.STOCKAGE_KEY);
-  //   const browser = navigator.language.split('-')[0];
-  //   const fallback = 'fr';
-
-  //   const initial =
-  //     stored && this.availableLangs.includes(stored)
-  //       ? stored
-  //       : this.availableLangs.includes(browser)
-  //         ? browser
-  //         : fallback;
-
-  //   this.translateService.addLangs(this.availableLangs);
-  //   this.translateService.setFallbackLang(fallback);
-  //   this.translateService.use(initial);
-  // }
-
-  // get currentLang(): string {
-  //   return this.translateService.getCurrentLang() || this.translateService.getFallbackLang()!;
-  // }
-
-  // get languages(): string[] {
-  //   return this.availableLangs;
-  // }
-
-  // setLanguage(lang: string): void {
-  //   if (!this.availableLangs.includes(lang)) return;
-
-  //   this.translateService.use(lang);
-  //   localStorage.setItem(this.STOCKAGE_KEY, lang);
-  // }
 }

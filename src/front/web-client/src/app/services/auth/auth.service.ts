@@ -230,6 +230,8 @@ export class AuthService extends ApiBaseService {
       localStorage.setItem(currentEmailKey, email);
       localStorage.setItem(currentUserIdKey, id);
     }
+
+    // Fetch permissions asynchronously without blocking token storage
     await this.fetchPermissions();
 
     this.refreshing$.next(false);
