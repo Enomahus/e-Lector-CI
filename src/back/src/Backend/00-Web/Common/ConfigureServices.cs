@@ -1,19 +1,20 @@
-﻿using Application.Interfaces.Services;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Application.Interfaces.Services;
 using Infrastructure.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 using Pcea.Core.Net.Authorization;
 using Pcea.Core.Net.Authorization.Application.Interfaces.Services;
 using Pcea.Core.Net.Authorization.Web.Interfaces.Services;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Tools.Constants;
 using Web.Common.Authorization;
 using Web.Common.Converters;
@@ -26,11 +27,13 @@ namespace Web.Common
     [ExcludeFromCodeCoverage]
     public static class ConfigureServices
     {
-        public static IServiceCollection AddWebServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddWebServices(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
         {
             // Customise default API behaviour
             services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
-
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             if (version is not null)
@@ -57,8 +60,10 @@ namespace Web.Common
                 options.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
             });
 
-            var allowedOrigins = configuration.GetValue<string>("ApiConfig:AllowedOrigins")?.Split(';', StringSplitOptions.RemoveEmptyEntries);
-            if (allowedOrigins is { Length: > 0})
+            var allowedOrigins = configuration
+                .GetValue<string>("ApiConfig:AllowedOrigins")
+                ?.Split(';', StringSplitOptions.RemoveEmptyEntries);
+            if (allowedOrigins is { Length: > 0 })
             {
                 services.AddCors(options =>
                 {
@@ -72,7 +77,7 @@ namespace Web.Common
                     });
                 });
             }
-           
+
             services.ConfigureJWT(configuration);
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -93,19 +98,19 @@ namespace Web.Common
             services.AddSingleton(options);
 
             services
-            .AddControllers(options =>
-            {
-                options.Filters.Add<ApiExceptionFilterAttribute>();
-            })
-            .AddJsonOptions(opt =>
-            {
-                foreach (var converter in converters)
+                .AddControllers(options =>
                 {
-                    opt.JsonSerializerOptions.Converters.Add(converter);
-                }
-                opt.JsonSerializerOptions.NumberHandling = options.NumberHandling;
-                opt.JsonSerializerOptions.DefaultIgnoreCondition = options.DefaultIgnoreCondition;
-            });
+                    options.Filters.Add<ApiExceptionFilterAttribute>();
+                })
+                .AddJsonOptions(opt =>
+                {
+                    foreach (var converter in converters)
+                    {
+                        opt.JsonSerializerOptions.Converters.Add(converter);
+                    }
+                    opt.JsonSerializerOptions.NumberHandling = options.NumberHandling;
+                    opt.JsonSerializerOptions.DefaultIgnoreCondition = options.DefaultIgnoreCondition;
+                });
 
             services.AddScoped<ITokenService, TokenService>();
             services.AddSingleton<IAuthorizationMiddlewareResultHandler, CustomAuthorizationResultHandler>();
@@ -116,7 +121,6 @@ namespace Web.Common
             services.AddPceaCoreNetAuthorization();
 
             return services;
-
         }
 
         public static Task UseWebServicesAsync(this WebApplication app)
@@ -165,6 +169,7 @@ namespace Web.Common
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
                     };
                 });
+            services.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>();
 
             services.AddAuthorizationBuilder();
         }

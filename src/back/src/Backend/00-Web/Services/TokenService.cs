@@ -1,4 +1,7 @@
-﻿using Application.Exceptions.Auth;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Application.Exceptions.Auth;
 using Application.Interfaces.Services;
 using Application.Models.Auth;
 using Infrastructure.Configurations;
@@ -7,9 +10,6 @@ using Infrastructure.Persistence.SQLServer.Contexts;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Pcea.Core.Net.Authorization.Web.Interfaces.Services;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Tools.Constants;
 using Tools.Exceptions;
 using Tools.Helpers;
@@ -21,7 +21,7 @@ namespace Web.Services
         WritableDbContext context,
         TimeProvider timeProvider,
         ITokenRoleClaimBuilder<long> tokenRoleClaimBuilder
-    ): ITokenService
+    ) : ITokenService
     {
         private async Task<string> CreateTokenAsync(
             UserDao user,
@@ -61,12 +61,13 @@ namespace Web.Services
             var tokenOptions = new JwtSecurityToken(
                 issuer: tokenConfig.Value.ValidIssuer,
                 claims: claims,
-                expires: timeProvider.GetUtcNow().DateTime.AddMinutes(tokenConfig.Value.AccessTokenExpirationMinutes),
+                expires: timeProvider
+                    .GetUtcNow()
+                    .DateTime.AddMinutes(tokenConfig.Value.AccessTokenExpirationMinutes),
                 signingCredentials: signingCredentials
             );
             return tokenOptions;
         }
-
 
         private async Task<List<Claim>> GetClaimsAsync(
             UserDao user,
@@ -85,6 +86,7 @@ namespace Web.Services
             [
                 new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new(JwtRegisteredClaimNames.Name, user.UserName!),
+                new(JwtRegisteredClaimNames.Email, user.Email!),
                 new("lastName", user.LastName),
                 new("firstName", user.FirstName),
                 .. rolesClaims,
