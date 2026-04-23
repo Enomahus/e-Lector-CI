@@ -1,0 +1,13 @@
+<div class="polling-stations">
+  <div class="title">
+    <h1>{{ 'pollingStations.title' | translate }}</h1>
+    <a class="btn primary" routerLink="/admin/polling-stations/new">
+      <i class="ph ph-plus"></i>
+      {{ 'pollingStations.createPollingStation' | translate }}
+    </a>
+  </div>
+
+  <ng-template #template let-anchor>
+    <span>{{ anchor.nativeEElement.innerText }}</span>
+  </ng-template>
+</div>

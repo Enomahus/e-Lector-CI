@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { Constituency } from './pages/administration/constituency/constituency';
-import { PollingStation } from './pages/administration/polling-station/polling-station';
+import { PollingStationCreate } from './pages/administration/polling-stations/polling-station-create/polling-station-create';
+import { PollingStations } from './pages/administration/polling-stations/polling-stations';
 import { Home } from './pages/home/home';
 import { PageTemplate } from './shared/page-template/page-template';
 
@@ -45,9 +46,14 @@ export const routes: Routes = [
             title: 'Constituency',
           },
           {
-            path: 'polling-station',
-            component: PollingStation,
-            title: 'Polling station',
+            path: 'polling-stations',
+            component: PollingStations,
+            title: 'Polling Stations',
+          },
+          {
+            path: 'polling-stations/new',
+            component: PollingStationCreate,
+            title: 'Create Polling Station',
           },
         ],
       },

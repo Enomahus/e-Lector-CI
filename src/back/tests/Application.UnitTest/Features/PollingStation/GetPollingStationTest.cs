@@ -78,8 +78,8 @@ namespace Application.UnitTest.Features.PollingStation
                 null
             );
 
-            var query = new GetPollingStationsByConstituencyIdQuery(constituency.Id);
-            
+            var query = new GetPollingStationsQuery();
+
             // Act
             var result = await serviceProvider.SendAsync(query);
 
@@ -120,8 +120,8 @@ namespace Application.UnitTest.Features.PollingStation
             await serviceProvider.SendAsync(command1);
             await serviceProvider.SendAsync(command2);
 
-            var query = new GetPollingStationsByConstituencyIdQuery(constituency.Id);
-            
+            var query = new GetPollingStationsQuery();
+
             // Act
             var result = await serviceProvider.SendAsync(query);
 
@@ -171,8 +171,8 @@ namespace Application.UnitTest.Features.PollingStation
             await serviceProvider.SendAsync(command1);
             await serviceProvider.SendAsync(command2);
 
-            var query = new GetPollingStationsByConstituencyIdQuery(constituency1.Id);
-           
+            var query = new GetPollingStationsQuery();
+
             // Act
             var result = await serviceProvider.SendAsync(query);
 

@@ -10,15 +10,12 @@ using Tools.Logging;
 namespace Application.Features.PollingStation.CreatePollingStation;
 
 [WithPermission(nameof(AppPermission.CreatePollingStation))]
-public class CreatePollingStationCommand : PollingStationModel, IRequest<Result<long>>
-{
-}
+public class CreatePollingStationCommand : PollingStationModel, IRequest<Result<long>> { }
 
 public class CreatePollingStationCommandValidator : PollingStationValidatorBase<CreatePollingStationCommand>
 {
-    public CreatePollingStationCommandValidator(ReadOnlyDbContext context): base(context)
-    {
-    }
+    public CreatePollingStationCommandValidator(ReadOnlyDbContext context)
+        : base(context) { }
 }
 
 public class CreatePollingStationCommandHandler(WritableDbContext context)

@@ -82,5 +82,10 @@
     },
     "gridError": "Une erreur est survenue lors de la récupération des données de la grille",
     "serverError": "Erreur serveur"
+  },
+  "pollingStations": {
+    "title": "Les Bureaux de vote",
+    "createPollingStation": "Créer un bureau de vote",
+    "editPollingStation": "Editer le bureau de vote"
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   CreatePollingStationCommand,
-  ResultOfListOfGetPollingStationsByConstituencyIdResponse,
+  ResultOfListOfGetPollingStationsResponse,
   ResultOfLong,
   ResultOfPollingStationModel,
   UpdatePollingStationCommand,
@@ -36,12 +36,9 @@ export class PollingStationApiService extends ApiBaseService {
     return this.apiClient.getPollingStationById(id).pipe(this.handleResult(options));
   }
 
-  getPollingStationsByConstituencyId(
-    constituencyId: number,
+  getPollingStations(
     options: ApiToastOptions = {},
-  ): Observable<ResultOfListOfGetPollingStationsByConstituencyIdResponse> {
-    return this.apiClient
-      .getPollingStationsByConstituencyId(constituencyId)
-      .pipe(this.handleResult(options));
+  ): Observable<ResultOfListOfGetPollingStationsResponse> {
+    return this.apiClient.getPollingStations().pipe(this.handleResult(options));
   }
 }
