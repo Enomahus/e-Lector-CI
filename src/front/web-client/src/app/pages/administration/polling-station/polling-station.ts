@@ -51,9 +51,9 @@ export class PollingStation implements OnInit {
   });
 
   ngOnInit(): void {
-    this.pollingStationApiService.getPollingStationsByConstituencyId(1).subscribe((response) => {
-      console.log('Polling stations for constituency 1:', response);
-    });
+    // this.pollingStationApiService.getPollingStations().subscribe((response) => {
+    //   console.log('Polling stations for constituency 1:', response);
+    // });
   }
 
   onSubmit() {

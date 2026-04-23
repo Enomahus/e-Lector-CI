@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   CreatePollingStationCommand,
-  ResultOfListOfGetPollingStationsByConstituencyIdResponse,
+  GetPollingStationsQuery,
   ResultOfLong,
+  ResultOfPagedListOfGetPollingStationsResponse,
   ResultOfPollingStationModel,
   UpdatePollingStationCommand,
 } from '../nswag/api-nswag-client';
@@ -36,12 +37,10 @@ export class PollingStationApiService extends ApiBaseService {
     return this.apiClient.getPollingStationById(id).pipe(this.handleResult(options));
   }
 
-  getPollingStationsByConstituencyId(
-    constituencyId: number,
+  getPollingStations(
+    command: GetPollingStationsQuery,
     options: ApiToastOptions = {},
-  ): Observable<ResultOfListOfGetPollingStationsByConstituencyIdResponse> {
-    return this.apiClient
-      .getPollingStationsByConstituencyId(constituencyId)
-      .pipe(this.handleResult(options));
+  ): Observable<ResultOfPagedListOfGetPollingStationsResponse> {
+    return this.apiClient.getPollingStations(command).pipe(this.handleResult(options));
   }
 }

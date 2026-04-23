@@ -172,6 +172,7 @@ export class AuthService extends ApiBaseService {
     this.currentUserService.changeCurrentUserName('');
     localStorage.removeItem(refreshTokenKey);
     localStorage.removeItem(currentUserKey);
+    this.router.navigate(['/login']);
   }
 
   private refreshToken(): Observable<string | undefined> {

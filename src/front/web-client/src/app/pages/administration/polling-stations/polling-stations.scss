@@ -1,0 +1,25 @@
+.polling-stations {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .table-container {
+    position: relative;
+    min-height: 200px;
+    max-height: 550px;
+    overflow: auto;
+
+    table {
+      width: 100%;
+    }
+    .demo-row-is-clicked {
+      font-weight: bold;
+    }
+  }
+}

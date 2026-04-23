@@ -1708,38 +1708,39 @@ export class ServerClient extends CustomApiClient {
     }
 
     /**
-     * Récupère tous les Bureaux de Vote d'une circonscription.
+     * Récupère tous les Bureaux de Vote.
      */
-    getPollingStationsByConstituencyId(constituencyId: number): Observable<ResultOfListOfGetPollingStationsByConstituencyIdResponse> {
-        let url_ = this.baseUrl + "/polling-station/constituency/{constituencyId}";
-        if (constituencyId === undefined || constituencyId === null)
-            throw new globalThis.Error("The parameter 'constituencyId' must be defined.");
-        url_ = url_.replace("{constituencyId}", encodeURIComponent("" + constituencyId));
+    getPollingStations(query: GetPollingStationsQuery): Observable<ResultOfPagedListOfGetPollingStationsResponse> {
+        let url_ = this.baseUrl + "/polling-station/get-polling-stations";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = this.customStringify(query);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             })
         };
 
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPollingStationsByConstituencyId(response_);
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPollingStations(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetPollingStationsByConstituencyId(response_ as any);
+                    return this.processGetPollingStations(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ResultOfListOfGetPollingStationsByConstituencyIdResponse>;
+                    return _observableThrow(e) as any as Observable<ResultOfPagedListOfGetPollingStationsResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ResultOfListOfGetPollingStationsByConstituencyIdResponse>;
+                return _observableThrow(response_) as any as Observable<ResultOfPagedListOfGetPollingStationsResponse>;
         }));
     }
 
-    protected processGetPollingStationsByConstituencyId(response: HttpResponseBase): Observable<ResultOfListOfGetPollingStationsByConstituencyIdResponse> {
+    protected processGetPollingStations(response: HttpResponseBase): Observable<ResultOfPagedListOfGetPollingStationsResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1749,7 +1750,7 @@ export class ServerClient extends CustomApiClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfListOfGetPollingStationsByConstituencyIdResponse;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfPagedListOfGetPollingStationsResponse;
             return _observableOf(result200);
             }));
         } else if (status === 400) {
@@ -2424,12 +2425,44 @@ export interface ResultOfPollingStationModel extends Result {
     data?: PollingStationModel | undefined;
 }
 
-export interface ResultOfListOfGetPollingStationsByConstituencyIdResponse extends Result {
-    data?: GetPollingStationsByConstituencyIdResponse[] | undefined;
+export interface ResultOfPagedListOfGetPollingStationsResponse extends Result {
+    data?: PagedListOfGetPollingStationsResponse | undefined;
 }
 
-export interface GetPollingStationsByConstituencyIdResponse extends PollingStationModel {
-    constituency?: ConstituencyModel | undefined;
+export interface PagedListOfGetPollingStationsResponse {
+    items?: GetPollingStationsResponse[];
+    totalCount?: number;
+}
+
+export interface GetPollingStationsResponse {
+    regionId?: number | undefined;
+    regionCode?: string;
+    regionName?: string;
+    departmentId?: number | undefined;
+    departmentCode?: string;
+    departmentName?: string;
+    subPrefectureId?: number | undefined;
+    subPrefectureCode?: string;
+    subPrefectureName?: string;
+    municipalityId?: number | undefined;
+    municipalityCode?: string;
+    municipalityName?: string;
+    votingLocationId?: number | undefined;
+    votingLocationCode?: string;
+    votingLocationName?: string;
+    stataiontId?: number;
+    stationNumber?: string;
+    isDisabled?: boolean;
+}
+
+export interface GetPollingStationsQuery {
+    sort?: string | undefined;
+    order?: string | undefined;
+    pageIndex?: number | undefined;
+    pageSize?: number;
+}
+
+export interface CreatePollingStationCommand extends PollingStationModel {
 }
 
 export interface ConstituencyModel {
@@ -2440,14 +2473,11 @@ export interface ConstituencyModel {
     isActive?: boolean;
 }
 
-export type LocationLevel = "region" | "department" | "subPrefecture" | "municipality" | "votingLocation";
-
-export interface CreatePollingStationCommand extends PollingStationModel {
-}
-
 export interface UpdateConstituencyCommandQuery extends ConstituencyModel {
     id?: number | undefined;
 }
+
+export type LocationLevel = "region" | "department" | "subPrefecture" | "municipality" | "votingLocation";
 
 export interface ResultOfGetConstituencyResponse extends Result {
     data?: GetConstituencyResponse | undefined;
