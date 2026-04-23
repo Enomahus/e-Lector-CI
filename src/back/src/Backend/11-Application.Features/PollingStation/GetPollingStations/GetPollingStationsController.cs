@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Application.Api;
+using Application.Features.Common;
 using Application.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,22 +18,24 @@ namespace Application.Features.PollingStation.GetPollingStations
         /// <summary>
         /// Get all polling stations
         /// </summary>
+        /// <param name="query">Query parameters for pagination and sorting</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>List of polling stations</returns>
         [HttpPost("get-polling-stations")]
         [OpenApiOperation("GetPollingStations", "Récupère tous les Bureaux de Vote.", "")]
         [ProducesResponseType(
             StatusCodes.Status200OK,
-            Type = typeof(Result<List<GetPollingStationsResponse>>)
+            Type = typeof(Result<PagedList<GetPollingStationsResponse>>)
         )]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<Error>))]
-        public async Task<Result<List<GetPollingStationsResponse>>> GetPollingStationsAsync(
+        public async Task<Result<PagedList<GetPollingStationsResponse>>> GetPollingStationsAsync(
+            [FromBody] GetPollingStationsQuery query,
             CancellationToken token
         )
         {
-            var query = new GetPollingStationsQuery();
+            //var query = new GetPollingStationsQuery();
 
             return await Mediator.Send(query, token);
         }

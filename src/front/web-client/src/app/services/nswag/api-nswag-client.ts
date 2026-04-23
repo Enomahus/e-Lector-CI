@@ -1710,14 +1710,18 @@ export class ServerClient extends CustomApiClient {
     /**
      * Récupère tous les Bureaux de Vote.
      */
-    getPollingStations(): Observable<ResultOfListOfGetPollingStationsResponse> {
+    getPollingStations(query: GetPollingStationsQuery): Observable<ResultOfPagedListOfGetPollingStationsResponse> {
         let url_ = this.baseUrl + "/polling-station/get-polling-stations";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = this.customStringify(query);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             })
         };
@@ -1729,14 +1733,14 @@ export class ServerClient extends CustomApiClient {
                 try {
                     return this.processGetPollingStations(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ResultOfListOfGetPollingStationsResponse>;
+                    return _observableThrow(e) as any as Observable<ResultOfPagedListOfGetPollingStationsResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ResultOfListOfGetPollingStationsResponse>;
+                return _observableThrow(response_) as any as Observable<ResultOfPagedListOfGetPollingStationsResponse>;
         }));
     }
 
-    protected processGetPollingStations(response: HttpResponseBase): Observable<ResultOfListOfGetPollingStationsResponse> {
+    protected processGetPollingStations(response: HttpResponseBase): Observable<ResultOfPagedListOfGetPollingStationsResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1746,7 +1750,7 @@ export class ServerClient extends CustomApiClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfListOfGetPollingStationsResponse;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfPagedListOfGetPollingStationsResponse;
             return _observableOf(result200);
             }));
         } else if (status === 400) {
@@ -2421,8 +2425,13 @@ export interface ResultOfPollingStationModel extends Result {
     data?: PollingStationModel | undefined;
 }
 
-export interface ResultOfListOfGetPollingStationsResponse extends Result {
-    data?: GetPollingStationsResponse[] | undefined;
+export interface ResultOfPagedListOfGetPollingStationsResponse extends Result {
+    data?: PagedListOfGetPollingStationsResponse | undefined;
+}
+
+export interface PagedListOfGetPollingStationsResponse {
+    items?: GetPollingStationsResponse[];
+    totalCount?: number;
 }
 
 export interface GetPollingStationsResponse {
@@ -2441,9 +2450,16 @@ export interface GetPollingStationsResponse {
     votingLocationId?: number | undefined;
     votingLocationCode?: string;
     votingLocationName?: string;
-    stataiotId?: number;
+    stataiontId?: number;
     stationNumber?: string;
     isDisabled?: boolean;
+}
+
+export interface GetPollingStationsQuery {
+    sort?: string | undefined;
+    order?: string | undefined;
+    pageIndex?: number | undefined;
+    pageSize?: number;
 }
 
 export interface CreatePollingStationCommand extends PollingStationModel {

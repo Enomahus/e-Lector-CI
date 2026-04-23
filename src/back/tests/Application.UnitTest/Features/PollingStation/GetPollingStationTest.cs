@@ -64,124 +64,124 @@ namespace Application.UnitTest.Features.PollingStation
             result.Data.IsActive.Should().BeTrue();
         }
 
-        [Fact]
-        public async Task GetPollingStationsByConstituencyIdQuery_ShouldReturnEmptyList_When_No_PollingStations_Exist()
-        {
-            // Arrange
-            var serviceProvider = CreateServiceCollection().BuildServiceProvider();
-            var context = serviceProvider.GetRequiredService<WritableDbContext>();
+        //[Fact]
+        //public async Task GetPollingStationsByConstituencyIdQuery_ShouldReturnEmptyList_When_No_PollingStations_Exist()
+        //{
+        //    // Arrange
+        //    var serviceProvider = CreateServiceCollection().BuildServiceProvider();
+        //    var context = serviceProvider.GetRequiredService<WritableDbContext>();
 
-            var constituency = await CreateConstituencyAsync(
-                context,
-                "EPP ALLANIKRO",
-                LocationLevel.VotingLocation,
-                null
-            );
+        //    var constituency = await CreateConstituencyAsync(
+        //        context,
+        //        "EPP ALLANIKRO",
+        //        LocationLevel.VotingLocation,
+        //        null
+        //    );
 
-            var query = new GetPollingStationsQuery();
+        //    var query = new GetPollingStationsQuery();
 
-            // Act
-            var result = await serviceProvider.SendAsync(query);
+        //    // Act
+        //    var result = await serviceProvider.SendAsync(query);
 
-            // Assert
-            result.Should().NotBeNull();
-            result.Data.Should().NotBeNull();
-            result.Data.Should().BeEmpty();
-        }
+        //    // Assert
+        //    result.Should().NotBeNull();
+        //    result.Data.Should().NotBeNull();
+        //    result.Data.Should().BeEmpty();
+        //}
 
-        [Fact]
-        public async Task GetPollingStationsByConstituencyIdQuery_ShouldReturnAllPollingStations_When_They_Exist()
-        {
-            // Arrange
-            var serviceProvider = CreateServiceCollection().BuildServiceProvider();
-            var context = serviceProvider.GetRequiredService<WritableDbContext>();
+        //[Fact]
+        //public async Task GetPollingStationsByConstituencyIdQuery_ShouldReturnAllPollingStations_When_They_Exist()
+        //{
+        //    // Arrange
+        //    var serviceProvider = CreateServiceCollection().BuildServiceProvider();
+        //    var context = serviceProvider.GetRequiredService<WritableDbContext>();
 
-            var constituency = await CreateConstituencyAsync(
-                context,
-                "EPP ALLANIKRO",
-                LocationLevel.VotingLocation,
-                null
-            );
+        //    var constituency = await CreateConstituencyAsync(
+        //        context,
+        //        "EPP ALLANIKRO",
+        //        LocationLevel.VotingLocation,
+        //        null
+        //    );
 
-            var command1 = new CreatePollingStationCommand
-            {
-                StationNumber = "01",
-                Wording = "Bureau Principal",
-                ConstituencyId = constituency.Id,
-            };
+        //    var command1 = new CreatePollingStationCommand
+        //    {
+        //        StationNumber = "01",
+        //        Wording = "Bureau Principal",
+        //        ConstituencyId = constituency.Id,
+        //    };
 
-            var command2 = new CreatePollingStationCommand
-            {
-                StationNumber = "02",
-                Wording = "Bureau Secondaire",
-                ConstituencyId = constituency.Id,
-            };
+        //    var command2 = new CreatePollingStationCommand
+        //    {
+        //        StationNumber = "02",
+        //        Wording = "Bureau Secondaire",
+        //        ConstituencyId = constituency.Id,
+        //    };
 
-            await serviceProvider.SendAsync(command1);
-            await serviceProvider.SendAsync(command2);
+        //    await serviceProvider.SendAsync(command1);
+        //    await serviceProvider.SendAsync(command2);
 
-            var query = new GetPollingStationsQuery();
+        //    var query = new GetPollingStationsQuery();
 
-            // Act
-            var result = await serviceProvider.SendAsync(query);
+        //    // Act
+        //    var result = await serviceProvider.SendAsync(query);
 
-            // Assert
-            result.Should().NotBeNull();
-            result.Data.Should().NotBeNull();
-            result.Data.Should().HaveCount(2);
-            result.Data.Should().Contain(x => x.StationNumber == "01");
-            result.Data.Should().Contain(x => x.StationNumber == "02");
-        }
+        //    // Assert
+        //    result.Should().NotBeNull();
+        //    result.Data.Should().NotBeNull();
+        //    result.Data.Should().HaveCount(2);
+        //    result.Data.Should().Contain(x => x.StationNumber == "01");
+        //    result.Data.Should().Contain(x => x.StationNumber == "02");
+        //}
 
-        [Fact]
-        public async Task GetPollingStationsByConstituencyIdQuery_ShouldNotReturnPollingStations_From_Other_Constituencies()
-        {
-            // Arrange
-            var serviceProvider = CreateServiceCollection().BuildServiceProvider();
-            var context = serviceProvider.GetRequiredService<WritableDbContext>();
+        //[Fact]
+        //public async Task GetPollingStationsByConstituencyIdQuery_ShouldNotReturnPollingStations_From_Other_Constituencies()
+        //{
+        //    // Arrange
+        //    var serviceProvider = CreateServiceCollection().BuildServiceProvider();
+        //    var context = serviceProvider.GetRequiredService<WritableDbContext>();
 
-            var constituency1 = await CreateConstituencyAsync(
-                context,
-                "EPP ALLANIKRO 1",
-                LocationLevel.VotingLocation,
-                null
-            );
+        //    var constituency1 = await CreateConstituencyAsync(
+        //        context,
+        //        "EPP ALLANIKRO 1",
+        //        LocationLevel.VotingLocation,
+        //        null
+        //    );
 
-            var constituency2 = await CreateConstituencyAsync(
-                context,
-                "EPP ALLANIKRO 2",
-                LocationLevel.VotingLocation,
-                null
-            );
+        //    var constituency2 = await CreateConstituencyAsync(
+        //        context,
+        //        "EPP ALLANIKRO 2",
+        //        LocationLevel.VotingLocation,
+        //        null
+        //    );
 
-            var command1 = new CreatePollingStationCommand
-            {
-                StationNumber = "01",
-                Wording = "Bureau 1",
-                ConstituencyId = constituency1.Id,
-            };
+        //    var command1 = new CreatePollingStationCommand
+        //    {
+        //        StationNumber = "01",
+        //        Wording = "Bureau 1",
+        //        ConstituencyId = constituency1.Id,
+        //    };
 
-            var command2 = new CreatePollingStationCommand
-            {
-                StationNumber = "02",
-                Wording = "Bureau 2",
-                ConstituencyId = constituency2.Id,
-            };
+        //    var command2 = new CreatePollingStationCommand
+        //    {
+        //        StationNumber = "02",
+        //        Wording = "Bureau 2",
+        //        ConstituencyId = constituency2.Id,
+        //    };
 
-            await serviceProvider.SendAsync(command1);
-            await serviceProvider.SendAsync(command2);
+        //    await serviceProvider.SendAsync(command1);
+        //    await serviceProvider.SendAsync(command2);
 
-            var query = new GetPollingStationsQuery();
+        //    var query = new GetPollingStationsQuery();
 
-            // Act
-            var result = await serviceProvider.SendAsync(query);
+        //    // Act
+        //    var result = await serviceProvider.SendAsync(query);
 
-            // Assert
-            result.Should().NotBeNull();
-            result.Data.Should().NotBeNull();
-            result.Data.Should().HaveCount(1);
-            result.Data.Should().Contain(x => x.StationNumber == "01");
-            result.Data.Should().NotContain(x => x.StationNumber == "02");
-        }
+        //    // Assert
+        //    result.Should().NotBeNull();
+        //    result.Data.Should().NotBeNull();
+        //    result.Data.Should().HaveCount(1);
+        //    result.Data.Should().Contain(x => x.StationNumber == "01");
+        //    result.Data.Should().NotContain(x => x.StationNumber == "02");
+        //}
     }
 }

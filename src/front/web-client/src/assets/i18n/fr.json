@@ -86,6 +86,12 @@
   "pollingStations": {
     "title": "Les Bureaux de vote",
     "createPollingStation": "Créer un bureau de vote",
-    "editPollingStation": "Editer le bureau de vote"
+    "editPollingStation": "Editer le bureau de vote",
+    "votingLocationName": "Lieu de vote",
+    "stationNumber": "Numéro du bureau de vote",
+    "municipalityName": "Commune / Village",
+    "subPrefectureName": "Sous-préfecture",
+    "departmentName": "Département",
+    "regionName": "Région"
   }
 }
