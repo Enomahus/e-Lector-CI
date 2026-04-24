@@ -3,9 +3,11 @@ import { Observable } from 'rxjs';
 import {
   CreatePollingStationCommand,
   GetPollingStationsQuery,
+  Result,
   ResultOfLong,
   ResultOfPagedListOfGetPollingStationsResponse,
   ResultOfPollingStationModel,
+  ToogleActivePollingStationCommand,
   UpdatePollingStationCommand,
 } from '../nswag/api-nswag-client';
 import { ApiBaseService } from './api-base.service';
@@ -28,6 +30,17 @@ export class PollingStationApiService extends ApiBaseService {
     options: ApiToastOptions = {},
   ): Observable<ResultOfLong> {
     return this.apiClient.updatePollingStation(id, command).pipe(this.handleResult(options));
+  }
+
+  deletePollingStation(id: number, options: ApiToastOptions = {}): Observable<Result> {
+    return this.apiClient.deletePollingStation(id).pipe(this.handleResult(options));
+  }
+
+  togglePollingStationActive(
+    command: ToogleActivePollingStationCommand,
+    options: ApiToastOptions = {},
+  ): Observable<Result> {
+    return this.apiClient.toogleActivePollingStation(command).pipe(this.handleResult(options));
   }
 
   getPollingStationById(

@@ -1,7 +1,12 @@
 <div class="polling-stations">
   <div class="title">
     <h1>{{ 'pollingStations.title' | translate }}</h1>
-    <a class="btn primary" routerLink="/admin/polling-stations/new">
+    <a
+      mat-flat-button
+      class="btn primary2"
+      *appHasPermission="'createPollingStation'"
+      routerLink="/admin/polling-stations/new"
+    >
       <i class="ph ph-plus"></i>
       {{ 'pollingStations.createPollingStation' | translate }}
     </a>
@@ -11,9 +16,10 @@
     <span>{{ anchor.nativeEElement.innerText }}</span>
   </ng-template>
 
-  <mat-form-field>
+  <mat-form-field appearance="outline" class="search-field">
     <mat-label>Filter</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input />
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Bureau 01" #input />
+    <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
   <div class="table-container">
     <table mat-table [dataSource]="data()" matSort class="mat-elevation-z8">
@@ -71,6 +77,57 @@
         </td>
       </ng-container>
 
+      <!-- Actions Definition -->
+      <ng-container matColumnDef="actions" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'pollingStations.action' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <div class="action-buttons">
+            <button
+              class="btn-grid btn-edit"
+              [title]="'pollingStations.actions.edit' | translate"
+              [routerLink]="['/admin/polling-stations', element.stataiontId, 'edit']"
+            >
+              <i class="ph ph-pencil"></i>
+              <!-- <mat-icon>edit</mat-icon> -->
+            </button>
+
+            <button
+              *appHasPermission="'deletePollingStation'"
+              class="btn-grid btn-del"
+              [title]="'pollingStations.actions.delete' | translate"
+              (click)="onDeletePollingStation(element)"
+            >
+              <i class="ph ph-trash"></i>
+              <!-- <mat-icon>delete</mat-icon> -->
+            </button>
+
+            <button
+              *appHasPermission="'updatePollingStation'"
+              class="btn-grid"
+              [ngClass]="{
+                'btn-disable': element.DisabledDate,
+                'btn-enable': !element.DisabledDate,
+              }"
+              [id]="'btn-disable-' + element.stationId"
+              [title]="
+                element.DisabledDate
+                  ? ('pollingStations.actions.toggleEnable' | translate)
+                  : ('pollingStations.actions.toggleDisable' | translate)
+              "
+              (click)="onToggleActivePollingStation(element)"
+            >
+              @if (element.DisabledDate) {
+                <i class="ph ph-empty"></i>
+              } @else {
+                <i class="ph ph-check"></i>
+              }
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
     </table>
@@ -82,5 +139,14 @@
     }
   </div>
 
-  <mat-paginator [length]="resultsLength()" [pageSize]="5" aria-label="Select page"></mat-paginator>
+  <mat-paginator
+    [length]="resultsLength()"
+    [pageSize]="10"
+    [pageIndex]="paginator?.pageIndex ?? 0"
+    (page)="onPageChange($event)"
+    [pageSizeOptions]="[5, 15, 25, 50]"
+  >
+    ></mat-paginator
+  >
 </div>
+<pre>{{ data().values | json }}</pre>

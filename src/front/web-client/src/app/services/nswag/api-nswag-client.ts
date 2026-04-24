@@ -2581,9 +2581,10 @@ export interface GetPollingStationsResponse {
     votingLocationId?: number | undefined;
     votingLocationCode?: string;
     votingLocationName?: string;
-    stataiontId?: number;
+    stationId?: number;
     stationNumber?: string;
     isDisabled?: boolean;
+    disabledDate?: string | undefined;
 }
 
 export interface GetPollingStationsQuery {
@@ -2591,6 +2592,7 @@ export interface GetPollingStationsQuery {
     order?: string | undefined;
     pageIndex?: number | undefined;
     pageSize?: number;
+    search?: string | undefined;
 }
 
 export interface CreatePollingStationCommand extends PollingStationModel {

@@ -35,8 +35,6 @@ namespace Application.Features.PollingStation.GetPollingStations
             CancellationToken token
         )
         {
-            //var query = new GetPollingStationsQuery();
-
             return await Mediator.Send(query, token);
         }
     }

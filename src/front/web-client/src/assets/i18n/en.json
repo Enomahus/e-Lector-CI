@@ -57,5 +57,33 @@
     "OrganismAgentRole": "Organism agent",
     "DefaultRole": "Elector",
     "SuperAdminRole": "Administrator CEI"
+  },
+  "pollingStations": {
+    "title": "Polling Stations",
+    "createPollingStation": "Create a polling station",
+    "editPollingStation": "Update the polling station",
+    "votingLocationName": "Voting location",
+    "stationNumber": "Polling station number",
+    "municipalityName": "Municipality / Village",
+    "subPrefectureName": "Sub-prefecture",
+    "departmentName": "Department",
+    "regionName": "Region",
+    "activateError": "Error activating the polling station.",
+    "deactivateError": "Error deactivating the polling station.",
+    "activated": "Polling station activated successfully",
+    "deactivated": "Polling station deactivated successfully",
+    "action": "Actions",
+    "actions": {
+      "edit": "Update",
+      "delete": "Delete",
+      "toggleEnable": "Enable",
+      "toggleDisable": "Disable"
+    }
+  },
+  "dialog": {
+    "title": "Confirmation",
+    "message": "Are you sure you want to delete <strong>{{ data.name }}</strong> ?",
+    "delete": "Delete",
+    "cancel": "Cancel"
   }
 }

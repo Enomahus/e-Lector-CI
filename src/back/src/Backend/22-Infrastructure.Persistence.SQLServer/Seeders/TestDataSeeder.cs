@@ -168,6 +168,12 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                 },
                 new PollingStationDao()
                 {
+                    StationNumber = "2",
+                    Wording = "EPP Adjebo",
+                    ConstituencyId = 155,
+                },
+                new PollingStationDao()
+                {
                     StationNumber = "1",
                     Wording = "EPP Takikro",
                     ConstituencyId = 156,
@@ -192,7 +198,25 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                 },
                 new PollingStationDao()
                 {
+                    StationNumber = "2",
+                    Wording = "EPP Boli 1",
+                    ConstituencyId = 159,
+                },
+                new PollingStationDao()
+                {
                     StationNumber = "1",
+                    Wording = "EPP Boli 3",
+                    ConstituencyId = 160,
+                },
+                new PollingStationDao()
+                {
+                    StationNumber = "2",
+                    Wording = "EPP Boli 3",
+                    ConstituencyId = 160,
+                },
+                new PollingStationDao()
+                {
+                    StationNumber = "3",
                     Wording = "EPP Boli 3",
                     ConstituencyId = 160,
                 },
@@ -210,7 +234,19 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                 },
                 new PollingStationDao()
                 {
+                    StationNumber = "2",
+                    Wording = "EPP Anokoi-Djezou",
+                    ConstituencyId = 162,
+                },
+                new PollingStationDao()
+                {
                     StationNumber = "1",
+                    Wording = "EPP Grodiekro",
+                    ConstituencyId = 163,
+                },
+                new PollingStationDao()
+                {
+                    StationNumber = "2",
                     Wording = "EPP Grodiekro",
                     ConstituencyId = 163,
                 },
