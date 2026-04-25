@@ -136,9 +136,13 @@ export class PollingStation implements OnInit {
     };
   }
 
-  onNodeSelected(node: ConstituencyNode | null): void {
+  onNodeSelected(node: ConstituencyNode | ConstituencyNode[] | null): void {
     if (node) {
-      this.form.value.constituencyId = node.id;
+      if (Array.isArray(node)) {
+        //this.form.value.constituencyId = node.map((n) => n.id);
+      } else {
+        this.form.value.constituencyId = node.id;
+      }
     }
   }
 }
