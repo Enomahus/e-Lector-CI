@@ -28,13 +28,6 @@ namespace Application.Features.Constituency.GetConstituencies
             using var activity = ActivitySourceLog.CQRS.Start();
             var dateNow = timeProvider.GetUtcNow();
 
-            //var rootConstituencies = await context.Constituencies
-            //    .Include(c => c.Subconstituency)
-            //    .ThenInclude(s => s.Subconstituency)
-            //    .Include(c => c.PollingStations)
-            //    .Where(c => c.ParentId == null)
-            //    .ToListAsync(cancellationToken);
-
             var rootConstituencies = await context
                 .Constituencies.Include(r => r.Subconstituency)
                 .ThenInclude(d => d.Subconstituency)

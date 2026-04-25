@@ -96,7 +96,17 @@
     "errorCreating": "Erreur lors de la création du bureau de vote.",
     "errorUpdating": "Erreur lors de la mise à jour du bureau de vote.",
     "successCreating": "Bureau de vote créé avec succès",
-    "successUpdating": "Bureau de vote mis à jour avec succès"
+    "successUpdating": "Bureau de vote mis à jour avec succès",
+    "fields": {
+      "stationNumber": "Numéro du bureau de vote",
+      "wording": "Nom du bureau de vote",
+      "votingLocation": "Lieu de vote",
+      "municipality": "Commune / Village",
+      "subPrefecture": "Sous-préfecture",
+      "department": "Département",
+      "region": "Région",
+      "isActive": "Activé"
+    }
   },
   "pollingStations": {
     "title": "Les Bureaux de vote",

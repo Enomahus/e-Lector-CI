@@ -1,1 +1,63 @@
-<p>polling-station works!</p>
+<div class="station-container">
+  <div class="constituency-tree">
+    <h1>Je sui là!</h1>
+    <app-constituency-tree
+      [nodes]="nodes()"
+      (nodeSelected)="onNodeSelected($event)"
+    ></app-constituency-tree>
+  </div>
+  <div class="station-form">
+    <form [formGroup]="form">
+      <div class="input-block required">
+        <label for="stationNumber">{{ 'pollingStation.fields.stationNumber' | translate }}</label>
+        <input id="stationNumber" formControlName="stationNumber" />
+        @if (form.controls.stationNumber.touched && form.controls.stationNumber.errors) {
+          <ul class="form-errors">
+            @if (form.controls.stationNumber.errors['required']) {
+              <li>{{ 'formError.required' | translate }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="input-block required">
+        <label for="wording">{{ 'pollingStation.fields.wording' | translate }}</label>
+        <input id="wording" formControlName="wording" />
+        @if (form.controls.wording.touched && form.controls.wording.errors) {
+          <ul class="form-errors">
+            @if (form.controls.wording.errors['required']) {
+              <li>{{ 'formError.required' | translate }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="input-block">
+        <div class="checkbox-container">
+          <label for="enabled" class="checkbox">
+            <input type="checkbox" id="enabled" name="enabled" formControlName="isActive" />
+            {{ 'pollingStation.fields.isActive' | translate }}</label
+          >
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<app-sticky-buttons-container>
+  <button
+    id="save-station"
+    type="button"
+    [disabled]="!canSubmit()"
+    class="btn primary"
+    (click)="savePollingStation()"
+  >
+    @if (isSubmitting()) {
+      <app-loader></app-loader>
+    } @else {
+      {{ 'global.save' | translate }}
+    }
+  </button>
+  <button class="btn outline outline-primary" (click)="cancel()">
+    {{ 'global.back' | translate }}
+  </button>
+</app-sticky-buttons-container>

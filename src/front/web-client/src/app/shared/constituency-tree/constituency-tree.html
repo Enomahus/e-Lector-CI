@@ -1,0 +1,56 @@
+<div class="constituency-tree-container" [class]="cssClass">
+  <ul ngTree [(values)]="selected" (valuesChange)="onSelectionChange($event)" #tree="ngTree">
+    <ng-template
+      [ngTemplateOutlet]="treeNodes"
+      [ngTemplateOutletContext]="{ nodes: internalNodes(), parent: tree }"
+    />
+  </ul>
+</div>
+
+<ng-template #treeNodes let-nodes="nodes" let-parent="parent">
+  @for (node of nodes; track node.id) {
+    <li
+      ngTreeItem
+      [parent]="parent"
+      [value]="node.id"
+      [label]="node.wording"
+      [(expanded)]="node.expanded"
+      (expandedChange)="onNodeToggle(node, $event)"
+      #treeItem="ngTreeItem"
+    >
+      <div class="tree-item-content">
+        @if (node.children?.length) {
+          <button
+            type="button"
+            class="tree-toggle"
+            [attr.aria-expanded]="treeItem.expanded()"
+            [attr.aria-label]="treeItem.expanded() ? 'Collapse' : 'Expand'"
+            (click)="$event.stopPropagation()"
+          >
+            {{ treeItem.expanded() ? '▾' : '▸' }}
+          </button>
+        } @else {
+          <span class="tree-toggle-placeholder"></span>
+        }
+
+        <span class="tree-item-label" [title]="node.wording">
+          <span class="tree-item-code">{{ node.code }}</span>
+          <span class="tree-item-wording">{{ node.wording }}</span>
+        </span>
+
+        <span class="tree-item-badge">{{ node.level }}</span>
+      </div>
+
+      @if (node.children?.length && treeItem.expanded()) {
+        <ul role="group">
+          <ng-template ngTreeItemGroup [ownedBy]="treeItem" #group="ngTreeItemGroup">
+            <ng-template
+              [ngTemplateOutlet]="treeNodes"
+              [ngTemplateOutletContext]="{ nodes: node.children, parent: group }"
+            />
+          </ng-template>
+        </ul>
+      }
+    </li>
+  }
+</ng-template>

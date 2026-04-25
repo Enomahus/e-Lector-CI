@@ -25,14 +25,22 @@
       gap: 8px;
     }
 
-    // Mettre en avant la ligne au survol
     .mat-mdc-row:hover {
       background-color: rgba(24, 241, 107, 0.04);
     }
-    // Fixer la largeur de la colonne actions
+
     .mat-column-actions {
       width: 120px;
       text-align: center;
+    }
+
+    .mat-mdc-header-row {
+      background-color: orange;
+      z-index: 100;
+    }
+
+    .loading-container {
+      z-index: 200;
     }
   }
 }

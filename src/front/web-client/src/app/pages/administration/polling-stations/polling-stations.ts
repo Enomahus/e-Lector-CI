@@ -1,4 +1,4 @@
-import { JsonPipe, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,7 +40,6 @@ import {
     MatProgressSpinnerModule,
     MatIconModule,
     PermissionDirective,
-    JsonPipe,
     NgClass,
   ],
   templateUrl: './polling-stations.html',

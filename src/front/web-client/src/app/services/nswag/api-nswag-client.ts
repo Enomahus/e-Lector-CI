@@ -2538,8 +2538,8 @@ export interface ResultOfLong extends Result {
 }
 
 export interface PollingStationModel {
-    stationNumber?: string | undefined;
-    wording?: string | undefined;
+    stationNumber?: string;
+    wording?: string;
     constituencyId?: number;
     isActive?: boolean;
 }
