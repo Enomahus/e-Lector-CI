@@ -16,9 +16,10 @@
         long? VotingLocationId,
         string VotingLocationCode,
         string VotingLocationName,
-        long StataiontId,
+        long StationId,
         string StationNumber,
-        bool IsDisabled
+        bool IsDisabled,
+        DateTimeOffset? DisabledDate
     );
 
     public class FlatPollingStationRow

@@ -1,19 +1,31 @@
+import { NgClass } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { RouterLink } from '@angular/router';
+import { MatTableModule } from '@angular/material/table';
+import { Router, RouterLink } from '@angular/router';
 import { PollingStationApiService } from '@app/services/api/polling-station.api.service';
+import { PermissionDirective } from '@app/services/auth/permission.directive';
 import {
   GetPollingStationsQuery,
   GetPollingStationsResponse,
 } from '@app/services/nswag/api-nswag-client';
 import { BaseTable } from '@app/shared/base-table/base-table';
-import { TranslateModule } from '@ngx-translate/core';
-import { map, Observable } from 'rxjs';
+import { ConfirmDialog } from '@app/shared/confirm-dialog/confirm-dialog';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  BehaviorSubject,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  Observable,
+  takeUntil,
+} from 'rxjs';
 
 @Component({
   selector: 'app-polling-stations',
@@ -26,12 +38,22 @@ import { map, Observable } from 'rxjs';
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatIconModule,
+    PermissionDirective,
+    NgClass,
   ],
   templateUrl: './polling-stations.html',
   styleUrl: './polling-stations.scss',
 })
 export class PollingStations extends BaseTable<GetPollingStationsResponse> {
   private readonly pollingStationService = inject(PollingStationApiService);
+  private readonly translateService = inject(TranslateService);
+  private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+
+  isDeleting = signal(false);
+  private searchSubject = new BehaviorSubject<string>('');
+  private currentSearch = signal('');
 
   displayedColumns = signal<string[]>([
     'stationNumber',
@@ -40,16 +62,24 @@ export class PollingStations extends BaseTable<GetPollingStationsResponse> {
     'subPrefectureName',
     'departmentName',
     'regionName',
+    'actions',
   ]);
-  // dataSource = signal<GetPollingStationsResponse[]>([]);
-  filteredDataSource = signal(new MatTableDataSource<GetPollingStationsResponse>());
-
-  //clickedRows = new Set<GetPollingStationsResponse>();
-  // @ViewChild(MatPaginator) paginator!: MatPaginator;
-  // @ViewChild(MatSort) sort!: MatSort;
 
   constructor() {
     super();
+
+    this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe((value) => {
+        this.currentSearch.set(value);
+        this.paginator.pageIndex = 0;
+        this.refreshData();
+      });
+  }
+
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim();
+    this.searchSubject.next(filterValue);
   }
 
   override getData(
@@ -61,6 +91,7 @@ export class PollingStations extends BaseTable<GetPollingStationsResponse> {
       sort,
       order,
       pageIndex: page,
+      search: this.currentSearch(),
     };
     return this.pollingStationService.getPollingStations(query).pipe(
       map((response) => ({
@@ -70,8 +101,56 @@ export class PollingStations extends BaseTable<GetPollingStationsResponse> {
     );
   }
 
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.filteredDataSource().filter = filterValue;
+  onEditPollingStation(row: GetPollingStationsResponse): void {
+    this.router.navigate(['admin', 'polling-stations', row.stationId, 'edit']);
+  }
+
+  onDeletePollingStation(row: GetPollingStationsResponse): void {
+    this.isDeleting.set(true);
+
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      width: '400px',
+      data: { name: `le bureau de vote n°${row.stationNumber}` },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.pollingStationService.deletePollingStation(row.stationId ?? 0).subscribe({
+          next: () => {
+            this.isDeleting.set(false);
+            this.refreshData();
+          },
+          error: () => {
+            this.isDeleting.set(false);
+          },
+        });
+      }
+    });
+  }
+
+  onToggleActivePollingStation(row: GetPollingStationsResponse): void {
+    const errorMessage = row.isDisabled
+      ? this.translateService.instant('pollingStations.activateError')
+      : this.translateService.instant('pollingStations.deactivateError');
+
+    const successMessage = row.isDisabled
+      ? this.translateService.instant('pollingStations.activated')
+      : this.translateService.instant('pollingStations.deactivated');
+
+    this.pollingStationService
+      .togglePollingStationActive(
+        { id: row.stationId ?? 0 },
+        { successMessage: successMessage, errorMessage: errorMessage },
+      )
+      .subscribe({
+        next: () => {
+          this.refreshData();
+        },
+      });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.paginator.pageIndex = event.pageIndex;
+    this.refreshData();
   }
 }

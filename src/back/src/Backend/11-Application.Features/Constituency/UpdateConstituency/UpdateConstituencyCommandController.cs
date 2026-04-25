@@ -27,7 +27,7 @@ namespace Application.Features.Constituency.UpdateConstituency
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Result<Error>))]
-        public async Task<Result> UpdateConstituencyAsync(
+        public async Task<Result<long>> UpdateConstituencyAsync(
             [FromBody] UpdateConstituencyCommandQuery command,
             [FromRoute] long Id,
             CancellationToken token

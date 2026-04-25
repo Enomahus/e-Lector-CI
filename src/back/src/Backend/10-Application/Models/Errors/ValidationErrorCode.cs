@@ -30,5 +30,6 @@ public enum ValidationErrorCode
     AlreadyExists,
     AlreadyRegisteredAsElector,
     PollingStationMustExist,
+    PollingStationLinked,
     TooManyAttachments,
 }

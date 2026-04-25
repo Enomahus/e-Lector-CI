@@ -5,6 +5,7 @@ using Application.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
+using Tools.Exceptions.Errors;
 
 namespace Application.Features.PollingStation.UpdatePollingStation
 {
@@ -22,29 +23,20 @@ namespace Application.Features.PollingStation.UpdatePollingStation
         /// <param name="token">Cancellation token</param>
         /// <returns>The updated polling station ID</returns>
         [HttpPut("{id}")]
-        [OpenApiOperation(
-            "UpdatePollingStation",
-            "Met à jour un Bureau de Vote existant.",
-            ""
-        )]
+        [OpenApiOperation("UpdatePollingStation", "Met à jour un Bureau de Vote existant.", "")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<long>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<object>))]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<object>))]
-        [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<object>))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Result<long>))]
-        public async Task<IActionResult> UpdatePollingStationAsync(
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<Error>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<Error>))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<Error>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Result<Error>))]
+        public async Task<Result<long>> UpdatePollingStationAsync(
             long id,
             [FromBody] UpdatePollingStationCommand command,
             CancellationToken token
         )
         {
             command.Id = id;
-            var result = await Mediator.Send(command, token);
-
-            if (result.Data == 0)
-                return NotFound(result);
-
-            return Ok(result);
+            return await Mediator.Send(command, token);
         }
     }
 }

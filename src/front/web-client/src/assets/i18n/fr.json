@@ -6,7 +6,7 @@
     "search": "Rechercher",
     "edit": "Editer",
     "back": "Retour",
-    "cancel": "Retour",
+    "cancel": "Annuler",
     "login": "Se connecter",
     "no": "Non",
     "yes": "Oui",
@@ -83,15 +83,57 @@
     "gridError": "Une erreur est survenue lors de la récupération des données de la grille",
     "serverError": "Erreur serveur"
   },
+  "pollingStation": {
+    "newStationTitle": "Nouveau bureau de vote",
+    "sattionNumber": "Numéro du bureau de vote",
+    "name": "Nom du bureau de vote",
+    "votingLocation": "Lieu de vote",
+    "municipality": "Commune / Village",
+    "subPrefecture": "Sous-préfecture",
+    "department": "Département",
+    "region": "Région",
+    "isActive": "Actif",
+    "errorCreating": "Erreur lors de la création du bureau de vote.",
+    "errorUpdating": "Erreur lors de la mise à jour du bureau de vote.",
+    "successCreating": "Bureau de vote créé avec succès",
+    "successUpdating": "Bureau de vote mis à jour avec succès",
+    "fields": {
+      "stationNumber": "Numéro du bureau de vote",
+      "wording": "Nom du bureau de vote",
+      "votingLocation": "Lieu de vote",
+      "municipality": "Commune / Village",
+      "subPrefecture": "Sous-préfecture",
+      "department": "Département",
+      "region": "Région",
+      "isActive": "Activé"
+    }
+  },
   "pollingStations": {
     "title": "Les Bureaux de vote",
     "createPollingStation": "Créer un bureau de vote",
-    "editPollingStation": "Editer le bureau de vote",
+    "editPollingStation": "Modifier le bureau de vote",
     "votingLocationName": "Lieu de vote",
     "stationNumber": "Numéro du bureau de vote",
     "municipalityName": "Commune / Village",
     "subPrefectureName": "Sous-préfecture",
     "departmentName": "Département",
-    "regionName": "Région"
+    "regionName": "Région",
+    "activateError": "Erreur lors de l'activation du bureau de vote.",
+    "deactivateError": "Erreur lors de la désactivation du bureau de vote.",
+    "activated": "Bureau de vote activé avec succès",
+    "deactivated": "Bureau de vote désactivé avec succès",
+    "action": "Actions",
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "toggleEnable": "Activer",
+      "toggleDisable": "Désactiver"
+    }
+  },
+  "dialog": {
+    "title": "Confirmation",
+    "message": "Êtes-vous sûr de vouloir supprimer <strong>{{ data.name }}</strong> ?",
+    "delete": "Supprimer",
+    "cancel": "Annuler"
   }
 }

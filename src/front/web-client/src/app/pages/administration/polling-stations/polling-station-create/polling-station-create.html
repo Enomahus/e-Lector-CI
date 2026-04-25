@@ -1,1 +1,7 @@
-<p>polling-station-create works!</p>
+<h1>{{ 'pollingStation.newStationTitle' | translate }}</h1>
+<app-polling-station
+  [isSaving]="isSaving()"
+  [isToCreate]="true"
+  (save)="savePollingStation($event)"
+  (goBack)="goBack()"
+></app-polling-station>

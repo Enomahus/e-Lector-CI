@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy, signal, ViewChild } from '@angular
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, SortDirection } from '@angular/material/sort';
 import {
+  BehaviorSubject,
   catchError,
   map,
   merge,
@@ -24,6 +25,7 @@ export abstract class BaseTable<TResponse> implements AfterViewInit, OnDestroy {
   isLoadingResults = signal(true);
 
   protected destroy$ = new Subject<void>();
+  protected refresh$ = new BehaviorSubject<void>(undefined); // Permet de déclencher un rafraîchissement manuel des données
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -32,6 +34,7 @@ export abstract class BaseTable<TResponse> implements AfterViewInit, OnDestroy {
     sort: string,
     order: SortDirection,
     page: number,
+    search?: string,
   ): Observable<{ data: TResponse[]; total: number }>;
 
   ngAfterViewInit(): void {
@@ -40,7 +43,7 @@ export abstract class BaseTable<TResponse> implements AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => (this.paginator.pageIndex = 0));
 
-    merge(this.sort.sortChange, this.paginator.page)
+    merge(this.sort.sortChange, this.paginator.page, this.refresh$)
       .pipe(
         startWith({}),
         switchMap(() => {
@@ -60,6 +63,10 @@ export abstract class BaseTable<TResponse> implements AfterViewInit, OnDestroy {
         takeUntil(this.destroy$),
       )
       .subscribe((res) => this.data.set(res));
+  }
+
+  refreshData(): void {
+    this.refresh$.next();
   }
 
   ngOnDestroy(): void {

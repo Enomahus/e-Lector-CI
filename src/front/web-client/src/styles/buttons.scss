@@ -25,6 +25,11 @@
     background-color: var(--primary-btn-background);
   }
 
+  &.primary2 {
+    color: var(--primary-btn-text-color2);
+    background-color: var(--primary-btn-background2);
+  }
+
   &.column-chooser {
     width: 44px;
     background-color: var(--tertiary-btn-background);

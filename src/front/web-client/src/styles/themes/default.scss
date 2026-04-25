@@ -7,6 +7,7 @@ body {
   --tertiary-color: #{$red};
   --accent-color: #{$yellow};
   --gradient-color: linear-gradient(90deg, #00e6ac 0%, #ffde00 100%);
+  --medium-sea-green: #{$medium-sea-green};
 
   // Backgrounds
   --body-background: #f3f3f3;
@@ -36,6 +37,9 @@ body {
   // Buttons
   --primary-btn-background: var(--primary-color);
   --primary-btn-text-color: var(--inverse-text-color);
+
+  --primary-btn-background2: var(--medium-sea-green);
+  --primary-btn-text-color2: var(--inverse-text-color);
 
   --secondary-btn-background: var(--secondary-color);
   --secondary-btn-text-color: var(--inverse-text-color);

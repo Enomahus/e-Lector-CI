@@ -78,7 +78,6 @@ $color-green-light: #0f8629;
         justify-content: center;
         height: 100%;
         position: relative;
-     
 
         &:hover,
         &.active {
@@ -102,7 +101,7 @@ $color-green-light: #0f8629;
           .current-username {
             font-size: 0.95rem;
             font-weight: 600;
-            color: $color-primary;
+            //color: $color-primary;
           }
         }
 
@@ -148,13 +147,11 @@ $color-green-light: #0f8629;
         width: 100px;
         margin: 16px;
       }
-
     }
 
     .menu-right {
       flex: 1;
       justify-content: flex-end;
     }
-   
   }
 }
