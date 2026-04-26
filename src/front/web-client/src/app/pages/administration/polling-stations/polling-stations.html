@@ -87,10 +87,9 @@
             <button
               class="btn-grid btn-edit"
               [title]="'pollingStations.actions.edit' | translate"
-              [routerLink]="['/admin/polling-stations', element.stataiontId, 'edit']"
+              [routerLink]="['/admin/polling-stations', element.stationId, 'edit']"
             >
               <i class="ph ph-pencil"></i>
-              <!-- <mat-icon>edit</mat-icon> -->
             </button>
 
             <button
@@ -100,7 +99,6 @@
               (click)="onDeletePollingStation(element)"
             >
               <i class="ph ph-trash"></i>
-              <!-- <mat-icon>delete</mat-icon> -->
             </button>
 
             <button

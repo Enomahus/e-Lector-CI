@@ -1,1 +1,12 @@
-<p>polling-station-update works!</p>
+@if (isLoading()) {
+  <app-loader></app-loader>
+} @else {
+  <h1 class="station-name">{{ pollingStation()?.wording }}</h1>
+  <div class="polling-station-update">
+    <app-polling-station
+      [station]="pollingStation()"
+      [isSaving]="isSaving()"
+      (save)="validate($event)"
+    ></app-polling-station>
+  </div>
+}

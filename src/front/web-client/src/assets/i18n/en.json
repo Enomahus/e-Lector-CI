@@ -85,5 +85,13 @@
     "message": "Are you sure you want to delete <strong>{{ data.name }}</strong> ?",
     "delete": "Delete",
     "cancel": "Cancel"
+  },
+  "constituencyLevels": {
+    "country": "Country",
+    "region": "Region",
+    "department": "Department",
+    "subPrefecture": "Sub-prefecture",
+    "municipality": "Town / Village",
+    "votingLocation": "Polling station"
   }
 }
