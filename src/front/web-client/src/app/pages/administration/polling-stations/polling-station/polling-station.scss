@@ -1,3 +1,11 @@
+// Dans votre fichier parent ou en modifiant le composant
+:host {
+  height: 100%; /* Prend toute la hauteur du parent */
+  max-height: 100vh; /* Ou limite à la hauteur de l'écran */
+  display: flex;
+  flex-direction: column;
+}
+
 .station-container {
   display: flex;
   gap: 8px;
@@ -17,5 +25,42 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+
+    .combobox-wrapper {
+      position: relative;
+      select {
+        appearance: none; // On cache la flèche par défaut
+        background-color: #f8f9fa;
+        cursor: default;
+        border: 1px solid #ddd;
+        padding-right: 85px;
+        border-radius: 4px;
+        height: 40px;
+
+        &:focus {
+          border-color: var(--tree-accent-color, #9c27b0);
+          box-shadow: 0 0 0 2px rgba(156, 39, 176, 0.1);
+        }
+      }
+
+      // On ajoute une icône Phosphor pour indiquer que c'est lié à une localisation
+      &::after {
+        font-family: 'Phosphor';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+        pointer-events: none;
+      }
+
+      .help-text {
+        display: block;
+        margin-top: 4px;
+        font-size: 11px;
+        color: #666;
+        font-style: italic;
+      }
+    }
   }
 }

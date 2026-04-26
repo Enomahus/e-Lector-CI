@@ -9,7 +9,7 @@ using Tools.Logging;
 
 namespace Application.Features.Constituency.GetConstituencies
 {
-    //[WithPermission(nameof(AppPermission.GetConstituencies))]
+    [WithPermission(nameof(AppPermission.GetConstituencies))]
     public class GetConstituenciesQuery : IRequest<Result<IEnumerable<GetConstituenciesResponse>>> { }
 
     public class GetConstituenciesQueryValidator : AbstractValidator<GetConstituenciesQuery>

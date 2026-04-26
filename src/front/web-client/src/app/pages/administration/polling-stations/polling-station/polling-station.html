@@ -1,6 +1,5 @@
 <div class="station-container">
   <div class="constituency-tree">
-    <h1>Je sui là!</h1>
     <app-constituency-tree
       [nodes]="nodes()"
       (nodeSelected)="onNodeSelected($event)"
@@ -32,6 +31,28 @@
         }
       </div>
 
+      <div class="input-block required">
+        <label for="constituencyId">{{ 'pollingStation.fields.votingLocation' | translate }}</label>
+        <div class="combobox-wrapper">
+          <select id="constituencyId" formControlName="constituencyId" class="form-control">
+            <option [value]="null" disabled>
+              {{ 'pollingStation.selectLocation' | translate }}
+            </option>
+            @if (selectedNode(); as node) {
+              <option [value]="node.id" selected>{{ node.wording }}</option>
+            }
+          </select>
+          <small class="help-text">{{ 'pollingStation.selectInTree' | translate }}</small>
+        </div>
+        @if (form.controls.constituencyId.touched && form.controls.constituencyId.errors) {
+          <ul class="form-errors">
+            @if (form.controls.constituencyId.errors['required']) {
+              <li>{{ 'formError.required' | translate }}</li>
+            }
+          </ul>
+        }
+      </div>
+
       <div class="input-block">
         <div class="checkbox-container">
           <label for="enabled" class="checkbox">
@@ -47,7 +68,7 @@
   <button
     id="save-station"
     type="button"
-    [disabled]="!canSubmit()"
+    [disabled]="form.invalid || !form.dirty || isSubmitting()"
     class="btn primary"
     (click)="savePollingStation()"
   >

@@ -97,6 +97,8 @@
     "errorUpdating": "Erreur lors de la mise à jour du bureau de vote.",
     "successCreating": "Bureau de vote créé avec succès",
     "successUpdating": "Bureau de vote mis à jour avec succès",
+    "selectLocation": "Sélectionnez le lieu de vote",
+    "selectInTree": "Sélectionnez le lieu de vote dans l'arbre à gauche",
     "fields": {
       "stationNumber": "Numéro du bureau de vote",
       "wording": "Nom du bureau de vote",
@@ -135,5 +137,13 @@
     "message": "Êtes-vous sûr de vouloir supprimer <strong>{{ data.name }}</strong> ?",
     "delete": "Supprimer",
     "cancel": "Annuler"
+  },
+  "constituencyLevels": {
+    "country": "Pays",
+    "region": "Région",
+    "department": "Département",
+    "subPrefecture": "Sous-préfecture",
+    "municipality": "Commune / Village",
+    "votingLocation": "Lieu de vote"
   }
 }

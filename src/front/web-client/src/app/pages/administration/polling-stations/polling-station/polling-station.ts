@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import {
   Component,
   computed,
@@ -10,7 +10,6 @@ import {
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Breadcrumbs } from '@app/models/breadcrumb.model';
 import { ConstituencyNode } from '@app/models/constituency.model';
 import { ConstituencyApiService } from '@app/services/api/constituency.api.service';
@@ -19,7 +18,8 @@ import {
   GetConstituenciesResponse,
   PollingStationModel,
 } from '@app/services/nswag/api-nswag-client';
-import { ConstituencyTree } from '@app/shared/constituency-tree';
+
+import { ConstituencyTree } from '@app/shared/constituency-tree/constituency-tree';
 import { Loader } from '@app/shared/loader/loader';
 import { StickyButtonsContainer } from '@app/shared/sticky-buttons-container/sticky-buttons-container';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -28,28 +28,21 @@ import {
   createPollingStationModelFromForm,
 } from './polling-station-form';
 
-const createInitialState = (): PollingStationModel => ({
-  stationNumber: '',
-  wording: '',
-  constituencyId: undefined,
-  isActive: true,
-});
-
 @Component({
   selector: 'app-polling-station',
   imports: [
-    ConstituencyTree,
     TranslateModule,
     StickyButtonsContainer,
     Loader,
     CommonModule,
     ReactiveFormsModule,
+    ConstituencyTree,
+    JsonPipe,
   ],
   templateUrl: './polling-station.html',
   styleUrl: './polling-station.scss',
 })
 export class PollingStation implements OnInit {
-  private readonly router = inject(Router);
   private readonly translateService = inject(TranslateService);
   private readonly breadcrumbService = inject(BreadcrumbService);
   private readonly constituencyService = inject(ConstituencyApiService);
@@ -60,10 +53,10 @@ export class PollingStation implements OnInit {
   @Input() isToCreate = false;
   @Input() isSaving = false;
 
-  readonly nodes = signal<ConstituencyNode[]>([]);
+  nodes = signal<ConstituencyNode[]>([]);
+  selectedNode = signal<ConstituencyNode | null>(null);
 
-  model = signal<PollingStationModel>(createInitialState());
-  readonly isSubmitting = signal(false);
+  isSubmitting = signal(false);
 
   form = createPollingStationForm();
 
@@ -71,16 +64,11 @@ export class PollingStation implements OnInit {
 
   ngOnInit(): void {
     this.setBreadcrumbs(this.station);
-    if (!this.isToCreate && this.station) {
-      this.form.patchValue({
-        stationNumber: this.station.stationNumber,
-        wording: this.station.wording,
-        constituencyId: this.station.constituencyId,
-        isActive: this.station.isActive,
-      });
-    }
-
     this.loadConstituencyTree();
+
+    if (!this.isToCreate && this.station) {
+      this.form.patchValue(this.station);
+    }
   }
 
   savePollingStation(): void {
@@ -120,7 +108,15 @@ export class PollingStation implements OnInit {
     this.constituencyService.getConstituencyTree({}).subscribe((response) => {
       const res = response.data;
       if (res) {
-        this.nodes.set(res.map((c) => this.mapToNode(c)));
+        const mappedNodes = res.map((c) => this.mapToNode(c));
+        this.nodes.set(mappedNodes);
+
+        if (this.station?.constituencyId) {
+          const found = this.findNodeById(mappedNodes, this.station.constituencyId);
+          if (found) {
+            this.selectedNode.set(found);
+          }
+        }
       }
     });
   }
@@ -136,13 +132,24 @@ export class PollingStation implements OnInit {
     };
   }
 
-  onNodeSelected(node: ConstituencyNode | ConstituencyNode[] | null): void {
-    if (node) {
-      if (Array.isArray(node)) {
-        //this.form.value.constituencyId = node.map((n) => n.id);
-      } else {
-        this.form.value.constituencyId = node.id;
+  onNodeSelected(info: ConstituencyNode): void {
+    this.selectedNode.set(info);
+    this.form.patchValue({ constituencyId: info.id, isActive: true });
+    this.form.get('constituencyId')?.markAsDirty();
+    this.form.get('isActive')?.markAsDirty();
+  }
+
+  private findNodeById(
+    nodes: ConstituencyNode[],
+    id: number | string,
+  ): ConstituencyNode | undefined {
+    for (const node of nodes) {
+      if (node.id === id) return node;
+      if (node.children) {
+        const found = this.findNodeById(node.children, id);
+        if (found) return found;
       }
     }
+    return undefined;
   }
 }
