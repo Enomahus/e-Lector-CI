@@ -16,6 +16,7 @@
         #treeItem="ngTreeItem"
         [class.is-leaf]="isLeaf(node)"
         [class.is-parent]="node.children && node.children.length > 0"
+        [selectable]="true"
       >
         <div class="tree-item-content">
           @if (node.children?.length) {
