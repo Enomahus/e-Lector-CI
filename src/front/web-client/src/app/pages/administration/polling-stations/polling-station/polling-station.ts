@@ -82,9 +82,9 @@ export class PollingStation implements OnInit {
     this.setBreadcrumbs(this.station);
   }
 
-  cancel(): void {
-    this.goBack.emit();
-  }
+  // cancel(): void {
+  //   this.goBack.emit();
+  // }
 
   setBreadcrumbs(station: PollingStationModel | undefined): void {
     let breadcrumbs: Breadcrumbs[] = [];

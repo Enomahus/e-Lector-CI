@@ -4,6 +4,7 @@ import { MatSort, SortDirection } from '@angular/material/sort';
 import {
   BehaviorSubject,
   catchError,
+  EMPTY,
   map,
   merge,
   Observable,
@@ -19,7 +20,6 @@ import {
   template: '',
 })
 export abstract class BaseTable<TResponse> implements AfterViewInit, OnDestroy {
-  // Signaux pour l'état de l'UI
   data = signal<TResponse[]>([]);
   resultsLength = signal(0);
   isLoadingResults = signal(true);
@@ -49,13 +49,19 @@ export abstract class BaseTable<TResponse> implements AfterViewInit, OnDestroy {
         switchMap(() => {
           this.isLoadingResults.set(true);
           return this.getData(this.sort.active, this.sort.direction, this.paginator.pageIndex).pipe(
-            catchError(() => of(null)),
+            catchError((err) => {
+              if (err.name === 'CanceledError' || err.status === 0) {
+                return EMPTY;
+              }
+              console.log('Error loading data', err);
+              return of({ data: [], total: 0 });
+            }),
           );
         }),
         map((response) => {
           this.isLoadingResults.set(false);
 
-          if (response === null) return [];
+          if (!response) return this.data();
 
           this.resultsLength.set(response.total);
           return response.data;

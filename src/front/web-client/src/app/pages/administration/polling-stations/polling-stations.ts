@@ -20,10 +20,12 @@ import { ConfirmDialog } from '@app/shared/confirm-dialog/confirm-dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
+  catchError,
   debounceTime,
   distinctUntilChanged,
   map,
   Observable,
+  of,
   takeUntil,
 } from 'rxjs';
 
@@ -72,7 +74,9 @@ export class PollingStations extends BaseTable<GetPollingStationsResponse> {
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe((value) => {
         this.currentSearch.set(value);
-        this.paginator.pageIndex = 0;
+        if (this.paginator) {
+          this.paginator.pageIndex = 0;
+        }
         this.refreshData();
       });
   }
@@ -91,6 +95,7 @@ export class PollingStations extends BaseTable<GetPollingStationsResponse> {
       sort,
       order,
       pageIndex: page,
+      pageSize: this.paginator?.pageSize ?? 20,
       search: this.currentSearch(),
     };
     return this.pollingStationService.getPollingStations(query).pipe(
@@ -98,6 +103,12 @@ export class PollingStations extends BaseTable<GetPollingStationsResponse> {
         data: response.data?.items ?? [],
         total: response.data?.totalCount ?? 0,
       })),
+      catchError((err) => {
+        if (err.name === 'CanceledError' || err.status === 0) {
+          this.translateService.get('pollingStations.loadError').subscribe((msg) => alert(msg));
+        }
+        return of({ data: [], total: 0 });
+      }),
     );
   }
 

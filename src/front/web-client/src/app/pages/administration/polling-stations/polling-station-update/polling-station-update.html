@@ -6,7 +6,8 @@
     <app-polling-station
       [station]="pollingStation()"
       [isSaving]="isSaving()"
-      (save)="validate($event)"
+      (save)="updatePollingStation($event)"
+      (goBack)="navigateToPollingStations()"
     ></app-polling-station>
   </div>
 }
