@@ -14,7 +14,7 @@
   width: 100%;
 
   .constituency-tree {
-    flex: 2; /* Prend deux parts de l'espace */
+    flex: 1;
     min-width: 300px; /* Empêche l'arbre de devenir trop étroit */
     border-right: 1px solid #eee; // Optionnel : une petite séparation visuelle
     padding-right: 1rem;

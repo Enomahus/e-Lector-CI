@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PollingStationApiService } from '@app/services/api/polling-station.api.service';
 import { PollingStationModel } from '@app/services/nswag/api-nswag-client';
 import { Loader } from '@app/shared/loader/loader';
@@ -15,6 +15,7 @@ import { PollingStation } from '../polling-station/polling-station';
 export class PollingStationUpdate implements OnInit {
   private readonly pollingSationService = inject(PollingStationApiService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly translateService = inject(TranslateService);
 
   isLoading = signal(false);
@@ -22,9 +23,25 @@ export class PollingStationUpdate implements OnInit {
   pollingStation = signal<PollingStationModel | undefined>(undefined);
   pollingStationId = signal<number | undefined>(undefined);
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const stationId = Number(this.route.snapshot.paramMap.get('id'));
+    if (stationId) {
+      this.pollingStationId.set(stationId);
+      this.isLoading.set(true);
+      this.pollingSationService.getPollingStationById(stationId).subscribe({
+        next: (response) => {
+          this.isLoading.set(false);
+          this.pollingStation.set(response.data);
+        },
+        error: () => {
+          this.isLoading.set(false);
+          this.router.navigate(['admin', 'polling-stations']);
+        },
+      });
+    }
+  }
 
-  validate(model: PollingStationModel): void {
+  updatePollingStation(model: PollingStationModel): void {
     if (!this.pollingStationId()) {
       return;
     }
@@ -42,5 +59,9 @@ export class PollingStationUpdate implements OnInit {
           this.isSaving.set(false);
         },
       });
+  }
+
+  navigateToPollingStations(): void {
+    this.router.navigate(['/admin/polling-stations']);
   }
 }

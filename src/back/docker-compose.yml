@@ -20,8 +20,6 @@ services:
     depends_on:
       elector.database.init:
         condition: service_completed_successfully
-     # elector.database:
-     #   condition: service_healthy
       elector.jaeger:
         condition: service_started
 
@@ -30,7 +28,7 @@ services:
     image: jaegertracing/all-in-one:1.58
     environment:
       - METRICS_STORAGE_TYPE=prometheus
-      - PROMETHEUS_SERVER_URL=http://localhost:43000
+      - PROMETHEUS_SERVER_URL=http://elector.backend:9091
       - PROMETHEUS_QUERY_SUPPORT_SPANMETRICS_CONNECTOR=${PROMETHEUS_QUERY_SUPPORT_SPANMETRICS_CONNECTOR:-true}
       - PROMETHEUS_QUERY_NAMESPACE=${PROMETHEUS_QUERY_NAMESPACE:-}
       - PROMETHEUS_QUERY_DURATION_UNIT=${PROMETHEUS_QUERY_DURATION_UNIT:-}
@@ -38,8 +36,16 @@ services:
       - PROMETHEUS_QUERY_NORMALIZE_DURATION=true
     ports:
       - '41100:16686'
-      - '4317:4317'
-      - '4318:4318'
+      #- '4317:4317'
+      #- '4318:4318'
+
+  elector.prometheus:
+    container_name: elector.prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - '43000:9091'
 
   elector.database:
     container_name: 'elector.database'

@@ -11,29 +11,23 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './constituency-tree.scss',
 })
 export class ConstituencyTree {
-  // Inputs utilisant les Signals (Angular 17.2+)
   nodes = input.required<ConstituencyNode[]>();
-  // Output réactif
   nodeSelected = output<ConstituencyNode>();
 
-  // État interne pour la sélection
   protected readonly selectedIds = signal<number[]>([]);
 
   //Gère le changement de sélection dans l'arborescence
   protected onSelectionChange(ids: number[]): void {
-    this.selectedIds.set(ids);
-    if (ids.length > 0) {
-      const node = this.findNodeById(this.nodes(), ids[0]);
-      if (node) {
-        this.nodeSelected.emit({
-          id: node.id,
-          code: node.code,
-          wording: node.wording,
-          level: node.level,
-          children: node.children,
-          expanded: node.expanded,
-        });
-      }
+    if (ids.length === 0) return;
+
+    const nodeId = ids[0];
+    let node = this.findNodeById(this.nodes(), nodeId);
+
+    if (node && (!node.children || node.children.length === 0) && node.level === 'votingLocation') {
+      this.selectedIds.set(ids);
+      this.nodeSelected.emit(node);
+    } else {
+      node = undefined;
     }
   }
 
@@ -51,5 +45,9 @@ export class ConstituencyTree {
       }
     }
     return undefined;
+  }
+
+  isLeaf(node: ConstituencyNode): boolean {
+    return !node.children || node.children.length === 0;
   }
 }
