@@ -64,6 +64,7 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.CreateRegistrationRequest,
                     AppPermission.UpdateRegistrationRequest,
                     AppPermission.UploadRegistrationRequestTempDocument,
+                    AppPermission.GetRegistrationRequestForCurrentUser,
                 ] 
             },
             { 
@@ -72,6 +73,7 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.AccessRegistrationRequestsPage,
                     AppPermission.DeleteRegistrationRequest,
                     AppPermission.GetRegistrationRequests,
+                    AppPermission.GetRegistrationRequestForCurrentUser,
                 ]
             },
             {

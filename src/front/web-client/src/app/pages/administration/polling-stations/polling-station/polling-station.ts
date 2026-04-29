@@ -1,4 +1,4 @@
-import { CommonModule, JsonPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   Component,
   computed,
@@ -37,7 +37,6 @@ import {
     CommonModule,
     ReactiveFormsModule,
     ConstituencyTree,
-    JsonPipe,
   ],
   templateUrl: './polling-station.html',
   styleUrl: './polling-station.scss',
