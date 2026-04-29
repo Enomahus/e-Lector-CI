@@ -12,10 +12,10 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@types/node": "^25.6.0",
     "playwright": "^1.58.1"
   },
   "dependencies": {
-    "@playwright/test": "^1.58.1",
-    "@types/node": "^25.2.0"
+    "@playwright/test": "^1.58.1"
   }
 }
