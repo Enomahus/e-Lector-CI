@@ -7,6 +7,7 @@
     "edit": "Editer",
     "back": "Retour",
     "cancel": "Annuler",
+    "refresh": "Actualiser",
     "login": "Se connecter",
     "no": "Non",
     "yes": "Oui",
@@ -84,7 +85,7 @@
     "serverError": "Erreur serveur"
   },
   "constituencies": {
-    "title": "Les circonscriptions",
+    "title": "Liste des circonscriptions",
     "createConstituency": "Créer une circonscription",
     "editConstituency": "Modifier la circonscription",
     "name": "Nom de la circonscription",
@@ -108,6 +109,8 @@
     "errorUpdating": "Erreur lors de la mise à jour de la circonscription.",
     "successCreating": "Circonscription créée avec succès",
     "successUpdating": "Circonscription mise à jour avec succès",
+    "errorDeleting": "Erreur lors de la suppression de la circonscription.",
+    "successDeleting": "Circonscription supprimée avec succès",
     "selectParent": "Sélectionnez la circonscription parente",
     "selectInTree": "Sélectionnez la circonscription parente dans l'arbre à gauche",
     "fields": {

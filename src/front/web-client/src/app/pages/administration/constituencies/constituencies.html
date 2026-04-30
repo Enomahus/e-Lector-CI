@@ -1,1 +1,27 @@
-<p>constituencies works!</p>
+<div class="constituencies-container">
+  <div class="title-section">
+    <h1>{{ 'constituencies.title' | translate }}</h1>
+    <div class="constituencies-actions">
+      <button class="btn outline outline-primary" (click)="refresh()" [disabled]="isLoading()">
+        @if (isLoading()) {
+          <span class="spinner">⏳</span>
+        } @else {
+          <span class="icon">🔄</span>
+        }
+        {{ 'global.refresh' | translate }}
+      </button>
+      <a class="btn primary2" routerLink="/admin/constituencies/new">
+        <i class="ph ph-plus"></i>
+        {{ 'constituencies.createConstituency' | translate }}
+      </a>
+    </div>
+  </div>
+  <div class="tree-wrapper">
+    <app-constituency-tree
+      [nodes]="nodes()"
+      (editNode)="onEdit($event)"
+      (deleteNode)="onDelete($event)"
+      (toggleStatus)="onToggleStatus($event)"
+    ></app-constituency-tree>
+  </div>
+</div>

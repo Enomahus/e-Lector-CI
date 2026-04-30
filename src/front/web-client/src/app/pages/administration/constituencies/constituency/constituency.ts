@@ -25,8 +25,8 @@ export class Constituency implements OnInit {
   private readonly breadcrumbService = inject(BreadcrumbService);
   private readonly route = inject(ActivatedRoute);
 
-  constituency = input.required<ConstituencyModel>();
-  constituencyId = input.required<number>();
+  constituency = input<ConstituencyModel | undefined>(undefined);
+  constituencyId = input<number | undefined>(undefined);
   saveConstituency = output<ConstituencyModel>();
   goBack = output<void>();
   isSaving = input.required<boolean>();
@@ -57,7 +57,7 @@ export class Constituency implements OnInit {
     this.setBreadcrumbs(this.constituency());
 
     if (!this.isToCreate() && this.constituency()) {
-      this.constituencyForm.patchValue(this.constituency());
+      this.constituencyForm.patchValue(this.constituency()!);
     }
   }
 

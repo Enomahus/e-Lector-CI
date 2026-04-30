@@ -1,1 +1,6 @@
-<p>constituency-create works!</p>
+<app-constituency
+  (save)="saveCreation($event)"
+  (goBack)="goBack()"
+  [isSaving]="isSaving()"
+  [isToCreate]="true"
+></app-constituency>
