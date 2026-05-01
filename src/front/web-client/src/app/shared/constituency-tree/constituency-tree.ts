@@ -1,7 +1,7 @@
 import { Tree, TreeItem, TreeItemGroup } from '@angular/aria/tree';
 import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, input, output, signal } from '@angular/core';
+import { Component, effect, input, output, signal, untracked } from '@angular/core';
 import { ConstituencyNode } from '@app/models/constituency.model';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -22,6 +22,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class ConstituencyTree {
   nodes = input.required<ConstituencyNode[]>();
+  initialSelectedId = input<number | undefined>(undefined);
   // Outputs pour les actions du menu
   nodeSelected = output<ConstituencyNode>();
   editNode = output<ConstituencyNode>();
@@ -29,6 +30,15 @@ export class ConstituencyTree {
   toggleStatus = output<ConstituencyNode>();
 
   protected readonly selectedIds = signal<number[]>([]);
+
+  constructor() {
+    effect(() => {
+      const id = this.initialSelectedId();
+      if (id !== undefined) {
+        untracked(() => this.selectedIds.set([id]));
+      }
+    });
+  }
 
   //Gère le changement de sélection dans l'arborescence
   protected onSelectionChange(ids: number[]): void {

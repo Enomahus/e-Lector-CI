@@ -4,6 +4,7 @@
   <h1 class="constituency-name">{{ constituency()?.wording }}</h1>
   <app-constituency
     [constituency]="constituency()"
+    [constituencyId]="constituencyId()"
     [isSaving]="isSaving()"
     [isToCreate]="false"
     (saveConstituency)="submitedForm($event)"

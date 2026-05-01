@@ -116,18 +116,6 @@ export class PollingStation implements OnInit {
     });
   }
 
-  private mapToNode(constituency: GetConstituenciesResponse): ConstituencyNode {
-    return {
-      id: constituency.id!,
-      code: constituency.code!,
-      wording: constituency.wording!,
-      level: constituency.level!,
-      parentId: constituency.parentId ?? undefined,
-      children: constituency.children?.map((c) => this.mapToNode(c)),
-      expanded: false,
-    };
-  }
-
   onNodeSelected(info: ConstituencyNode): void {
     const votingLocationNode = info.level === 'votingLocation' ? info : null;
     if (votingLocationNode) {
@@ -150,5 +138,28 @@ export class PollingStation implements OnInit {
       }
     }
     return undefined;
+  }
+
+  private expendPathToNode(nodes: ConstituencyNode[], targetId: number): boolean {
+    for (const node of nodes) {
+      if (node.id === targetId) return true;
+      if (node.children?.length && this.expendPathToNode(node.children, targetId)) {
+        node.expanded = true;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private mapToNode(constituency: GetConstituenciesResponse): ConstituencyNode {
+    return {
+      id: constituency.id!,
+      code: constituency.code!,
+      wording: constituency.wording!,
+      level: constituency.level!,
+      parentId: constituency.parentId ?? undefined,
+      children: constituency.children?.map((c) => this.mapToNode(c)),
+      expanded: false,
+    };
   }
 }

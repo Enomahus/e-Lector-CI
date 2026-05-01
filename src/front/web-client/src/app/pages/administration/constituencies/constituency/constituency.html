@@ -2,6 +2,7 @@
   <div class="constituency-tree">
     <app-constituency-tree
       [nodes]="nodes()"
+      [initialSelectedId]="initialTreeSelectedId()"
       (nodeSelected)="onNodeSelected($event)"
     ></app-constituency-tree>
   </div>

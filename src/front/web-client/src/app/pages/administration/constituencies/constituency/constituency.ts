@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import {
   FormControl,
   NonNullableFormBuilder,
@@ -48,6 +48,7 @@ export class Constituency implements OnInit {
 
   nodes = signal<ConstituencyNode[]>([]);
   selectedNode = signal<ConstituencyNode | null>(null);
+  initialTreeSelectedId = computed(() => (!this.isToCreate() ? this.constituencyId() : undefined));
 
   private fg = inject(NonNullableFormBuilder);
   parentConstituencies = signal<ConstituencyNode[]>([]);
@@ -79,7 +80,21 @@ export class Constituency implements OnInit {
     }
     this.constituecyService.getConstituencyTree({}).subscribe((res) => {
       const parent = res.data ?? [];
-      this.nodes.set(parent.map((c) => this.mapToNode(c)));
+      const nodes = parent.map((c) => this.mapToNode(c));
+
+      if (!this.isToCreate() && this.constituencyId()) {
+        this.expandPathToNode(nodes, this.constituencyId()!);
+      }
+
+      this.nodes.set(nodes);
+
+      if (!this.isToCreate() && this.constituency()?.parentId) {
+        const parentNode = this.findNodeInTree(nodes, this.constituency()!.parentId!);
+        if (parentNode) {
+          this.parentConstituencies.set([parentNode]);
+          this.selectedNode.set(parentNode);
+        }
+      }
     });
   }
 
@@ -116,6 +131,31 @@ export class Constituency implements OnInit {
     this.constituencyForm.patchValue({ parentId: info.id, level: info.level, isActive: true });
     this.constituencyForm.get('parentId')?.markAsDirty();
     this.constituencyForm.get('isActive')?.markAsDirty();
+  }
+
+  private findNodeInTree(
+    nodes: ConstituencyNode[],
+    targetId: number,
+  ): ConstituencyNode | undefined {
+    for (const node of nodes) {
+      if (node.id === targetId) return node;
+      if (node.children?.length) {
+        const found = this.findNodeInTree(node.children, targetId);
+        if (found) return found;
+      }
+    }
+    return undefined;
+  }
+
+  private expandPathToNode(nodes: ConstituencyNode[], targetId: number): boolean {
+    for (const node of nodes) {
+      if (node.id === targetId) return true;
+      if (node.children?.length && this.expandPathToNode(node.children, targetId)) {
+        node.expanded = true;
+        return true;
+      }
+    }
+    return false;
   }
 
   private mapToNode(constituency: GetConstituenciesResponse): ConstituencyNode {

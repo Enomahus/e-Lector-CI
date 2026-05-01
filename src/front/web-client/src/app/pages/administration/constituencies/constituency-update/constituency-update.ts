@@ -3,7 +3,7 @@ import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConstituencyApiService } from '@app/services/api/constituency.api.service';
-import { ConstituencyModel } from '@app/services/nswag/api-nswag-client';
+import { ConstituencyModel, GetConstituencyResponse } from '@app/services/nswag/api-nswag-client';
 import { Loader } from '@app/shared/loader/loader';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, map, Observable, switchMap, tap } from 'rxjs';
@@ -24,7 +24,7 @@ export class ConstituencyUpdate implements OnInit {
 
   isLoading = signal(false);
   isSaving = signal(false);
-  constituency = signal<ConstituencyModel | undefined>(undefined);
+  constituency = signal<GetConstituencyResponse | undefined>(undefined);
   constituencyId = signal<number | undefined>(undefined);
   constituencyId$: Observable<number>;
 
@@ -37,6 +37,7 @@ export class ConstituencyUpdate implements OnInit {
       .pipe(
         takeUntilDestroyed(this.destroyRef), // on détruit l'abonnement lorsque le composant est détruit
         tap((constituencyId) => {
+          this.constituencyId.set(constituencyId);
           if (!constituencyId) {
             console.error('No constituency id provided from route');
             this.router.navigate(['/']);
@@ -44,12 +45,11 @@ export class ConstituencyUpdate implements OnInit {
         }), // on redirige quand l'id est null ou undefined
         filter((constituencyId) => !!constituencyId),
         tap(() => this.isLoading.set(true)),
-        switchMap((constituencyId) => this.constituencyService.getConstituency(constituencyId!)), // on récupère la circonscription
+        switchMap((constituencyId) => this.constituencyService.getConstituency(constituencyId!)),
       )
       .subscribe({
         next: (res) => {
           this.constituency.set(res.data);
-          //this.constituencyId.set(res?.data?.id);
           this.isLoading.set(false);
         },
         error: () => {

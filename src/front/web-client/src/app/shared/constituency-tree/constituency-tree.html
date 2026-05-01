@@ -13,6 +13,7 @@
         [parent]="parent"
         [value]="node.id"
         [label]="node.wording"
+        [expanded]="!!node.expanded"
         #treeItem="ngTreeItem"
         [class.is-leaf]="isLeaf(node)"
         [class.is-parent]="!isLeaf(node)"
