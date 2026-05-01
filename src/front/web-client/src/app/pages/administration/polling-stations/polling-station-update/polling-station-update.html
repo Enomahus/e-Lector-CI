@@ -4,8 +4,9 @@
   <h1 class="station-name">{{ pollingStation()?.wording }}</h1>
   <div class="polling-station-update">
     <app-polling-station
-      [station]="pollingStation()"
+      [pollingStation]="pollingStation()"
       [isSaving]="isSaving()"
+      [isToCreate]="false"
       (save)="updatePollingStation($event)"
       (goBack)="navigateToPollingStations()"
     ></app-polling-station>
