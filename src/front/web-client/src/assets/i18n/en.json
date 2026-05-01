@@ -7,6 +7,7 @@
     "edit": "Edit",
     "back": "Back",
     "cancel": "Cancel",
+    "refresh": "Refresh",
     "login": "Log in",
     "no": "No",
     "yes": "Yes",
@@ -58,12 +59,74 @@
     "DefaultRole": "Elector",
     "SuperAdminRole": "Administrator CEI"
   },
+  "constituencies": {
+    "title": "Constituencies",
+    "createConstituency": "Create a constituency",
+    "editConstituency": "Edit the constituency",
+    "name": "Constituency name",
+    "level": "Constituency level",
+    "parentConstituency": "Parent constituency",
+    "activateError": "Error activating the constituency.",
+    "deactivateError": "Error deactivating the constituency.",
+    "activated": "Constituency activated successfully",
+    "deactivated": "Constituency deactivated successfully",
+    "action": "Actions",
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "toggleEnable": "Enable",
+      "toggleDisable": "Disable"
+    }
+  },
+  "constituency": {
+    "newConstituencyTitle": "New constituency",
+    "errorCreating": "Error creating the constituency.",
+    "errorUpdating": "Error updating the constituency.",
+    "successCreating": "Constituency created successfully",
+    "successUpdating": "Constituency updated successfully",
+    "selectParent": "Select the parent constituency",
+    "selectInTree": "Select the parent constituency in the tree on the left",
+    "fields": {
+      "code": "Code",
+      "name": "Constituency",
+      "level": "Level",
+      "parentConstituency": "Parent constituency",
+      "isActive": "Active"
+    }
+  },
+  "pollingStation": {
+    "newStationTitle": "New polling station",
+    "stationNumber": "Polling station number",
+    "name": "Polling station name",
+    "votingLocation": "Voting location",
+    "municipality": "Municipality / Village",
+    "subPrefecture": "Sub-prefecture",
+    "department": "Department",
+    "region": "Region",
+    "isActive": "Active",
+    "errorCreating": "Error creating the polling station.",
+    "errorUpdating": "Error updating the polling station.",
+    "successCreating": "Polling station created successfully",
+    "successUpdating": "Polling station updated successfully",
+    "selectLocation": "Select the voting location",
+    "selectInTree": "Select the voting location in the tree on the left",
+    "fields": {
+      "stationNumber": "Polling station number",
+      "wording": "Polling station name",
+      "votingLocation": "Voting location",
+      "municipality": "Municipality / Village",
+      "subPrefecture": "Sub-prefecture",
+      "department": "Department",
+      "region": "Region",
+      "isActive": "Active"
+    }
+  },
   "pollingStations": {
     "title": "Polling Stations",
     "createPollingStation": "Create a polling station",
     "editPollingStation": "Update the polling station",
     "votingLocationName": "Voting location",
-    "stationNumber": "Polling station number",
+    "stationNumber": "Polling station",
     "municipalityName": "Municipality / Village",
     "subPrefectureName": "Sub-prefecture",
     "departmentName": "Department",
@@ -87,7 +150,6 @@
     "cancel": "Cancel"
   },
   "constituencyLevels": {
-    "country": "Country",
     "region": "Region",
     "department": "Department",
     "subPrefecture": "Sub-prefecture",

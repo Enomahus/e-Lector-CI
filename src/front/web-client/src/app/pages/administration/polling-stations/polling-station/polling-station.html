@@ -2,6 +2,7 @@
   <div class="constituency-tree">
     <app-constituency-tree
       [nodes]="nodes()"
+      [initialSelectedId]="initialTreeSelectedId()"
       (nodeSelected)="onNodeSelected($event)"
     ></app-constituency-tree>
   </div>
@@ -11,7 +12,7 @@
         <label for="stationNumber">{{ 'pollingStation.fields.stationNumber' | translate }}</label>
         <input id="stationNumber" formControlName="stationNumber" />
         @if (form.controls.stationNumber.touched && form.controls.stationNumber.errors) {
-          <ul class="form-errors">
+          <ul class="form-error">
             @if (form.controls.stationNumber.errors['required']) {
               <li>{{ 'formError.required' | translate }}</li>
             }
@@ -23,7 +24,7 @@
         <label for="wording">{{ 'pollingStation.fields.wording' | translate }}</label>
         <input id="wording" formControlName="wording" />
         @if (form.controls.wording.touched && form.controls.wording.errors) {
-          <ul class="form-errors">
+          <ul class="form-error">
             @if (form.controls.wording.errors['required']) {
               <li>{{ 'formError.required' | translate }}</li>
             }
@@ -45,7 +46,7 @@
           <small class="help-text">{{ 'pollingStation.selectInTree' | translate }}</small>
         </div>
         @if (form.controls.constituencyId.touched && form.controls.constituencyId.errors) {
-          <ul class="form-errors">
+          <ul class="form-error">
             @if (form.controls.constituencyId.errors['required']) {
               <li>{{ 'formError.required' | translate }}</li>
             }

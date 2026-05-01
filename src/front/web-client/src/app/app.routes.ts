@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
-import { Constituency } from './pages/administration/constituency/constituency';
+import { Constituencies } from './pages/administration/constituencies/constituencies';
+import { ConstituencyCreate } from './pages/administration/constituencies/constituency-create/constituency-create';
+import { ConstituencyUpdate } from './pages/administration/constituencies/constituency-update/constituency-update';
 import { PollingStationCreate } from './pages/administration/polling-stations/polling-station-create/polling-station-create';
 import { PollingStationUpdate } from './pages/administration/polling-stations/polling-station-update/polling-station-update';
 import { PollingStations } from './pages/administration/polling-stations/polling-stations';
@@ -42,9 +44,19 @@ export const routes: Routes = [
         path: 'admin',
         children: [
           {
-            path: 'constituency',
-            component: Constituency,
-            title: 'Constituency',
+            path: 'constituencies',
+            component: Constituencies,
+            title: 'Constituencies',
+          },
+          {
+            path: 'constituencies/new',
+            component: ConstituencyCreate,
+            title: 'Create constituency',
+          },
+          {
+            path: 'constituencies/:id/edit',
+            component: ConstituencyUpdate,
+            title: 'Update constituency',
           },
           {
             path: 'polling-stations',

@@ -30,8 +30,8 @@ export class PollingStationUpdate implements OnInit {
       this.isLoading.set(true);
       this.pollingSationService.getPollingStationById(stationId).subscribe({
         next: (response) => {
-          this.isLoading.set(false);
           this.pollingStation.set(response.data);
+          this.isLoading.set(false);
         },
         error: () => {
           this.isLoading.set(false);

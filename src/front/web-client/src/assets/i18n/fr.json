@@ -7,6 +7,7 @@
     "edit": "Editer",
     "back": "Retour",
     "cancel": "Annuler",
+    "refresh": "Actualiser",
     "login": "Se connecter",
     "no": "Non",
     "yes": "Oui",
@@ -83,6 +84,43 @@
     "gridError": "Une erreur est survenue lors de la récupération des données de la grille",
     "serverError": "Erreur serveur"
   },
+  "constituencies": {
+    "title": "Liste des circonscriptions",
+    "createConstituency": "Créer une circonscription",
+    "editConstituency": "Modifier la circonscription",
+    "name": "Nom de la circonscription",
+    "level": "Niveau de la circonscription",
+    "parentConstituency": "Circonscription parente",
+    "activateError": "Erreur lors de l'activation de la circonscription.",
+    "deactivateError": "Erreur lors de la désactivation de la circonscription.",
+    "activated": "Circonscription activée avec succès",
+    "deactivated": "Circonscription désactivée avec succès",
+    "action": "Actions",
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "toggleEnable": "Activer",
+      "toggleDisable": "Désactiver"
+    }
+  },
+  "constituency": {
+    "newConstituencyTitle": "Nouvelle circonscription",
+    "errorCreating": "Erreur lors de la création de la circonscription.",
+    "errorUpdating": "Erreur lors de la mise à jour de la circonscription.",
+    "successCreating": "Circonscription créée avec succès",
+    "successUpdating": "Circonscription mise à jour avec succès",
+    "errorDeleting": "Erreur lors de la suppression de la circonscription.",
+    "successDeleting": "Circonscription supprimée avec succès",
+    "selectParent": "Sélectionnez la circonscription parente",
+    "selectInTree": "Sélectionnez la circonscription parente dans l'arbre à gauche",
+    "fields": {
+      "code": "Code",
+      "name": "Circonscription",
+      "level": "Niveau",
+      "parentConstituency": "Circonscription parente",
+      "isActive": "Activé"
+    }
+  },
   "pollingStation": {
     "newStationTitle": "Nouveau bureau de vote",
     "sattionNumber": "Numéro du bureau de vote",
@@ -115,7 +153,7 @@
     "createPollingStation": "Créer un bureau de vote",
     "editPollingStation": "Modifier le bureau de vote",
     "votingLocationName": "Lieu de vote",
-    "stationNumber": "Numéro du bureau de vote",
+    "stationNumber": "Bureau",
     "municipalityName": "Commune / Village",
     "subPrefectureName": "Sous-préfecture",
     "departmentName": "Département",
@@ -139,7 +177,6 @@
     "cancel": "Annuler"
   },
   "constituencyLevels": {
-    "country": "Pays",
     "region": "Région",
     "department": "Département",
     "subPrefecture": "Sous-préfecture",

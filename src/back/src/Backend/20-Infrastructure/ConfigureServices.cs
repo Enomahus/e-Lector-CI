@@ -3,6 +3,7 @@ using Infrastructure.Configurations;
 using Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 
 namespace Infrastructure;
 
@@ -17,6 +18,17 @@ public static class ConfigureServices
 
         services.Configure<TokenConfiguration>(configuration.GetSection("JwtConfig"));
         //services.Configure<PdfPrinterConfiguration>(configuration.GetSection("Service:Print"));
+
+        if (configuration.GetValue<bool>("FixedTime") == true) 
+        {
+            services.AddSingleton<TimeProvider>(
+                (sp) => 
+                new FakeTimeProvider(new DateTimeOffset(2026, 1, 1, 10, 0, 0, TimeSpan.Zero))
+                {
+                    AutoAdvanceAmount = TimeSpan.FromMicroseconds(1),
+                }
+            );
+        }
 
         return services;
     }

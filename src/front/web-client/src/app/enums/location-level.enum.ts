@@ -1,7 +1,7 @@
 export enum LocationLevel {
-  Continent = 1,
+  Region = 1,
   Department = 2,
   SubPrefecture = 3,
-  Country = 4,
-  City = 5,
+  Municipality = 4,
+  VotationLocation = 5,
 }

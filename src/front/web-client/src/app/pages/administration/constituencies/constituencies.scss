@@ -1,0 +1,38 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 78vh;
+  background-color: #f5f7f9; // Fond légèrement grisé pour faire ressortir le cadre
+  padding: 20px;
+}
+
+.constituencies-container {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 900px; // Largeur maximale du cadre
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: absolute;
+  border: 1px solid #e0e0e0;
+
+  .title-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .constituencies-actions {
+      display: flex;
+      gap: 10px;
+    }
+  }
+
+  .tree-wrapper {
+    max-height: 900px;
+    overflow: hidden;
+  }
+}

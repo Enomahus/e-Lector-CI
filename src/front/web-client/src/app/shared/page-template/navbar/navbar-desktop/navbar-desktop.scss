@@ -8,17 +8,14 @@ $color-text-muted: #9e9e9e;
 $color-green-light: #0f8629;
 
 .navbar-desktop {
-  height: 100%;
   display: flex;
   justify-content: space-between;
+  height: 100%;
 
   .navbar-desktop-container {
     width: 100%;
-    //height: 100%;
     display: flex;
     align-items: center;
-    //justify-content: space-between;
-    //padding:  0 2px;
     gap: 12px;
 
     .brand-section {
@@ -64,20 +61,14 @@ $color-green-light: #0f8629;
     .menu {
       display: flex;
       align-items: center;
-      gap: 25px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
+      //gap: 25px;
 
       .menu-item {
-        display: flex;
-        flex-direction: column;
         align-items: center;
-        border-bottom: 3px solid transparent;
-        font-size: var(--font-size-menu);
-        justify-content: center;
+        display: flex;
         height: 100%;
-        position: relative;
+        font-size: var(--font-size-menu);
+        border-bottom: 3px solid transparent;
 
         &:hover,
         &.active {
@@ -101,7 +92,6 @@ $color-green-light: #0f8629;
           .current-username {
             font-size: 0.95rem;
             font-weight: 600;
-            //color: $color-primary;
           }
         }
 
@@ -119,7 +109,6 @@ $color-green-light: #0f8629;
         .dropdown-content {
           position: absolute;
           top: 100%;
-          //right: 0;
           display: flex;
           flex-direction: column;
           min-width: 200px;
