@@ -2,6 +2,7 @@
   <div class="constituency-tree">
     <app-constituency-tree
       [nodes]="nodes()"
+      [initialSelectedId]="initialTreeSelectedId()"
       (nodeSelected)="onNodeSelected($event)"
     ></app-constituency-tree>
   </div>
@@ -38,8 +39,13 @@
             <option [value]="null" disabled>
               {{ 'pollingStation.selectLocation' | translate }}
             </option>
-            @if (selectedNode(); as node) {
+            <!-- @if (selectedNode(); as node) {
               <option [value]="node.id" selected>{{ node.wording }}</option>
+            } -->
+            @for (node of selectedNodes(); track node.id) {
+              <option [value]="node.id" [selected]="node.id === selectedNode()?.id">
+                {{ node.wording }}
+              </option>
             }
           </select>
           <small class="help-text">{{ 'pollingStation.selectInTree' | translate }}</small>
