@@ -11,6 +11,7 @@ namespace Application.Features.Constituency.GetConstituencies
         public string Code { get; set; }
         public string Wording { get; set; }
         public LocationLevel Level { get; set; }
+        public long? ParentId { get; set; }
         public ICollection<GetConstituenciesResponse> Children { get; set; } = [];
         public ICollection<PollingStationModel> PollingStations { get; set; } = [];
 
@@ -23,6 +24,7 @@ namespace Application.Features.Constituency.GetConstituencies
                 Id = dao.Id,
                 Level = dao.Level,
                 Wording = dao.Wording,
+                ParentId = dao.ParentId,
                 Children = dao.Subconstituency?.Select(x => From(x, now)).ToList() ?? [],
                 PollingStations = dao.PollingStations?.Select(ps => PollingStationModel.FromDao(ps, now)).ToList() ?? [],
             };

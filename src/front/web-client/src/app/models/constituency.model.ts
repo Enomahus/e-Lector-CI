@@ -4,6 +4,7 @@ export interface ConstituencyNode {
   id: number;
   code: string;
   wording: string;
+  parentId?: number;
   level: LocationLevel;
   children?: ConstituencyNode[];
   expanded?: boolean;

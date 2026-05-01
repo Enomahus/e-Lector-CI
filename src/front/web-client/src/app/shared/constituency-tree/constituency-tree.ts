@@ -58,7 +58,7 @@ export class ConstituencyTree {
 
   isLeaf(node: ConstituencyNode): boolean {
     return (
-      (node.children === undefined || node.children.length === 0) && node.level === 'votingLocation'
+      node.children === undefined || node.children.length === 0 //&& node.level === 'votingLocation'
     );
   }
 

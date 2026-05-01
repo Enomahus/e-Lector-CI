@@ -122,16 +122,20 @@ export class PollingStation implements OnInit {
       code: constituency.code!,
       wording: constituency.wording!,
       level: constituency.level!,
+      parentId: constituency.parentId ?? undefined,
       children: constituency.children?.map((c) => this.mapToNode(c)),
       expanded: false,
     };
   }
 
   onNodeSelected(info: ConstituencyNode): void {
-    this.selectedNode.set(info);
-    this.form.patchValue({ constituencyId: info.id, isActive: true });
-    this.form.get('constituencyId')?.markAsDirty();
-    this.form.get('isActive')?.markAsDirty();
+    const votingLocationNode = info.level === 'votingLocation' ? info : null;
+    if (votingLocationNode) {
+      this.selectedNode.set(votingLocationNode);
+      this.form.patchValue({ constituencyId: votingLocationNode.id, isActive: true });
+      this.form.get('constituencyId')?.markAsDirty();
+      this.form.get('isActive')?.markAsDirty();
+    }
   }
 
   private findNodeById(

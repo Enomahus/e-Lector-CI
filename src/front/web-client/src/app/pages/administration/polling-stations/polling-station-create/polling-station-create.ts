@@ -18,7 +18,7 @@ export class PollingStationCreate {
 
   isSaving = signal(false);
 
-  savePollingStation(station: PollingStationModel): void {
+  submittedForm(station: PollingStationModel): void {
     this.isSaving.set(true);
     this.pollingStationService
       .createPollingStation(station, {

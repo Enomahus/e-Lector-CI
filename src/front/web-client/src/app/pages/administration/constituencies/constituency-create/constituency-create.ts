@@ -19,7 +19,7 @@ export class ConstituencyCreate {
 
   isSaving = signal(false);
 
-  saveCreation(model: ConstituencyModel): void {
+  submittedForm(model: ConstituencyModel): void {
     this.isSaving.set(true);
     this.constituencyService
       .createConstituency(model, {

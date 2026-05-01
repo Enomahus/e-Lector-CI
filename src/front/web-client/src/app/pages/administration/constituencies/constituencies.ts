@@ -83,6 +83,7 @@ export class Constituencies {
       code: constituency.code!,
       wording: constituency.wording!,
       level: constituency.level!,
+      parentId: constituency.parentId ?? undefined,
       children: constituency.children?.map((c) => this.mapToNode(c)),
       expanded: false,
     };

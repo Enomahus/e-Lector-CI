@@ -8,14 +8,28 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Breadcrumbs } from '@app/models/breadcrumb.model';
+import { ConstituencyNode } from '@app/models/constituency.model';
 import { ConstituencyApiService } from '@app/services/api/constituency.api.service';
 import { BreadcrumbService } from '@app/services/breadcrumb.service';
-import { ConstituencyModel, LocationLevel } from '@app/services/nswag/api-nswag-client';
+import {
+  ConstituencyModel,
+  GetConstituenciesResponse,
+  GetConstituencyResponse,
+  LocationLevel,
+} from '@app/services/nswag/api-nswag-client';
+import { ConstituencyTree } from '@app/shared/constituency-tree/constituency-tree';
+import { StickyButtonsContainer } from '@app/shared/sticky-buttons-container/sticky-buttons-container';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-constituency',
-  imports: [TranslateModule, CommonModule, ReactiveFormsModule],
+  imports: [
+    TranslateModule,
+    CommonModule,
+    ReactiveFormsModule,
+    ConstituencyTree,
+    StickyButtonsContainer,
+  ],
   templateUrl: './constituency.html',
   styleUrl: './constituency.scss',
 })
@@ -25,14 +39,18 @@ export class Constituency implements OnInit {
   private readonly breadcrumbService = inject(BreadcrumbService);
   private readonly route = inject(ActivatedRoute);
 
-  constituency = input<ConstituencyModel | undefined>(undefined);
+  constituency = input<GetConstituencyResponse | undefined>(undefined);
   constituencyId = input<number | undefined>(undefined);
   saveConstituency = output<ConstituencyModel>();
   goBack = output<void>();
   isSaving = input.required<boolean>();
   isToCreate = input.required<boolean>();
 
+  nodes = signal<ConstituencyNode[]>([]);
+  selectedNode = signal<ConstituencyNode | null>(null);
+
   private fg = inject(NonNullableFormBuilder);
+  parentConstituencies = signal<ConstituencyNode[]>([]);
 
   // Liste des niveaux pour le select
   levels: LocationLevel[] = [
@@ -59,6 +77,10 @@ export class Constituency implements OnInit {
     if (!this.isToCreate() && this.constituency()) {
       this.constituencyForm.patchValue(this.constituency()!);
     }
+    this.constituecyService.getConstituencyTree({}).subscribe((res) => {
+      const parent = res.data ?? [];
+      this.nodes.set(parent.map((c) => this.mapToNode(c)));
+    });
   }
 
   setBreadcrumbs(constituency: ConstituencyModel | undefined): void {
@@ -86,5 +108,25 @@ export class Constituency implements OnInit {
     this.formData.set(rawValue as ConstituencyModel);
     this.saveConstituency.emit(this.formData()!);
     this.setBreadcrumbs(this.formData()!);
+  }
+
+  onNodeSelected(info: ConstituencyNode): void {
+    this.selectedNode.set(info);
+    this.parentConstituencies.set([info]);
+    this.constituencyForm.patchValue({ parentId: info.id, level: info.level, isActive: true });
+    this.constituencyForm.get('parentId')?.markAsDirty();
+    this.constituencyForm.get('isActive')?.markAsDirty();
+  }
+
+  private mapToNode(constituency: GetConstituenciesResponse): ConstituencyNode {
+    return {
+      id: constituency.id!,
+      code: constituency.code!,
+      wording: constituency.wording!,
+      level: constituency.level!,
+      parentId: constituency.parentId ?? undefined,
+      children: constituency.children?.map((c) => this.mapToNode(c)),
+      expanded: false,
+    };
   }
 }

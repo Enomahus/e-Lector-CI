@@ -2630,6 +2630,7 @@ export interface GetConstituenciesResponse {
     code?: string;
     wording?: string;
     level?: LocationLevel;
+    parentId?: number | undefined;
     children?: GetConstituenciesResponse[];
     pollingStations?: PollingStationModel[];
 }
