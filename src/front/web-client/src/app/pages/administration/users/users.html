@@ -1,0 +1,176 @@
+<div class="users">
+  <div class="title">
+    <h1>{{ 'users.title' | translate }}</h1>
+    <a
+      mat-flat-button
+      class="btn primary2"
+      *appHasPermission="'createUser'"
+      routerLink="/admin/users/new"
+    >
+      <i class="ph ph-plus"></i>
+      {{ 'users.createUser' | translate }}
+    </a>
+  </div>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="data()" matSort class="mat-elevation-z8">
+      <ng-container matColumnDef="civility">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'users.civility' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.civility }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'users.lastName' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.lastName }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'users.firstName' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.firstName }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'users.email' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.email }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="phone">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'users.phone' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.phone }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="constituency">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'users.constituency' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.constituency }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="isActive">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'users.isActive' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.isActive }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="isAdmin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'users.isAdmin' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.isAdmin }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'users.createdAt' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.createdAt }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="authProvider">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'users.authProvider' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.authProvider }}
+        </td>
+      </ng-container>
+
+      <!-- Actions Definition -->
+      <ng-container matColumnDef="actions" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'users.action' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <div class="action-buttons">
+            <button
+              class="btn-grid btn-edit"
+              [title]="'users.actions.edit' | translate"
+              [routerLink]="['/admin/users', element.userId, 'edit']"
+            >
+              <i class="ph ph-pencil"></i>
+            </button>
+
+            <button
+              *appHasPermission="'deleteUser'"
+              class="btn-grid btn-del"
+              [title]="'users.actions.delete' | translate"
+              (click)="onDeleteUser(element)"
+            >
+              <i class="ph ph-trash"></i>
+            </button>
+
+            <button
+              *appHasPermission="'updateUser'"
+              class="btn-grid"
+              [ngClass]="{
+                'btn-disable': element.DisabledDate,
+                'btn-enable': !element.DisabledDate,
+              }"
+              [id]="'btn-disable-' + element.userId"
+              [title]="
+                element.DisabledDate
+                  ? ('users.actions.toggleEnable' | translate)
+                  : ('users.actions.toggleDisable' | translate)
+              "
+              (click)="onToggleActiveUser(element)"
+            >
+              @if (element.DisabledDate) {
+                <i class="ph ph-empty"></i>
+              } @else {
+                <i class="ph ph-check"></i>
+              }
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
+    </table>
+
+    @if (isLoadingResults()) {
+      <div class="loading-container">
+        <mat-spinner></mat-spinner>
+      </div>
+    }
+  </div>
+
+  <mat-paginator
+    [length]="resultsLength()"
+    [pageSize]="10"
+    [pageIndex]="paginator?.pageIndex ?? 0"
+    (page)="onPageChange($event)"
+    [pageSizeOptions]="[5, 15, 25, 50]"
+  >
+    ></mat-paginator
+  >
+</div>

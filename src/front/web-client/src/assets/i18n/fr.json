@@ -52,7 +52,8 @@
     "faq": "FAQ",
     "Administration": "Administration",
     "pollingStation": "Bureau de vote",
-    "constituency": "Circonscription"
+    "constituency": "Circonscription",
+    "users": "Utilisateurs"
   },
   "roles": {
     "OrganismAgentRole": "Agent d'organisme",
@@ -163,6 +164,33 @@
     "activated": "Bureau de vote activé avec succès",
     "deactivated": "Bureau de vote désactivé avec succès",
     "action": "Actions",
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "toggleEnable": "Activer",
+      "toggleDisable": "Désactiver"
+    }
+  },
+  "users": {
+    "title": "Liste des utilisateurs",
+    "createUser": "Créer un utilisateur",
+    "civility": "Civilité",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "constituency": "Circonscription",
+    "role": "Rôle",
+    "isActive": "Actif",
+    "isAdmin": "Administrateur",
+    "authProvider": "Fournisseur d'authentification",
+    "errorCreating": "Erreur lors de la création de l'utilisateur.",
+    "activateError": "Erreur lors de l'activation de l'utilisateur.",
+    "deactivateError": "Erreur lors de la désactivation de l'utilisateur.",
+    "activated": "Utilisateur activé avec succès",
+    "deactivated": "Utilisateur désactivé avec succès",
+    "action": "Actions",
+
     "actions": {
       "edit": "Modifier",
       "delete": "Supprimer",

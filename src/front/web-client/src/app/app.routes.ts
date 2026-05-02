@@ -5,6 +5,8 @@ import { ConstituencyUpdate } from './pages/administration/constituencies/consti
 import { PollingStationCreate } from './pages/administration/polling-stations/polling-station-create/polling-station-create';
 import { PollingStationUpdate } from './pages/administration/polling-stations/polling-station-update/polling-station-update';
 import { PollingStations } from './pages/administration/polling-stations/polling-stations';
+import { UserCreate } from './pages/administration/users/user-create/user-create';
+import { Users } from './pages/administration/users/users';
 import { Home } from './pages/home/home';
 import { PageTemplate } from './shared/page-template/page-template';
 
@@ -72,6 +74,21 @@ export const routes: Routes = [
             path: 'polling-stations/:id/edit',
             component: PollingStationUpdate,
             title: 'Update Polling Station',
+          },
+          {
+            path: 'users',
+            component: Users,
+            title: 'Users',
+          },
+          {
+            path: 'users/new',
+            component: UserCreate,
+            title: 'Create User',
+          },
+          {
+            path: 'users/:id/edit',
+            component: UserCreate,
+            title: 'Update User',
           },
         ],
       },

@@ -52,7 +52,8 @@
     "faq": "FAQ",
     "Administration": "Administration",
     "pollingStation": "Polling station",
-    "constituency": "Constituency"
+    "constituency": "Constituency",
+    "users": "Users"
   },
   "roles": {
     "OrganismAgentRole": "Organism agent",

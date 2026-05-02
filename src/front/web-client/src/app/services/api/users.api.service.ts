@@ -3,7 +3,9 @@ import { Observable } from 'rxjs/internal/Observable';
 import {
   CreateUserCommand,
   GetCurrentUserResponse,
+  GetUsersQuery,
   Result,
+  ResultOfPagedListOfGetUsersResponse,
   UpdateCurrentUserCommand,
   UpdateUserCommand,
   UserModel,
@@ -27,6 +29,10 @@ export class UsersApiService extends ApiBaseService {
 
   getUser(id: string, options: ApiToastOptions = {}): Observable<UserModel> {
     return this.apiClient.getUser(id).pipe(this.handleDataResult(options));
+  }
+
+  getUsers(query: GetUsersQuery): Observable<ResultOfPagedListOfGetUsersResponse> {
+    return this.apiClient.getUsers(query).pipe(this.handleResult());
   }
 
   createUser(command: CreateUserCommand, options: ApiToastOptions = {}): Observable<string> {
