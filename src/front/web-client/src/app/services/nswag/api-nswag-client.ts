@@ -650,6 +650,78 @@ export class ServerClient extends CustomApiClient {
     }
 
     /**
+     * Récupère les utilisateurs.
+     */
+    getUsers(query: GetUsersQuery): Observable<ResultOfPagedListOfGetUsersResponse> {
+        let url_ = this.baseUrl + "/users/get-users";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = this.customStringify(query);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUsers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUsers(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfPagedListOfGetUsersResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfPagedListOfGetUsersResponse>;
+        }));
+    }
+
+    protected processGetUsers(response: HttpResponseBase): Observable<ResultOfPagedListOfGetUsersResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfPagedListOfGetUsersResponse;
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result401: any = null;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result403: any = null;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * Récupère les informations de l'utilisateur connecté.
      */
     getCurrentUser(): Observable<ResultOfGetCurrentUserResponse> {
@@ -2419,6 +2491,40 @@ export interface RegisterUserCommand extends UserModel {
 
 export interface ResultOfUserModel extends Result {
     data?: UserModel | undefined;
+}
+
+export interface ResultOfPagedListOfGetUsersResponse extends Result {
+    data?: PagedListOfGetUsersResponse | undefined;
+}
+
+export interface PagedListOfGetUsersResponse {
+    items?: GetUsersResponse[];
+    totalCount?: number;
+}
+
+export interface GetUsersResponse {
+    userId?: string;
+    lastName?: string;
+    firstName?: string;
+    civility?: PersonTitle;
+    email?: string | undefined;
+    phone?: string | undefined;
+    isActive?: boolean;
+    constituency?: string | undefined;
+    canBeDeleted?: boolean;
+    canBeToggled?: boolean;
+    createdAt?: string;
+    roles?: string[] | undefined;
+    authProvider?: AuthProvider | undefined;
+}
+
+export interface GetUsersQuery {
+    constituencyId?: number | undefined;
+    sort?: string | undefined;
+    order?: string | undefined;
+    pageIndex?: number | undefined;
+    pageSize?: number;
+    search?: string | undefined;
 }
 
 export interface ResultOfGetCurrentUserResponse extends Result {

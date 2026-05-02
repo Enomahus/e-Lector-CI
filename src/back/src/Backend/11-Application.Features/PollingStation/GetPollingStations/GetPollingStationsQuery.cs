@@ -41,7 +41,7 @@ namespace Application.Features.PollingStation.GetPollingStations
             {
                 string baseSql =
                     @"
-                SELECT 
+                SELECT
                     ps.Id as StationId, ps.StationNumber, ps.Wording as StationWording, ps.DisabledDate,
                     c.Id as VotingLocationId, c.Code as VotingLocationCode, c.Wording as VotingLocationName,
                     m.Id as MunicipalityId, m.Code as MunicipalityCode, m.Wording as MunicipalityName,
@@ -121,7 +121,7 @@ namespace Application.Features.PollingStation.GetPollingStations
                     .Cast<Microsoft.Data.SqlClient.SqlParameter>()
                     .ToList();
                 finalParams.Add(
-                    new Microsoft.Data.SqlClient.SqlParameter("@Skip", query.PageIndex * query.PageSize)
+                    new Microsoft.Data.SqlClient.SqlParameter("@Skip", (query.PageIndex ?? 0) * query.PageSize)
                 );
                 finalParams.Add(new Microsoft.Data.SqlClient.SqlParameter("@Take", query.PageSize));
 
