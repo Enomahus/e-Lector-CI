@@ -8,4 +8,47 @@
     justify-content: space-between;
     align-items: center;
   }
+
+  .table-container {
+    position: relative;
+    min-height: 200px;
+    max-height: 550px;
+    overflow: auto;
+
+    table {
+      width: 100%;
+    }
+
+    .mat-column {
+      text-align: left;
+      min-width: 300px;
+    }
+    .mat-column.phone {
+      width: 450px;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .mat-mdc-row:hover {
+      background-color: rgba(24, 241, 107, 0.04);
+    }
+
+    .mat-column-actions {
+      width: 120px;
+      text-align: center;
+    }
+
+    .mat-mdc-header-row {
+      background-color: orange;
+      z-index: 100;
+    }
+
+    .loading-container {
+      z-index: 200;
+    }
+  }
 }

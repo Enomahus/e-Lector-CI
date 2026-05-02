@@ -144,6 +144,45 @@
       "toggleDisable": "Disable"
     }
   },
+  "users": {
+    "title": "Users list",
+    "createUser": "Create a user",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phone": "Phone",
+    "constituency": "Constituency",
+    "role": "RRole",
+    "isActive": "Active",
+    "isAdmin": "Administrator",
+    "createdAt": "Created at",
+    "authProvider": "Authentication provider",
+    "errorCreating": "Error creating the user.",
+    "activateError": "Error activating the user.",
+    "deactivateError": "Error deactivating the user.",
+    "activated": "User activated successfully",
+    "deactivated": "User deactivated successfully",
+    "action": "Actions",
+    "authMethods": {
+      "label": "Authentication",
+      "google": "Google",
+      "microsoft": "Microsoft",
+      "email": "Email"
+    },
+    "civility": {
+      "label": "Civility",
+      "mr": "Mr.",
+      "ms": "Ms.",
+      "other": "Other"
+    },
+
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "toggleEnable": "Enable",
+      "toggleDisable": "Disable"
+    }
+  },
   "dialog": {
     "title": "Confirmation",
     "message": "Are you sure you want to delete <strong>{{ data.name }}</strong> ?",

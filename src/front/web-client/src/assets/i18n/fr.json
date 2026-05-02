@@ -174,7 +174,6 @@
   "users": {
     "title": "Liste des utilisateurs",
     "createUser": "Créer un utilisateur",
-    "civility": "Civilité",
     "firstName": "Prénom",
     "lastName": "Nom",
     "email": "Email",
@@ -183,6 +182,7 @@
     "role": "Rôle",
     "isActive": "Actif",
     "isAdmin": "Administrateur",
+    "createdAt": "Créé le",
     "authProvider": "Fournisseur d'authentification",
     "errorCreating": "Erreur lors de la création de l'utilisateur.",
     "activateError": "Erreur lors de l'activation de l'utilisateur.",
@@ -190,6 +190,18 @@
     "activated": "Utilisateur activé avec succès",
     "deactivated": "Utilisateur désactivé avec succès",
     "action": "Actions",
+    "authMethods": {
+      "label": "Authentification",
+      "google": "Google",
+      "microsoft": "Microsoft",
+      "email": "Email"
+    },
+    "civility": {
+      "label": "Civilité",
+      "mr": "M.",
+      "ms": "Mme",
+      "other": "Autre"
+    },
 
     "actions": {
       "edit": "Modifier",

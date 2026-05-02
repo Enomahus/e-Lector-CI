@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -39,7 +39,9 @@ import {
     MatProgressSpinnerModule,
     MatIconModule,
     NgClass,
+    DatePipe,
   ],
+  providers: [DatePipe],
   templateUrl: './users.html',
   styleUrl: './users.scss',
 })
@@ -94,7 +96,7 @@ export class Users extends BaseTable<GetUsersResponse> {
       sort,
       order,
       pageIndex: page,
-      pageSize: this.paginator.pageSize ?? 20,
+      pageSize: this.paginator?.pageSize ?? 20,
       search: this.currentSearch(),
     };
     return this.userService.getUsers(query).pipe(
@@ -120,7 +122,9 @@ export class Users extends BaseTable<GetUsersResponse> {
   }
 
   onPageChange(event: PageEvent): void {
-    this.paginator.pageIndex = event.pageIndex;
+    if (this.paginator) {
+      this.paginator.pageIndex = event.pageIndex;
+    }
     this.refreshData();
   }
 }

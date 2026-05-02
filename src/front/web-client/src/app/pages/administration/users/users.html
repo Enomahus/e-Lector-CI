@@ -12,14 +12,24 @@
     </a>
   </div>
 
+  <ng-template #template let-anchor>
+    <span>{{ anchor.nativeEElement.innerText }}</span>
+  </ng-template>
+
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" #input />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
   <div class="table-container">
     <table mat-table [dataSource]="data()" matSort class="mat-elevation-z8">
       <ng-container matColumnDef="civility">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ 'users.civility' | translate }}
+          {{ 'users.civility.label' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.civility }}
+          {{ 'users.civility.' + element.civility | translate }}
         </td>
       </ng-container>
 
@@ -73,7 +83,7 @@
           {{ 'users.isActive' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.isActive }}
+          {{ element.isActive ? ('global.yes' | translate) : ('global.no' | translate) }}
         </td>
       </ng-container>
 
@@ -82,7 +92,7 @@
           {{ 'users.isAdmin' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.isAdmin }}
+          {{ element.isAdmin ? ('global.yes' | translate) : ('global.no' | translate) }}
         </td>
       </ng-container>
 
@@ -91,7 +101,7 @@
           {{ 'users.createdAt' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.createdAt }}
+          {{ element.createdAt | date: 'dd/MM/yyyy' }}
         </td>
       </ng-container>
 
@@ -100,7 +110,11 @@
           {{ 'users.authProvider' | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.authProvider }}
+          @if (element.authProvider) {
+            {{ 'users.authMethods.' + element.authProvider | translate }}
+          } @else {
+            {{ 'users.authMethods.email' | translate }}
+          }
         </td>
       </ng-container>
 
@@ -168,7 +182,6 @@
     [length]="resultsLength()"
     [pageSize]="10"
     [pageIndex]="paginator?.pageIndex ?? 0"
-    (page)="onPageChange($event)"
     [pageSizeOptions]="[5, 15, 25, 50]"
   >
     ></mat-paginator

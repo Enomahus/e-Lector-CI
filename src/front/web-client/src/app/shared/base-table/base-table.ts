@@ -27,8 +27,8 @@ export abstract class BaseTable<TResponse> implements AfterViewInit, OnDestroy {
   protected destroy$ = new Subject<void>();
   protected refresh$ = new BehaviorSubject<void>(undefined); // Permet de déclencher un rafraîchissement manuel des données
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator?: MatPaginator;
+  @ViewChild(MatSort) sort?: MatSort;
 
   abstract getData(
     sort: string,
@@ -38,17 +38,22 @@ export abstract class BaseTable<TResponse> implements AfterViewInit, OnDestroy {
   ): Observable<{ data: TResponse[]; total: number }>;
 
   ngAfterViewInit(): void {
-    // Si l'utilisateur trie, on revient à la première page
-    this.sort.sortChange
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => (this.paginator.pageIndex = 0));
+    if (!this.sort || !this.paginator) {
+      return;
+    }
 
-    merge(this.sort.sortChange, this.paginator.page, this.refresh$)
+    const sort = this.sort;
+    const paginator = this.paginator;
+
+    // Si l'utilisateur trie, on revient à la première page
+    sort.sortChange.pipe(takeUntil(this.destroy$)).subscribe(() => (paginator.pageIndex = 0));
+
+    merge(sort.sortChange, paginator.page, this.refresh$)
       .pipe(
         startWith({}),
         switchMap(() => {
           this.isLoadingResults.set(true);
-          return this.getData(this.sort.active, this.sort.direction, this.paginator.pageIndex).pipe(
+          return this.getData(sort.active, sort.direction, paginator.pageIndex).pipe(
             catchError((err) => {
               if (err.name === 'CanceledError' || err.status === 0) {
                 return EMPTY;

@@ -161,7 +161,10 @@ export class PollingStations extends BaseTable<GetPollingStationsResponse> {
   }
 
   onPageChange(event: PageEvent): void {
-    this.paginator.pageIndex = event.pageIndex;
+    if (this.paginator) {
+      this.paginator.pageIndex = event.pageIndex;
+    }
+    //this.paginator.pageIndex = event.pageIndex;
     this.refreshData();
   }
 }
