@@ -3,10 +3,7 @@ using Application.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Tools.Exceptions.Errors;
 
 namespace Application.Features.Users.CreateUser
