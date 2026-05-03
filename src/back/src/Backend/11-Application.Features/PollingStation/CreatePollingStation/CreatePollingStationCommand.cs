@@ -4,7 +4,9 @@ using Application.Models;
 using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Pcea.Core.Net.Authorization.Application.Attributes;
+using Tools.Constants;
 using Tools.Logging;
 
 namespace Application.Features.PollingStation.CreatePollingStation;
@@ -30,7 +32,8 @@ public class CreatePollingStationCommandHandler(WritableDbContext context)
 
         var newEntity = new PollingStationDao
         {
-            StationNumber = command.StationNumber!,
+            //StationNumber = command.StationNumber!,
+            StationNumber = await GetStationNumber(command.ConstituencyId, cancellationToken),
             Wording = command.Wording!,
             ConstituencyId = command.ConstituencyId,
         };
@@ -38,5 +41,19 @@ public class CreatePollingStationCommandHandler(WritableDbContext context)
         await context.SaveChangesAsync(cancellationToken);
 
         return Result<long>.From(newEntity.Id);
+    }
+
+    private async Task<string> GetStationNumber(long constituencyId, CancellationToken cancellationToken)
+    {
+        const int maxElectorsPerStation = AppConstants.MAX_ELECTORS_PER_STATION;
+
+        var totalElectors = await context.PollingStations
+            .Where(ps => ps.ConstituencyId == constituencyId)
+            .SelectMany(ps => ps.Electors)
+            .CountAsync(cancellationToken);
+
+        var stationNumber = totalElectors / maxElectorsPerStation + 1;
+
+        return $"Bureau No: {stationNumber:D2}";
     }
 }
