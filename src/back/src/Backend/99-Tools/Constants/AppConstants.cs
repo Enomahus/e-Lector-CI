@@ -11,4 +11,7 @@ public static class AppConstants
     // App links
     public const string ConfirmGuestRequestLink = "{0}/registration-request-confirm?token={1}&id={2}";
     public const string ConfirmPasswordResetLink = "{0}/reset-password?token={1}&email={2}";
+
+    // Elector by polling station
+    public const int MAX_ELECTORS_PER_STATION = 500;
 }
