@@ -15,6 +15,16 @@
     "lang": {
       "fr": "French",
       "en": "English"
+    },
+    "civility": {
+      "mr": "Mr.",
+      "mrs": "Mrs.",
+      "ms": "Ms."
+    },
+    "authProvider": {
+      "google": "Google",
+      "microsoft": "Microsoft",
+      "email": "Email"
     }
   },
   "formError": {
@@ -195,5 +205,14 @@
     "subPrefecture": "Sub-prefecture",
     "municipality": "Town / Village",
     "votingLocation": "Polling station"
+  },
+  "register": {
+    "title": "Create an account",
+    "email": "E-mail",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "register": "Register",
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Log in"
   }
 }

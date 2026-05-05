@@ -15,6 +15,16 @@
     "lang": {
       "fr": "Français",
       "en": "Anglais"
+    },
+    "civility": {
+      "mr": "M.",
+      "mrs": "Mme",
+      "ms": "Mademoiselle"
+    },
+    "authProvider": {
+      "google": "Google",
+      "microsoft": "Microsoft",
+      "email": "Email"
     }
   },
   "formError": {
@@ -177,6 +187,7 @@
     "firstName": "Prénom",
     "lastName": "Nom",
     "email": "Email",
+    "employeeNumber": "Numéro matricule",
     "phone": "Téléphone",
     "constituency": "Circonscription",
     "role": "Rôle",
@@ -222,5 +233,15 @@
     "subPrefecture": "Sous-préfecture",
     "municipality": "Commune / Village",
     "votingLocation": "Lieu de vote"
+  },
+  "register": {
+    "title": "Créer un compte",
+    "subtitle": "Je m'inscris !",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "register": "S'inscrire",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "login": "Connectez-vous"
   }
 }

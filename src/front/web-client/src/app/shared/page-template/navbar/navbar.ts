@@ -21,9 +21,12 @@ export class Navbar {
   private readonly authService = inject(AuthService);
 
   isToggleMobileMenu = signal(false);
+  isRegisterRoute = signal(false);
   userName$: Observable<string>;
 
   constructor() {
+    const isRegisterRoute = this.router.url === '/register';
+    this.isRegisterRoute.set(isRegisterRoute);
     this.userName$ = this.currentUserService.currentUserName$.pipe(
       takeUntilDestroyed(this.destroyRef),
     );

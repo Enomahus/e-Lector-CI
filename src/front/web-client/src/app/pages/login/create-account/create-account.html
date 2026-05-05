@@ -1,2 +1,145 @@
-<p>create-account works!</p>
-<p>Register a new account</p>
+<div class="register-container">
+  <div class="header">
+    <h1>{{ 'register.subtitle' | translate }}</h1>
+  </div>
+  <form [formGroup]="registerForm" class="register-form">
+    <!-- Civilité -->
+    <div class="civility-group">
+      <label class="radio-card" [class.field-error]="isFieldInvalid('civility')">
+        <input type="radio" formControlName="civility" value="mr" />
+        <span class="custom-radio"></span> {{ 'global.civility.mr' | translate }}
+      </label>
+      <label class="radio-card" [class.field-error]="isFieldInvalid('civility')">
+        <input type="radio" formControlName="civility" value="mrs" />
+        <span class="custom-radio"></span> {{ 'global.civility.mrs' | translate }}
+      </label>
+      <label class="radio-card" [class.field-error]="isFieldInvalid('civility')">
+        <input type="radio" formControlName="civility" value="ms" />
+        <span class="custom-radio"></span> {{ 'global.civility.ms' | translate }}
+      </label>
+    </div>
+
+    <!-- Nom et Prénom -->
+    <div class="row">
+      <div class="form-field">
+        <input
+          type="text"
+          required="true"
+          formControlName="lastName"
+          [class.field-error]="isFieldInvalid('lastName')"
+        />
+        <span class="highlight-span"></span>
+        <label class="lebal-email">{{ 'users.lastName' | translate }}</label>
+      </div>
+      <div class="form-field">
+        <input
+          type="text"
+          required="true"
+          formControlName="firstName"
+          [class.field-error]="isFieldInvalid('firstName')"
+        />
+        <span class="highlight-span"></span>
+        <label class="lebal-email">{{ 'users.firstName' | translate }}</label>
+      </div>
+    </div>
+
+    <!-- Téléphone et Email -->
+    <div class="row">
+      <div class="form-field">
+        <input
+          type="text"
+          formControlName="phone"
+          placeholder="Numéro de téléphone *"
+          [class.field-error]="isFieldInvalid('phone')"
+        />
+      </div>
+      <div class="form-field">
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Email *"
+          [class.field-error]="isFieldInvalid('email')"
+        />
+      </div>
+    </div>
+
+    <!-- Mots de passe -->
+    <div class="row">
+      <div class="form-field password-wrapper">
+        <input
+          [type]="hidePassword() ? 'password' : 'text'"
+          formControlName="password"
+          placeholder="Mot de passe *"
+        />
+        <i
+          [class]="hidePassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"
+          (click)="togglePassword()"
+        ></i>
+        <!-- <span class="eye-icon" (click)="togglePassword()">👁️</span> -->
+      </div>
+      <div class="form-field password-wrapper confirm-field">
+        <input
+          [type]="hideConfirmPassword() ? 'password' : 'text'"
+          formControlName="confirmPassword"
+          placeholder="Confirmation Mot de passe *"
+        />
+        <i
+          [class]="hideConfirmPassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"
+          (click)="toggleConfirmPassword()"
+        ></i>
+        <!-- <span class="eye-icon" (click)="togglePassword()">👁️</span> -->
+      </div>
+    </div>
+
+    <!-- activité user et matricule -->
+    <div class="row">
+      <div class="form-field">
+        <select
+          class="custom-select"
+          formControlName="roles"
+          [class.field-error]="isFieldInvalid('roles')"
+        >
+          <option value="" selected>Activité *</option>
+          @for (activity of activityOptions; track activity) {
+            <option [value]="activity">{{ activity }}</option>
+          }
+        </select>
+      </div>
+      @if (!isRequester()) {
+        <div class="form-field">
+          <input
+            type="text"
+            formControlName="employeeNumber"
+            placeholder="Numéro de matricule *"
+            [class.field-error]="isFieldInvalid('employeeNumber')"
+          />
+        </div>
+      }
+    </div>
+
+    <!-- Authentification -->
+    <div class="auth-group">
+      <label class="radio-card" [class.field-error]="isFieldInvalid('authProvider')">
+        <input type="radio" formControlName="authProvider" value="email" />
+        <span class="custom-radio"></span> {{ 'global.authProvider.email' | translate }}
+      </label>
+      <label class="radio-card" [class.field-error]="isFieldInvalid('authProvider')">
+        <input type="radio" formControlName="authProvider" value="google" />
+        <span class="custom-radio"></span> {{ 'global.authProvider.google' | translate }}
+      </label>
+      <label class="radio-card" [class.field-error]="isFieldInvalid('authProvider')">
+        <input type="radio" formControlName="authProvider" value="microsoft" />
+        <span class="custom-radio"></span> {{ 'global.authProvider.microsoft' | translate }}
+      </label>
+    </div>
+  </form>
+</div>
+
+<app-sticky-buttons-container>
+  <button type="button" class="btn primary" [disabled]="registerForm.invalid" (click)="onSubmit()">
+    {{ 'global.save' | translate }}
+  </button>
+  <button type="button" class="btn outline outline-primary" (click)="goBack()">
+    {{ 'global.back' | translate }}
+  </button>
+</app-sticky-buttons-container>

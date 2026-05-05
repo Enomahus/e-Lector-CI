@@ -7,7 +7,11 @@ import { PollingStationUpdate } from './pages/administration/polling-stations/po
 import { PollingStations } from './pages/administration/polling-stations/polling-stations';
 import { UserCreate } from './pages/administration/users/user-create/user-create';
 import { Users } from './pages/administration/users/users';
+import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { Home } from './pages/home/home';
+import { CreateAccount } from './pages/login/create-account/create-account';
+import { Login } from './pages/login/login';
+import { PermissionGuard } from './services/auth/permission.guard';
 import { PageTemplate } from './shared/page-template/page-template';
 
 export const routes: Routes = [
@@ -18,20 +22,13 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./pages/login/login').then((m) => m.Login),
+    component: Login,
     title: 'Login',
   },
   {
     path: 'forgot-password',
-    loadComponent: () =>
-      import('./pages/forgot-password/forgot-password').then((m) => m.ForgotPassword),
+    component: ForgotPassword,
     title: 'Forgot Password',
-  },
-  {
-    path: 'register',
-    loadComponent: () =>
-      import('./pages/login/create-account/create-account').then((m) => m.CreateAccount),
-    title: 'Create an account',
   },
   {
     path: '',
@@ -40,7 +37,13 @@ export const routes: Routes = [
       {
         path: 'home',
         component: Home,
+        canActivate: [PermissionGuard],
         title: 'Home',
+      },
+      {
+        path: 'register',
+        component: CreateAccount,
+        title: 'Create an account',
       },
       {
         path: 'admin',
@@ -48,46 +51,55 @@ export const routes: Routes = [
           {
             path: 'constituencies',
             component: Constituencies,
+            canActivate: [PermissionGuard],
             title: 'Constituencies',
           },
           {
             path: 'constituencies/new',
             component: ConstituencyCreate,
+            canActivate: [PermissionGuard],
             title: 'Create constituency',
           },
           {
             path: 'constituencies/:id/edit',
             component: ConstituencyUpdate,
+            canActivate: [PermissionGuard],
             title: 'Update constituency',
           },
           {
             path: 'polling-stations',
             component: PollingStations,
+            canActivate: [PermissionGuard],
             title: 'Polling Stations',
           },
           {
             path: 'polling-stations/new',
             component: PollingStationCreate,
+            canActivate: [PermissionGuard],
             title: 'Create Polling Station',
           },
           {
             path: 'polling-stations/:id/edit',
             component: PollingStationUpdate,
+            canActivate: [PermissionGuard],
             title: 'Update Polling Station',
           },
           {
             path: 'users',
             component: Users,
+            canActivate: [PermissionGuard],
             title: 'Users',
           },
           {
             path: 'users/new',
             component: UserCreate,
+            canActivate: [PermissionGuard],
             title: 'Create User',
           },
           {
             path: 'users/:id/edit',
             component: UserCreate,
+            canActivate: [PermissionGuard],
             title: 'Update User',
           },
         ],

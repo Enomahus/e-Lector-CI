@@ -1,11 +1,11 @@
 import {
   Component,
   DestroyRef,
-  EventEmitter,
   HostListener,
   inject,
+  input,
   Input,
-  Output,
+  output,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -21,7 +21,8 @@ import { LanguageService } from '../../../services/language.service';
 })
 export abstract class BaseNavbar {
   @Input({ required: true }) userName$!: Observable<string>;
-  @Output() logout = new EventEmitter<void>();
+  isRegister = input.required<boolean>();
+  logout = output<void>();
 
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
