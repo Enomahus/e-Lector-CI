@@ -1,4 +1,4 @@
-<!-- <div class="phone-container" [class.disabled]="disabled()">
+<div class="phone-container" [class.disabled]="disabled()">
   <div class="country-selector">
     @for (country of countries; track country.code) {
       @if (country.code === selectedCountry()) {
@@ -24,25 +24,5 @@
     [disabled]="disabled()"
     [required]="required()"
   />
-</div> -->
-
-<app-ngx-intl-tel-input
-  [cssClass]="'custom'"
-  [inputId]="labelForId"
-  [preferredCountries]="preferredCountries"
-  [enableAutoCountrySelect]="true"
-  [enablePlaceholder]="true"
-  [searchCountryFlag]="true"
-  [selectFirstCountry]="selectFirstCountry"
-  [selectedCountryISO]="selectedCountryISO"
-  [maxLength]="maxLength"
-  [phoneValidation]="false"
-  [separateDialCode]="true"
-  [disabled]="disabled"
-  [name]="name"
-  [ngModel]="value"
-  (ngModelChange)="mapChange($event)"
-  (blur)="onTouched()"
-  [required]="required"
->
-</app-ngx-intl-tel-input>
+  <span><i class="flag-icon flag-icon-fr"></i></span>
+</div>

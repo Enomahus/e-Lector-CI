@@ -53,11 +53,7 @@
     <div class="inputs-container">
       <div class="input-block required">
         <label for="phone">{{ 'users.phone' | translate }}</label>
-        <app-phone-input
-          [required]="true"
-          labelForId="phone"
-          formControlName="phone"
-        ></app-phone-input>
+        <app-phone-input [required]="true" formControlName="phone"></app-phone-input>
         @if (registerForm.controls.phone.touched && registerForm.controls.phone.errors) {
           <ul class="form-error">
             @if (registerForm.controls.phone.errors['required']) {

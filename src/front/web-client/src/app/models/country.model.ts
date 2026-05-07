@@ -8,3 +8,10 @@ export interface Country {
   flagClass: string;
   placeHolder: string;
 }
+
+export interface CountryData {
+  name: string;
+  code: string;
+  dial: string;
+  flag: string;
+}
