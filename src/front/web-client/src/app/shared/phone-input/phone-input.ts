@@ -1,4 +1,12 @@
-import { Component, forwardRef, input, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  computed,
+  forwardRef,
+  input,
+  signal,
+} from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CountryData } from '@app/models/country.model';
 import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
@@ -24,11 +32,29 @@ export class PhoneInput implements ControlValueAccessor {
   selectedCountry = signal('CI');
   disabled = signal(false);
   required = input.required<boolean>();
+  showDropdown = signal(false);
+  searchQuery = signal('');
   countries: CountryData[] = [];
 
-  constructor() {
+  filteredCountries = computed(() => {
+    const q = this.searchQuery().toLowerCase().trim();
+    if (!q) return this.countries;
+    return this.countries.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) || c.dial.includes(q) || c.code.toLowerCase().includes(q),
+    );
+  });
+
+  constructor(private elementRef: ElementRef) {
     const lang = localStorage.getItem('chosenLanguage') || 'fr';
     this.countries = getCountriesList(lang);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.closeDropdown();
+    }
   }
 
   onChange = (value: string) => {};
@@ -61,13 +87,38 @@ export class PhoneInput implements ControlValueAccessor {
     this.disabled.set(isDisabled);
   }
 
-  onCountryChange(event: any): void {
-    this.selectedCountry.set(event.target.value);
+  toggleDropdown(): void {
+    if (!this.disabled()) {
+      this.showDropdown.update((v) => !v);
+      if (!this.showDropdown()) {
+        this.searchQuery.set('');
+      }
+    }
+  }
+
+  closeDropdown(): void {
+    this.showDropdown.set(false);
+    this.searchQuery.set('');
+  }
+
+  selectCountry(code: string): void {
+    this.selectedCountry.set(code);
+    this.closeDropdown();
     this.triggerChange();
   }
 
+  onSearchInput(event: any): void {
+    this.searchQuery.set(event.target.value);
+  }
+
+  getSelectedFlag(): string {
+    return this.countries.find((c) => c.code === this.selectedCountry())?.flag ?? '';
+  }
+
   onNumberInput(event: any): void {
-    this.phoneNumber.set(event.target.value);
+    const digits = event.target.value.replace(/\D/g, '');
+    event.target.value = digits;
+    this.phoneNumber.set(digits);
     this.triggerChange();
   }
 
@@ -97,49 +148,4 @@ export class PhoneInput implements ControlValueAccessor {
     const country = this.countries.find((c) => c.code === this.selectedCountry());
     return country ? country.dial : '';
   }
-
-  // @Input()
-  // preferredCountries: CountryISO[] = ['fr'];
-
-  // @Input()
-  // selectFirstCountry = false;
-
-  // @Input()
-  // maxLength = 15;
-
-  // @Input()
-  // required = true;
-
-  // @Input({ required: true }) labelForId!: string;
-
-  // @Input()
-  // // This needs to be changed if multiple phone inputs are present at the same time.
-  // name: string = 'phone';
-
-  // selectedCountryISO: CountryISO = 'fr';
-  // disabled = false;
-  // value?: string;
-
-  // onChange = (_?: string) => {};
-  // onTouched = () => {};
-
-  // writeValue(obj?: string): void {
-  //   this.value = obj;
-  // }
-  // registerOnChange(fn: (_?: string) => {}): void {
-  //   this.onChange = fn;
-  // }
-  // registerOnTouched(fn: () => {}): void {
-  //   this.onTouched = fn;
-  // }
-  // setDisabledState?(isDisabled: boolean): void {
-  //   this.disabled = isDisabled;
-  // }
-
-  // mapChange(ev?: ChangeData): void {
-  //   if (ev && this.value !== ev?.internationalNumber) {
-  //     this.writeValue(ev?.internationalNumber);
-  //     this.onChange(ev?.internationalNumber);
-  //   }
-  // }
 }

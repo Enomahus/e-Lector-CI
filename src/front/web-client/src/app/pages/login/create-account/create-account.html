@@ -205,6 +205,8 @@
   </form>
 </div>
 
+<pre>{{ registerForm.value | json }}</pre>
+
 <app-sticky-buttons-container>
   <button type="button" class="btn primary" [disabled]="registerForm.invalid" (click)="onSubmit()">
     {{ 'global.save' | translate }}

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -12,7 +12,14 @@ export type Activity = 'demandeur' | 'agent' | 'administrateur';
 
 @Component({
   selector: 'app-create-account',
-  imports: [TranslateModule, CommonModule, ReactiveFormsModule, StickyButtonsContainer, PhoneInput],
+  imports: [
+    TranslateModule,
+    CommonModule,
+    ReactiveFormsModule,
+    StickyButtonsContainer,
+    PhoneInput,
+    JsonPipe,
+  ],
   templateUrl: './create-account.html',
   styleUrl: './create-account.scss',
 })
