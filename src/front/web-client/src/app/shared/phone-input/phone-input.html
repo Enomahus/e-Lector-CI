@@ -1,0 +1,48 @@
+<!-- <div class="phone-container" [class.disabled]="disabled()">
+  <div class="country-selector">
+    @for (country of countries; track country.code) {
+      @if (country.code === selectedCountry()) {
+        <span class="selected-flag">{{ country.flag }}</span>
+      }
+    }
+    <span class="dial-code">+{{ getDialCode() }}</span>
+    <select [value]="selectedCountry()" (change)="onCountryChange($event)" [disabled]="disabled()">
+      @for (country of countries; track country.code) {
+        <option value="{{ country.code }}">
+          {{ country.flag }} {{ country.name }} (+{{ country.dial }})
+        </option>
+      }
+    </select>
+    <span class="dropdown-arrow">▼</span>
+  </div>
+
+  <input
+    type="tel"
+    [value]="phoneNumber()"
+    (input)="onNumberInput($event)"
+    (blur)="onTouched()"
+    [disabled]="disabled()"
+    [required]="required()"
+  />
+</div> -->
+
+<app-ngx-intl-tel-input
+  [cssClass]="'custom'"
+  [inputId]="labelForId"
+  [preferredCountries]="preferredCountries"
+  [enableAutoCountrySelect]="true"
+  [enablePlaceholder]="true"
+  [searchCountryFlag]="true"
+  [selectFirstCountry]="selectFirstCountry"
+  [selectedCountryISO]="selectedCountryISO"
+  [maxLength]="maxLength"
+  [phoneValidation]="false"
+  [separateDialCode]="true"
+  [disabled]="disabled"
+  [name]="name"
+  [ngModel]="value"
+  (ngModelChange)="mapChange($event)"
+  (blur)="onTouched()"
+  [required]="required"
+>
+</app-ngx-intl-tel-input>

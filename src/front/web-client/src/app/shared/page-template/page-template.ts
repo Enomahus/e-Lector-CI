@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { Breadcrumb } from './breadcrumb/breadcrumb';
 import { Footer } from './footer/footer';
 import { Navbar } from './navbar/navbar';
@@ -10,4 +10,8 @@ import { Navbar } from './navbar/navbar';
   templateUrl: './page-template.html',
   styleUrl: './page-template.scss',
 })
-export class PageTemplate {}
+export class PageTemplate {
+  private readonly router = inject(Router);
+
+  isRegisterRoute = signal(this.router.url === '/register');
+}

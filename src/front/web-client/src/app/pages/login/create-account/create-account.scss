@@ -1,14 +1,3 @@
-// .create-account-container {
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   padding: 2rem;
-
-.group {
-  flex: 1;
-  position: relative;
-}
-
 .register-container {
   display: flex;
   flex-direction: column;
@@ -43,93 +32,50 @@
 
   .register-form {
     width: 100%;
-  }
 
-  .row {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-
-    .main-input {
-      font-size: 16px;
-      padding: 10px 10px 10px 5px;
-      display: block;
-      width: 185px;
-      border: none;
-      border-bottom: 1px solid #6c6c6c;
-      background: transparent;
-      //color: #ffffff;
-    }
-    .main-input:focus {
-      outline: none;
-      border-bottom-color: #e7b309;
-    }
-    .lebal-email {
-      color: #999999;
-      font-size: 18px;
-      font-weight: normal;
-      position: absolute;
-      pointer-events: none;
-      left: 5px;
-      top: 10px;
-      transition: 0.2s ease all;
-      -moz-transition: 0.2s ease all;
-      -webkit-transition: 0.2s ease all;
+    .civility-group {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 25px;
     }
 
-    .main-input:focus ~ .lebal-email,
-    .main-input:valid ~ .lebal-email {
-      top: -20px;
-      font-size: 14px;
-      color: #09e19c;
-    }
-
-    highlight-span {
-      position: absolute;
-      height: 60%;
-      width: 0px;
-      top: 25%;
-      left: 0;
-      pointer-events: none;
-      opacity: 0.5;
-    }
-
-    .main-input:focus ~ .highlight-span {
-      -webkit-animation: input-focus 0.3s ease;
-      animation: input-focus 0.3s ease;
-    }
-
-    .form-field {
+    .radio-card {
       flex: 1;
+      display: flex;
+      gap: 8px;
+      margin: 0 5px;
+      border: 1px solid #ccc;
+      padding: 12px;
+      border-radius: 8px;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .password-container {
       position: relative;
+      display: flex;
+      align-items: center;
 
-      input.field-error,
-      select.field-error {
-        border: 1px solid #e74c3c !important;
-        background-color: #fff6f6;
-      }
-
-      /* Bordure rouge pour les cartes radio */
-      .radio-card.card-error {
-        border: 1px solid #e74c3c;
-        background-color: #fff6f6;
-      }
-
-      .custom-select {
-        flex: 0.5 !important;
+      input {
         width: 100%;
-        padding: 8px 4px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        box-sizing: border-box;
-        background-color: white;
+        padding: 0.5rem 2.5rem 0.5rem 0.5rem;
       }
-    }
-    .col-small {
-      flex: 0.3;
-    }
-    .col-large {
-      flex: 0.7;
+
+      .toggle-password {
+        position: absolute;
+        right: 0.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: var(--primary-title-color);
+        i {
+          pointer-events: none;
+        }
+      }
     }
   }
 
@@ -142,93 +88,4 @@
     border-radius: 6px;
     box-sizing: border-box;
   }
-
-  .civility-group {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 25px;
-  }
-  .auth-group {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 25px;
-  }
-
-  .radio-card {
-    flex: 1;
-    margin: 0 5px;
-    border: 1px solid #ccc;
-    padding: 12px;
-    border-radius: 8px;
-    background: white;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    color: #999;
-  }
-
-  .custom-radio {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #ccc;
-    border-radius: 50%;
-    margin-right: 10px;
-    display: inline-block;
-  }
-
-  input[type='radio']:checked + .custom-radio {
-    border-color: #34495e;
-    background: radial-gradient(#34495e 50%, transparent 50%);
-  }
-
-  input[type='radio'] {
-    display: none;
-  }
-
-  .password-wrapper .eye-icon {
-    position: absolute;
-    right: 10px;
-    top: 12px;
-    cursor: pointer;
-  }
-
-  .confirm-field input {
-    background-color: #dcdcdc;
-  }
-
-  .hint {
-    color: #666;
-    font-size: 0.8em;
-    display: block;
-    margin-bottom: 20px;
-    font-weight: bold;
-  }
-
-  .btn-valider {
-    width: 100%;
-    padding: 15px;
-    background-color: #8e8e8e;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 1.1em;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-
-  .btn-valider:enabled {
-    background-color: #7f8c8d;
-  }
-
-  .footer-text {
-    text-align: center;
-    margin-top: 20px;
-  }
-  .login-link {
-    color: #e67e22;
-    font-weight: bold;
-    cursor: pointer;
-  }
 }
-//}

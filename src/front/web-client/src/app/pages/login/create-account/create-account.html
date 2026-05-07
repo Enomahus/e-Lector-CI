@@ -5,132 +5,206 @@
   <form [formGroup]="registerForm" class="register-form">
     <!-- Civilité -->
     <div class="civility-group">
-      <label class="radio-card" [class.field-error]="isFieldInvalid('civility')">
+      <label class="radio radio-card">
         <input type="radio" formControlName="civility" value="mr" />
-        <span class="custom-radio"></span> {{ 'global.civility.mr' | translate }}
+        <span>{{ 'global.civility.mr' | translate }}</span>
       </label>
-      <label class="radio-card" [class.field-error]="isFieldInvalid('civility')">
+      <label class="radio radio-card">
         <input type="radio" formControlName="civility" value="mrs" />
-        <span class="custom-radio"></span> {{ 'global.civility.mrs' | translate }}
+        <span>{{ 'global.civility.mrs' | translate }}</span>
       </label>
-      <label class="radio-card" [class.field-error]="isFieldInvalid('civility')">
+      <label class="radio radio-card">
         <input type="radio" formControlName="civility" value="ms" />
-        <span class="custom-radio"></span> {{ 'global.civility.ms' | translate }}
+        <span>{{ 'global.civility.ms' | translate }}</span>
       </label>
     </div>
 
     <!-- Nom et Prénom -->
-    <div class="row">
-      <div class="form-field">
-        <input
-          type="text"
-          required="true"
-          formControlName="lastName"
-          [class.field-error]="isFieldInvalid('lastName')"
-        />
-        <span class="highlight-span"></span>
-        <label class="lebal-email">{{ 'users.lastName' | translate }}</label>
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="lastName">{{ 'users.lastName' | translate }}</label>
+        <input type="text" id="lastName" formControlName="lastName" />
+        @if (registerForm.controls.lastName.touched && registerForm.controls.lastName.errors) {
+          <ul class="form-error">
+            @if (registerForm.controls.lastName.errors['required']) {
+              <li>
+                {{ 'formError.required' | translate }}
+              </li>
+            }
+          </ul>
+        }
       </div>
-      <div class="form-field">
-        <input
-          type="text"
-          required="true"
-          formControlName="firstName"
-          [class.field-error]="isFieldInvalid('firstName')"
-        />
-        <span class="highlight-span"></span>
-        <label class="lebal-email">{{ 'users.firstName' | translate }}</label>
+      <div class="input-block required">
+        <label for="firstName">{{ 'users.firstName' | translate }}</label>
+        <input type="text" id="firstName" formControlName="firstName" />
+        @if (registerForm.controls.firstName.touched && registerForm.controls.firstName.errors) {
+          <ul class="form-error">
+            @if (registerForm.controls.firstName.errors['required']) {
+              <li>
+                {{ 'formError.required' | translate }}
+              </li>
+            }
+          </ul>
+        }
       </div>
     </div>
 
     <!-- Téléphone et Email -->
-    <div class="row">
-      <div class="form-field">
-        <input
-          type="text"
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="phone">{{ 'users.phone' | translate }}</label>
+        <app-phone-input
+          [required]="true"
+          labelForId="phone"
           formControlName="phone"
-          placeholder="Numéro de téléphone *"
-          [class.field-error]="isFieldInvalid('phone')"
-        />
+        ></app-phone-input>
+        @if (registerForm.controls.phone.touched && registerForm.controls.phone.errors) {
+          <ul class="form-error">
+            @if (registerForm.controls.phone.errors['required']) {
+              <li>
+                {{ 'formError.required' | translate }}
+              </li>
+            }
+            @if (registerForm.controls.phone.errors['pattern']) {
+              <li>
+                {{ 'formError.phoneInvalid' | translate }}
+              </li>
+            }
+          </ul>
+        }
       </div>
-      <div class="form-field">
-        <input
-          type="email"
-          formControlName="email"
-          placeholder="Email *"
-          [class.field-error]="isFieldInvalid('email')"
-        />
+      <div class="input-block required">
+        <label for="email">{{ 'users.email' | translate }}</label>
+        <input type="email" id="email" formControlName="email" />
+        @if (registerForm.controls.email.touched && registerForm.controls.email.errors) {
+          <ul class="form-error">
+            @if (registerForm.controls.email.errors['required']) {
+              <li>
+                {{ 'formError.required' | translate }}
+              </li>
+            }
+            @if (registerForm.controls.email.errors['email']) {
+              <li>
+                {{ 'formError.emailInvalid' | translate }}
+              </li>
+            }
+          </ul>
+        }
       </div>
     </div>
 
     <!-- Mots de passe -->
-    <div class="row">
-      <div class="form-field password-wrapper">
-        <input
-          [type]="hidePassword() ? 'password' : 'text'"
-          formControlName="password"
-          placeholder="Mot de passe *"
-        />
-        <i
-          [class]="hidePassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"
-          (click)="togglePassword()"
-        ></i>
-        <!-- <span class="eye-icon" (click)="togglePassword()">👁️</span> -->
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="password">{{ 'users.password' | translate }}</label>
+        <div class="password-container">
+          <input
+            id="password"
+            [type]="hidePassword() ? 'password' : 'text'"
+            formControlName="password"
+          />
+          <button type="button" class="toggle-password" (click)="togglePassword()">
+            <i [class]="hidePassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"></i>
+          </button>
+        </div>
+        @if (registerForm.controls.password.touched && registerForm.controls.password.errors) {
+          <ul class="form-error">
+            @if (registerForm.controls.password.errors['required']) {
+              <li>
+                {{ 'formError.required' | translate }}
+              </li>
+            }
+          </ul>
+        }
       </div>
-      <div class="form-field password-wrapper confirm-field">
-        <input
-          [type]="hideConfirmPassword() ? 'password' : 'text'"
-          formControlName="confirmPassword"
-          placeholder="Confirmation Mot de passe *"
-        />
-        <i
-          [class]="hideConfirmPassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"
-          (click)="toggleConfirmPassword()"
-        ></i>
-        <!-- <span class="eye-icon" (click)="togglePassword()">👁️</span> -->
+
+      <div class="input-block required">
+        <label for="confirmPassword">{{ 'users.confirmPassword' | translate }}</label>
+        <div class="password-container">
+          <input
+            id="confirmPassword"
+            [type]="hideConfirmPassword() ? 'password' : 'text'"
+            formControlName="confirmPassword"
+          />
+          <button type="button" class="toggle-password" (click)="toggleConfirmPassword()">
+            <i [class]="hideConfirmPassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"></i>
+          </button>
+        </div>
+        @if (
+          registerForm.controls.confirmPassword.touched &&
+          registerForm.controls.confirmPassword.errors
+        ) {
+          <ul class="form-error">
+            @if (registerForm.controls.confirmPassword.errors['required']) {
+              <li>
+                {{ 'formError.required' | translate }}
+              </li>
+            }
+          </ul>
+        }
       </div>
     </div>
 
     <!-- activité user et matricule -->
-    <div class="row">
-      <div class="form-field">
-        <select
-          class="custom-select"
-          formControlName="roles"
-          [class.field-error]="isFieldInvalid('roles')"
-        >
-          <option value="" selected>Activité *</option>
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="roles-select">{{ 'users.role' | translate }}</label>
+        <select id="roles-select" formControlName="roles">
+          <option value="">Activité</option>
           @for (activity of activityOptions; track activity) {
             <option [value]="activity">{{ activity }}</option>
           }
         </select>
       </div>
       @if (!isRequester()) {
-        <div class="form-field">
-          <input
-            type="text"
-            formControlName="employeeNumber"
-            placeholder="Numéro de matricule *"
-            [class.field-error]="isFieldInvalid('employeeNumber')"
-          />
+        <div class="input-block required">
+          <label for="employeeNumber">{{ 'users.employeeNumber' | translate }}</label>
+          <input type="text" id="employeeNumber" formControlName="employeeNumber" />
+          @if (
+            registerForm.controls.employeeNumber.touched &&
+            registerForm.controls.employeeNumber.errors
+          ) {
+            <ul class="form-error">
+              @if (registerForm.controls.employeeNumber.errors['required']) {
+                <li>
+                  {{ 'formError.required' | translate }}
+                </li>
+              }
+            </ul>
+          }
         </div>
       }
     </div>
 
     <!-- Authentification -->
-    <div class="auth-group">
-      <label class="radio-card" [class.field-error]="isFieldInvalid('authProvider')">
-        <input type="radio" formControlName="authProvider" value="email" />
-        <span class="custom-radio"></span> {{ 'global.authProvider.email' | translate }}
-      </label>
-      <label class="radio-card" [class.field-error]="isFieldInvalid('authProvider')">
-        <input type="radio" formControlName="authProvider" value="google" />
-        <span class="custom-radio"></span> {{ 'global.authProvider.google' | translate }}
-      </label>
-      <label class="radio-card" [class.field-error]="isFieldInvalid('authProvider')">
-        <input type="radio" formControlName="authProvider" value="microsoft" />
-        <span class="custom-radio"></span> {{ 'global.authProvider.microsoft' | translate }}
-      </label>
+    <div class="input-block">
+      <div class="label-container">
+        <span class="label">{{ 'users.authMethods.label' | translate }}</span>
+      </div>
+      <div class="options-container">
+        <label for="email-method" class="radio">
+          <input type="radio" id="email-method" [value]="null" formControlName="authProvider" />
+          {{ 'users.authMethods.email' | translate }}
+        </label>
+        <label for="microsoft-method" class="radio">
+          <input
+            type="radio"
+            id="microsoft-method"
+            [value]="'microsoft'"
+            formControlName="authProvider"
+          />
+          {{ 'users.authMethods.microsoft' | translate }}
+        </label>
+        <label for="google-method" class="radio">
+          <input
+            type="radio"
+            id="google-method"
+            [value]="'google'"
+            formControlName="authProvider"
+          />
+          {{ 'users.authMethods.google' | translate }}
+        </label>
+      </div>
     </div>
   </form>
 </div>

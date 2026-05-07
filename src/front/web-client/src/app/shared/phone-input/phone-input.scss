@@ -1,0 +1,76 @@
+:host {
+  display: block;
+  font-family: sans-serif;
+}
+
+.phone-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-bottom-color: #2196f3; // Accent bleu au focus
+  }
+
+  &.is-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .country-selector {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    cursor: pointer;
+
+    .selected-flag {
+      font-size: 1.2rem;
+    }
+
+    .dial-code {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .dropdown-arrow {
+      font-size: 8px;
+      color: #666;
+      margin-left: 2px;
+    }
+
+    select {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0; // On cache le select mais il reste cliquable
+      cursor: pointer;
+    }
+  }
+
+  input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: #333;
+    width: 100%;
+    letter-spacing: 0.5px;
+
+    &::placeholder {
+      color: #bdbdbd;
+    }
+  }
+
+  input[type='tel'] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+}

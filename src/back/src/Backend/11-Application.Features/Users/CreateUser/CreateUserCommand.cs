@@ -1,6 +1,5 @@
 ﻿using Application.Common.Enums;
 using Application.Features.Users.Common;
-using Application.Interfaces.Services;
 using Application.Models;
 using Application.Models.Errors;
 using FluentValidation;
