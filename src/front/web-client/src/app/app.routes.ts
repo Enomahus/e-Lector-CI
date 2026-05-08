@@ -11,6 +11,7 @@ import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { Home } from './pages/home/home';
 import { CreateAccount } from './pages/login/create-account/create-account';
 import { Login } from './pages/login/login';
+import { MyAccountUi } from './pages/my-account-ui/my-account-ui';
 import { PermissionGuard } from './services/auth/permission.guard';
 import { PageTemplate } from './shared/page-template/page-template';
 
@@ -103,6 +104,12 @@ export const routes: Routes = [
             title: 'Update User',
           },
         ],
+      },
+      {
+        path: 'my-account',
+        component: MyAccountUi,
+        canActivate: [PermissionGuard],
+        title: 'My Account',
       },
     ],
   },

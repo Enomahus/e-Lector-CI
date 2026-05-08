@@ -59,7 +59,7 @@
     </ul>
 
     <ul class="menu menu-user">
-      @if (userName$ | async; as userName) {
+      @if (userName$() | async; as userName) {
         <li class="menu-item" [routerLinkActive]="'active'">
           <a class="menu-item-interaction user" routerLink="my-account">
             <i class="ph ph-user"></i>

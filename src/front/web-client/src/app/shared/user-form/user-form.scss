@@ -1,0 +1,70 @@
+:host {
+  height: 100%; /* Prend toute la hauteur du parent */
+  max-height: 250px; /* Ou limite à la hauteur de l'écran */
+  display: flex;
+  flex-direction: column;
+}
+.user-form-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+  padding: 16px;
+
+  .constituency-tree {
+    flex: 1;
+    min-width: 300px;
+    border-right: 1px solid #eee;
+    height: 50%;
+  }
+  .user-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .civility-group {
+      display: flex;
+      justify-content: space-between;
+
+      .radio-card {
+        flex: 1;
+        display: flex;
+        gap: 8px;
+        margin: 0 5px;
+        border: 1px solid #ccc;
+        padding: 12px;
+        border-radius: 8px;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        color: #999;
+      }
+    }
+
+    .password-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      input {
+        width: 100%;
+        padding: 0.5rem 2.5rem 0.5rem 0.5rem;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 0.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: var(--primary-title-color);
+        i {
+          pointer-events: none;
+        }
+      }
+    }
+  }
+}

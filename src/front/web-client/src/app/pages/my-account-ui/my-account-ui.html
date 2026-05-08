@@ -1,0 +1,14 @@
+<h1 class="title-my-account">{{ 'users.myInformations' | translate }}</h1>
+@if (!isLoading()) {
+  <app-user-form
+    [isSaving]="isSaving()"
+    [constituencyId]="constituencyId()"
+    [isUpdate]="true"
+    [form]="form"
+    (formSubmitted)="updateMyAccountInformations($event)"
+    (goBack)="reloadUi()"
+  >
+  </app-user-form>
+} @else {
+  <app-loader></app-loader>
+}

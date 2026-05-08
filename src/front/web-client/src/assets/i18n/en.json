@@ -172,6 +172,7 @@
     "deactivateError": "Error deactivating the user.",
     "activated": "User activated successfully",
     "deactivated": "User deactivated successfully",
+    "myInformations": "Update my informations",
     "action": "Actions",
     "authMethods": {
       "label": "Authentication",
@@ -185,12 +186,16 @@
       "ms": "Ms.",
       "other": "Other"
     },
-
     "actions": {
       "edit": "Edit",
       "delete": "Delete",
       "toggleEnable": "Enable",
       "toggleDisable": "Disable"
+    },
+    "form": {
+      "updateMyInformationsSuccess": "Information updated successfully",
+      "updateError": "Error updating the user",
+      "updateSuccess": "User updated successfully"
     }
   },
   "dialog": {

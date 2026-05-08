@@ -8,5 +8,5 @@ import { Component, input } from '@angular/core';
 })
 export class Loader {
   message = input<string | null>(null);
-  size = input<number>(24);
+  size = input<number>(10);
 }

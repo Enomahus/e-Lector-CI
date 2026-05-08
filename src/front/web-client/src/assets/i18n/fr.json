@@ -33,7 +33,9 @@
     "positiveNumber": "Doit être un nombre supérieur à zéro",
     "passwordFormat": "Le mot de passe doit contenir entre 8 et 24 caractères et avoir au moins une lettre minuscule, une lettre majuscule, un chiffre et un caracère spécial",
     "passwordMismatch": "Les mots de passe ne correspondent pas",
-    "emailUnique": "Cet e-mail existe déjà. Merci d'utiliser un autre e-mail"
+    "emailUnique": "Cet e-mail existe déjà. Merci d'utiliser un autre e-mail",
+    "employeeNumberUnique": "Ce numéro matricule existe déjà.",
+    "phoneInvalid": "Le numéro de téléphone n'est pas au bon format"
   },
   "login": {
     "email": "E-mail",
@@ -202,6 +204,7 @@
     "deactivateError": "Erreur lors de la désactivation de l'utilisateur.",
     "activated": "Utilisateur activé avec succès",
     "deactivated": "Utilisateur désactivé avec succès",
+    "myInformations": "Modifier mes informations",
     "action": "Actions",
     "authMethods": {
       "label": "Authentification",
@@ -215,12 +218,17 @@
       "ms": "Mme",
       "other": "Autre"
     },
-
     "actions": {
       "edit": "Modifier",
       "delete": "Supprimer",
       "toggleEnable": "Activer",
       "toggleDisable": "Désactiver"
+    },
+    "form": {
+      "personalInformation": "Informations personnelles",
+      "updateMyInformationsSuccess": "Informations modifiées avec succès",
+      "updateError": "Erreur lors de la mise à jour de l'utilisateur",
+      "updateSuccess": "Utilisateur mis à jour avec succès"
     }
   },
   "dialog": {

@@ -65,7 +65,7 @@
           </div>
         }
       </li>
-      @if (userName$ | async; as userName) {
+      @if (userName$() | async; as userName) {
         <li class="menu-item" [routerLinkActive]="'active'">
           <a class="menu-item-interaction" routerLink="my-account">
             <span class="current-username">{{ userName }}</span>
