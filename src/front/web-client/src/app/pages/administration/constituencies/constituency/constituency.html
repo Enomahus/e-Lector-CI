@@ -8,71 +8,86 @@
   </div>
   <div class="constituency-form">
     <form [formGroup]="constituencyForm" (ngSubmit)="save()">
-      <div class="input-block required">
-        <label for="code">{{ 'constituency.fields.code' | translate }}</label>
-        <input id="code" formControlName="code" class="form-control" />
-        @if (constituencyForm.controls.code.touched && constituencyForm.controls.code.errors) {
-          <ul class="form-error">
-            @if (constituencyForm.controls.code.errors['required']) {
-              <li>{{ 'formError.required' | translate }}</li>
-            }
-          </ul>
-        }
-      </div>
-
-      <div class="input-block required">
-        <label for="wording">{{ 'constituency.fields.name' | translate }}</label>
-        <input id="wording" formControlName="wording" class="form-control" />
-        @if (
-          constituencyForm.controls.wording.touched && constituencyForm.controls.wording.errors
-        ) {
-          <ul class="form-error">
-            @if (constituencyForm.controls.wording.errors['required']) {
-              <li>{{ 'formError.required' | translate }}</li>
-            }
-          </ul>
-        }
-      </div>
-
-      <div class="input-block required">
-        <label for="level">{{ 'constituency.fields.level' | translate }}</label>
-        <select id="level" formControlName="level" class="form-control">
-          @for (lvl of levels; track lvl) {
-            <option [value]="lvl">{{ 'constituencyLevels.' + lvl | translate }}</option>
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="code">{{ 'constituency.fields.code' | translate }}</label>
+          <input id="code" formControlName="code" class="form-control" />
+          @if (constituencyForm.controls.code.touched && constituencyForm.controls.code.errors) {
+            <ul class="form-error">
+              @if (constituencyForm.controls.code.errors['required']) {
+                <li>{{ 'formError.required' | translate }}</li>
+              }
+            </ul>
           }
-        </select>
+        </div>
       </div>
 
-      <div class="input-block required">
-        <label for="parentId">{{ 'constituency.fields.parentConstituency' | translate }}</label>
-        <select id="parentId" formControlName="parentId" class="form-control">
-          @for (constituency of parentConstituencies(); track constituency.id) {
-            <option [value]="constituency.id">{{ constituency.wording }}</option>
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="wording">{{ 'constituency.fields.name' | translate }}</label>
+          <input id="wording" formControlName="wording" class="form-control" />
+          @if (
+            constituencyForm.controls.wording.touched && constituencyForm.controls.wording.errors
+          ) {
+            <ul class="form-error">
+              @if (constituencyForm.controls.wording.errors['required']) {
+                <li>{{ 'formError.required' | translate }}</li>
+              }
+            </ul>
           }
-        </select>
-        @if (
-          constituencyForm.controls.parentId.touched && constituencyForm.controls.parentId.errors
-        ) {
-          <ul class="form-error">
-            @if (constituencyForm.controls.parentId.errors['required']) {
-              <li>{{ 'formError.required' | translate }}</li>
-            }
-          </ul>
-        }
+        </div>
       </div>
 
-      <div class="input-block required">
-        <label for="isActive">{{ 'constituency.fields.isActive' | translate }}</label>
-        <input id="isActive" formControlName="isActive" type="checkbox" class="form-check-input" />
-        @if (
-          constituencyForm.controls.isActive.touched && constituencyForm.controls.isActive.errors
-        ) {
-          <ul class="form-errors">
-            @if (constituencyForm.controls.isActive.errors['required']) {
-              <li>{{ 'formError.required' | translate }}</li>
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="level">{{ 'constituency.fields.level' | translate }}</label>
+          <select id="level" formControlName="level" class="form-control">
+            @for (lvl of levels; track lvl) {
+              <option [value]="lvl">{{ 'constituencyLevels.' + lvl | translate }}</option>
             }
-          </ul>
-        }
+          </select>
+        </div>
+      </div>
+
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="parentId">{{ 'constituency.fields.parentConstituency' | translate }}</label>
+          <select id="parentId" formControlName="parentId" class="form-control">
+            @for (constituency of parentConstituencies(); track constituency.id) {
+              <option [value]="constituency.id">{{ constituency.wording }}</option>
+            }
+          </select>
+          @if (
+            constituencyForm.controls.parentId.touched && constituencyForm.controls.parentId.errors
+          ) {
+            <ul class="form-error">
+              @if (constituencyForm.controls.parentId.errors['required']) {
+                <li>{{ 'formError.required' | translate }}</li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="isActive">{{ 'constituency.fields.isActive' | translate }}</label>
+          <input
+            id="isActive"
+            formControlName="isActive"
+            type="checkbox"
+            class="form-check-input"
+          />
+          @if (
+            constituencyForm.controls.isActive.touched && constituencyForm.controls.isActive.errors
+          ) {
+            <ul class="form-errors">
+              @if (constituencyForm.controls.isActive.errors['required']) {
+                <li>{{ 'formError.required' | translate }}</li>
+              }
+            </ul>
+          }
+        </div>
       </div>
     </form>
   </div>

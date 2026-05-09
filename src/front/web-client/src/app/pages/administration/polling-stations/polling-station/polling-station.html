@@ -7,14 +7,14 @@
     ></app-constituency-tree>
   </div>
   <div class="station-form">
-    <form [formGroup]="form">
+    <form [formGroup]="form()">
       <div class="inputs-container">
         <div class="input-block required">
           <label for="stationNumber">{{ 'pollingStation.fields.stationNumber' | translate }}</label>
           <input id="stationNumber" formControlName="stationNumber" />
-          @if (form.controls.stationNumber.touched && form.controls.stationNumber.errors) {
+          @if (form().controls.stationNumber.touched && form().controls.stationNumber.errors) {
             <ul class="form-error">
-              @if (form.controls.stationNumber.errors['required']) {
+              @if (form().controls.stationNumber.errors?.['required']) {
                 <li>{{ 'formError.required' | translate }}</li>
               }
             </ul>
@@ -26,9 +26,9 @@
         <div class="input-block required">
           <label for="wording">{{ 'pollingStation.fields.wording' | translate }}</label>
           <input id="wording" formControlName="wording" />
-          @if (form.controls.wording.touched && form.controls.wording.errors) {
+          @if (form().controls.wording.touched && form().controls.wording.errors) {
             <ul class="form-error">
-              @if (form.controls.wording.errors['required']) {
+              @if (form().controls.wording.errors?.['required']) {
                 <li>{{ 'formError.required' | translate }}</li>
               }
             </ul>
@@ -52,9 +52,9 @@
             </select>
             <small class="help-text">{{ 'pollingStation.selectInTree' | translate }}</small>
           </div>
-          @if (form.controls.constituencyId.touched && form.controls.constituencyId.errors) {
+          @if (form().controls.constituencyId.touched && form().controls.constituencyId.errors) {
             <ul class="form-error">
-              @if (form.controls.constituencyId.errors['required']) {
+              @if (form().controls.constituencyId.errors?.['required']) {
                 <li>{{ 'formError.required' | translate }}</li>
               }
             </ul>
@@ -78,7 +78,7 @@
   <button
     id="save-station"
     type="button"
-    [disabled]="form.invalid || !form.dirty || isSubmitting()"
+    [disabled]="form().invalid || !form().dirty || isSubmitting()"
     class="btn primary"
     (click)="savePollingStation()"
   >

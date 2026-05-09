@@ -4,9 +4,9 @@ import {
   CreatePollingStationCommand,
   GetPollingStationsQuery,
   Result,
+  ResultOfGetPollingStationResponse,
   ResultOfLong,
   ResultOfPagedListOfGetPollingStationsResponse,
-  ResultOfPollingStationModel,
   ToogleActivePollingStationCommand,
   UpdatePollingStationCommand,
 } from '../nswag/api-nswag-client';
@@ -46,8 +46,8 @@ export class PollingStationApiService extends ApiBaseService {
   getPollingStationById(
     id: number,
     options: ApiToastOptions = {},
-  ): Observable<ResultOfPollingStationModel> {
-    return this.apiClient.getPollingStationById(id).pipe(this.handleResult(options));
+  ): Observable<ResultOfGetPollingStationResponse> {
+    return this.apiClient.getPollingStation(id).pipe(this.handleResult(options));
   }
 
   getPollingStations(

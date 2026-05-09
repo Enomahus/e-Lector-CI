@@ -17,14 +17,14 @@ using Tools.Serialization;
 namespace Application.Features.Users.CreateUser
 {
     [WithPermission(nameof(AppPermission.CreateUser))]
-    public class CreateUserCommand : UserModel, IRequest<Result<Guid>> 
+    public class CreateUserCommand : UserModel, IRequest<Result<Guid>>
     {
         [SensitiveData]
         public string? Password { get; set; }
     }
 
     public class CreateUserCommandValidator: UserCommandValidatorBase<CreateUserCommand>
-    {       
+    {
         public CreateUserCommandValidator(ReadOnlyDbContext context): base(context)
         {
             RuleFor(u => u.Password)
@@ -33,9 +33,8 @@ namespace Application.Features.Users.CreateUser
                 .MaximumLength(8)
                 .WithMessage(ValidationErrorCode.MinLength.ToString())
                 .MaximumLength(50)
-                .WithMessage(ValidationErrorCode.MaxLength.ToString());            
+                .WithMessage(ValidationErrorCode.MaxLength.ToString());
         }
-        
     }
 
     public class CreateUserCommandHandler(
@@ -47,7 +46,7 @@ namespace Application.Features.Users.CreateUser
     ) : UserCommandHandlerBase(context, userManager,config,timeProvider), 
             IRequestHandler<CreateUserCommand, Result<Guid>>
     {
-        
+
         public async Task<Result<Guid>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
         {
             using var activity = ActivitySourceLog.CQRS.Start();

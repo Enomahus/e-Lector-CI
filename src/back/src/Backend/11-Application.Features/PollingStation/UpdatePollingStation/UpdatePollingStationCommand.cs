@@ -38,9 +38,6 @@ public class UpdatePollingStationCommandHandler(WritableDbContext context)
             .FirstOrDefaultAsync(x => x.Id == command.Id, cancellationToken)
             ?? throw new NotFoundException(nameof(PollingStationDao), command.Id);
 
-
-        // Update properties
-        existingEntity.StationNumber = command.StationNumber!;
         existingEntity.Wording = command.Wording!;
         existingEntity.ConstituencyId = command.ConstituencyId;
 

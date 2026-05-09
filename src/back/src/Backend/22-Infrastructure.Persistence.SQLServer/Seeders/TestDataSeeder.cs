@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using Tools.Constants;
+using Application.Common.Enums;
 
 namespace Infrastructure.Persistence.SQLServer.Seeders
 {
@@ -82,6 +83,8 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Doe",
                         Email = "john.doe@pcea.com",
                         PhoneNumber = "01 02 03 04 05",
+                        UserType = UserType.Admin,
+                        UserConstituencies = [new() { ConstituencyId = 16}]
                     },
                     new List<string> { AppConstants.SuperAdminRole }
                 ),
@@ -93,6 +96,8 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Gamegie",
                         Email = "sam.gamegie@pcea.com",
                         PhoneNumber = "01 02 03 04 05",
+                        UserType = UserType.Agent,
+                        UserConstituencies = [new() { ConstituencyId = 16}]
                     },
                     new List<string> { AppConstants.OrganismAgentRole }
                 ),
@@ -104,6 +109,8 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Baggins",
                         PhoneNumber = "01 02 03 04 05",
                         Email = "bilbo.baggins@pcea.com",
+                        UserType = UserType.Requester,
+                        UserConstituencies = [new() { ConstituencyId = 151}]
                     },
                     new List<string> { AppConstants.ElectorRole }
                 ),
@@ -115,6 +122,8 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Shieldmaiden",
                         PhoneNumber = "01 02 03 04 05",
                         Email = "eowyn.shieldmaiden@pcea.com",
+                        UserType = UserType.Requester,
+                        UserConstituencies = [new() { ConstituencyId = 151}]
                     },
                     new List<string> { AppConstants.ElectorRole }
                 ),
@@ -126,6 +135,8 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "RiderOfRohan",
                         PhoneNumber = "01 02 03 04 05",
                         Email = "eomer.riderofrohan@pcea.com",
+                        UserType = UserType.Agent,
+                        UserConstituencies = [new() { ConstituencyId = 16}]
                     },
                     new List<string> { AppConstants.OrganismAgentRole }
                 ),
@@ -138,55 +149,55 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
             [
                 new PollingStationDao()
                 {
-                    StationNumber = "1",
+                    StationNumber = "01",
                     Wording = "EPP Allanikro",
                     ConstituencyId = 152,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "2",
+                    StationNumber = "02",
                     Wording = "EPP Allanikro",
                     ConstituencyId = 152,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "1",
+                    StationNumber = "01",
                     Wording = "EPP Anokoi-Kouamekro",
                     ConstituencyId = 153,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "1",
+                    StationNumber = "01",
                     Wording = "EPP Labo",
                     ConstituencyId = 154,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "1",
+                    StationNumber = "01",
                     Wording = "EPP Adjebo",
                     ConstituencyId = 155,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "2",
+                    StationNumber = "02",
                     Wording = "EPP Adjebo",
                     ConstituencyId = 155,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "1",
+                    StationNumber = "01",
                     Wording = "EPP Takikro",
                     ConstituencyId = 156,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "1",
+                    StationNumber = "01",
                     Wording = "EPP Aka Kouamekro",
                     ConstituencyId = 157,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "1",
+                    StationNumber = "01",
                     Wording = "EPP Kongobo",
                     ConstituencyId = 158,
                 },
@@ -198,55 +209,55 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "2",
+                    StationNumber = "02",
                     Wording = "EPP Boli 1",
                     ConstituencyId = 159,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "1",
+                    StationNumber = "01",
                     Wording = "EPP Boli 3",
                     ConstituencyId = 160,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "2",
+                    StationNumber = "02",
                     Wording = "EPP Boli 3",
                     ConstituencyId = 160,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "3",
+                    StationNumber = "03",
                     Wording = "EPP Boli 3",
                     ConstituencyId = 160,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "1",
+                    StationNumber = "01",
                     Wording = "EPP Yoboueplissou",
                     ConstituencyId = 161,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "1",
+                    StationNumber = "01",
                     Wording = "EPP Anokoi-Djezou",
                     ConstituencyId = 162,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "2",
+                    StationNumber = "02",
                     Wording = "EPP Anokoi-Djezou",
                     ConstituencyId = 162,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "1",
+                    StationNumber = "01",
                     Wording = "EPP Grodiekro",
                     ConstituencyId = 163,
                 },
                 new PollingStationDao()
                 {
-                    StationNumber = "2",
+                    StationNumber = "02",
                     Wording = "EPP Grodiekro",
                     ConstituencyId = 163,
                 },

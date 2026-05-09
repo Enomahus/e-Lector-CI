@@ -10,6 +10,8 @@ namespace Application.Features.Users.GetUsers
         public PersonTitle Civility { get; init; }
         public required string? Email { get; init; }
         public required string? Phone { get; init; }
+        public required string? EmployeeNumber { get; init; }
+        public required UserType UserType { get; init; }
         public required bool IsActive { get; init; }
         public required string? Constituency { get; init; }
         public required bool CanBeDeleted { get; init; }

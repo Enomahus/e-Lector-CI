@@ -1,6 +1,8 @@
 <h1>{{ 'pollingStation.newStationTitle' | translate }}</h1>
 <app-polling-station
   [isSaving]="isSaving()"
+  [form]="form()"
+  [constituencyId]="constituencyId()"
   [isToCreate]="true"
   (save)="submittedForm($event)"
   (goBack)="goBack()"

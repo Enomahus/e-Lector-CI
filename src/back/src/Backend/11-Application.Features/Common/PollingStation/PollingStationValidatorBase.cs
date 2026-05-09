@@ -14,10 +14,6 @@ namespace Application.Features.Common.PollingStation
         {
             _context = context;
 
-            RuleFor(v => v.StationNumber)
-               .NotEmpty()
-               .WithMessage(ValidationErrorCode.Required.ToString());
-
             RuleFor(x => x.Wording)
             .NotEmpty()
             .WithMessage(ValidationErrorCode.Required.ToString())

@@ -32,7 +32,6 @@ public class CreatePollingStationCommandHandler(WritableDbContext context)
 
         var newEntity = new PollingStationDao
         {
-            //StationNumber = command.StationNumber!,
             StationNumber = await GetStationNumber(command.ConstituencyId, cancellationToken),
             Wording = command.Wording!,
             ConstituencyId = command.ConstituencyId,
@@ -54,6 +53,6 @@ public class CreatePollingStationCommandHandler(WritableDbContext context)
 
         var stationNumber = totalElectors / maxElectorsPerStation + 1;
 
-        return $"Bureau No: {stationNumber:D2}";
+        return $"{stationNumber:D2}";
     }
 }

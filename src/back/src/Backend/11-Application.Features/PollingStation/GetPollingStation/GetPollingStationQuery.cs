@@ -11,14 +11,14 @@ using Tools.Logging;
 
 namespace Application.Features.PollingStation.GetPollingStation;
 
-public class GetPollingStationByIdQuery : IRequest<Result<PollingStationModel>>
+public class GetPollingStationQuery : IRequest<Result<GetPollingStationResponse>>
 {
     public long Id { get; set; }
 }
 
-public class GetPollingStationByIdQueryValidator : AbstractValidator<GetPollingStationByIdQuery>
+public class GetPollingStationQueryValidator : AbstractValidator<GetPollingStationQuery>
 {
-    public GetPollingStationByIdQueryValidator()
+    public GetPollingStationQueryValidator()
     {
         RuleFor(v => v.Id).NotEmpty()
             .WithMessage(ValidationErrorCode.Required.ToString());
@@ -29,10 +29,10 @@ public class GetPollingStationByIdQueryHandler(
     ReadOnlyDbContext context,
     TimeProvider timeProvider
  )
-    : IRequestHandler<GetPollingStationByIdQuery, Result<PollingStationModel>>
+    : IRequestHandler<GetPollingStationQuery, Result<GetPollingStationResponse>>
 {
-    public async Task<Result<PollingStationModel>> Handle(
-        GetPollingStationByIdQuery query,
+    public async Task<Result<GetPollingStationResponse>> Handle(
+        GetPollingStationQuery query,
         CancellationToken cancellationToken
     )
     {
@@ -44,7 +44,7 @@ public class GetPollingStationByIdQueryHandler(
             .FirstOrDefaultAsync(x => x.Id == query.Id, cancellationToken)
             ?? throw new NotFoundException(nameof(PollingStationDao), query.Id);
 
-        var model = PollingStationModel.FromDao(dao, dateNow);
-        return Result<PollingStationModel>.From(model);
+        var model = GetPollingStationResponse.Fromdao(dao, dateNow);
+        return Result<GetPollingStationResponse>.From(model);
     }
 }

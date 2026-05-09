@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ConstituencyNode } from '@app/models/constituency.model';
-import { Activity, allActivities } from '@app/pages/types/enumerations';
+import { allActivities } from '@app/pages/types/enumerations';
 import { UsersApiService } from '@app/services/api/users.api.service';
 import { AuthService } from '@app/services/auth/auth.service';
 import { ConstituencyTreeHelperService } from '@app/services/constituency-tree-helper.service';
-import { UserModel } from '@app/services/nswag/api-nswag-client';
+import { UserModel, UserType } from '@app/services/nswag/api-nswag-client';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConstituencyTree } from '../constituency-tree/constituency-tree';
 import { Loader } from '../loader/loader';
@@ -42,7 +42,7 @@ export class UserForm {
   private readonly translateService = inject(TranslateService);
   private readonly store = inject(ConstituencyTreeHelperService);
 
-  activityOptions: Activity[] = allActivities;
+  activityOptions: UserType[] = allActivities;
 
   // Signal pour gérer la visibilité du mot de passe
   hidePassword = signal(true);
@@ -55,7 +55,7 @@ export class UserForm {
   // On ajoute un helper pour simplifier le template
   isRequester = computed(() => {
     const roles = this.form().controls.roles.value;
-    return Array.isArray(roles) && roles.length === 1 && roles[0] === 'demandeur';
+    return Array.isArray(roles) && roles.length === 1 && roles[0] === 'requester';
   });
 
   constructor() {

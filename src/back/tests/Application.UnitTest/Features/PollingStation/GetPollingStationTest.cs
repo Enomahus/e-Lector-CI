@@ -16,7 +16,7 @@ namespace Application.UnitTest.Features.PollingStation
             // Arrange
             var serviceProvider = CreateServiceCollection().BuildServiceProvider();
 
-            var query = new GetPollingStationByIdQuery { Id = 999999 };
+            var query = new GetPollingStationQuery { Id = 999999 };
 
             // Act
             var result = await serviceProvider.SendAsync(query);
@@ -42,7 +42,6 @@ namespace Application.UnitTest.Features.PollingStation
 
             var createCommand = new CreatePollingStationCommand
             {
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = constituency.Id,
             };
@@ -51,13 +50,13 @@ namespace Application.UnitTest.Features.PollingStation
             var pollingStationId = createResult.Data;
 
             // Act
-            var query = new GetPollingStationByIdQuery { Id = pollingStationId };
+            var query = new GetPollingStationQuery { Id = pollingStationId };
             var result = await serviceProvider.SendAsync(query);
 
             // Assert
             result.Should().NotBeNull();
             result.Data.Should().NotBeNull();
-            result.Data!.StationNumber.Should().Be("04");
+            result.Data!.StationNumber.Should().Be("01");
             result.Data.Wording.Should().Be("LYON");
             result.Data.ConstituencyId.Should().Be(constituency.Id);
             result.Data.IsActive.Should().BeTrue();
