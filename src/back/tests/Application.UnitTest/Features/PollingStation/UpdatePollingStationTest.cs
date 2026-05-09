@@ -14,59 +14,7 @@ namespace Application.UnitTest.Features.PollingStation
 {
     public class UpdatePollingStationTest : TestBase
     {
-        //[Fact]
-        //public async Task UpdatePollingStationCommand_ShouldFail_When_StationNumber_Is_Empty()
-        //{
-        //    // Arrange
-        //    var serviceProvider = CreateServiceCollection().BuildServiceProvider();
-        //    var context = serviceProvider.GetRequiredService<WritableDbContext>();
-
-        //    var constituency = await CreateConstituencyAsync(
-        //        context,
-        //        "EPP ALLANIKRO",
-        //        LocationLevel.VotingLocation,
-        //        null
-        //    );
-
-        //    var createCommand = new CreatePollingStationCommand
-        //    {
-        //        StationNumber = "04",
-        //        Wording = "LYON",
-        //        ConstituencyId = constituency.Id,
-        //    };
-
-        //    var createResult = await serviceProvider.SendAsync(createCommand);
-        //    var pollingStationId = createResult.Data;
-
-        //    var command = new UpdatePollingStationCommand
-        //    {
-        //        Id = pollingStationId,
-        //        StationNumber = "",
-        //        Wording = "LYON",
-        //        ConstituencyId = constituency.Id,
-        //    };
-
-        //    // Act & Assert
-        //    await FluentActions
-        //        .Invoking(() => serviceProvider.SendAsync(command))
-        //        .Should()
-        //        .ThrowAsync<ValidationException>();
-
-        //    AssertValidationException(
-        //        () => throw new ValidationException(
-        //            new List<ValidationFailure>
-        //            {
-        //                new ValidationFailure(
-        //                    nameof(UpdatePollingStationCommand.StationNumber),
-        //                    ValidationErrorCode.Required.ToString()
-        //                ),
-        //            }
-        //        ),
-        //        nameof(UpdatePollingStationCommand.StationNumber),
-        //        ValidationErrorCode.Required
-        //    );
-        //}
-
+        
         [Fact]
         public async Task UpdatePollingStationCommand_ShouldFail_When_Wording_Is_Empty()
         {
@@ -83,7 +31,6 @@ namespace Application.UnitTest.Features.PollingStation
 
             var createCommand = new CreatePollingStationCommand
             {
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = constituency.Id,
             };
@@ -94,7 +41,6 @@ namespace Application.UnitTest.Features.PollingStation
             var command = new UpdatePollingStationCommand
             {
                 Id = pollingStationId,
-                StationNumber = "04",
                 Wording = "",
                 ConstituencyId = constituency.Id,
             };
@@ -128,7 +74,6 @@ namespace Application.UnitTest.Features.PollingStation
 
             var createCommand = new CreatePollingStationCommand
             {
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = constituency.Id,
             };
@@ -139,7 +84,6 @@ namespace Application.UnitTest.Features.PollingStation
             var command = new UpdatePollingStationCommand
             {
                 Id = pollingStationId,
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = 0,
             };
@@ -173,7 +117,6 @@ namespace Application.UnitTest.Features.PollingStation
 
             var createCommand = new CreatePollingStationCommand
             {
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = constituency.Id,
             };
@@ -184,7 +127,6 @@ namespace Application.UnitTest.Features.PollingStation
             var command = new UpdatePollingStationCommand
             {
                 Id = pollingStationId,
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = 999999,
             };
@@ -225,7 +167,6 @@ namespace Application.UnitTest.Features.PollingStation
 
             var createCommand = new CreatePollingStationCommand
             {
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = votingLocationConstituency.Id,
             };
@@ -236,7 +177,6 @@ namespace Application.UnitTest.Features.PollingStation
             var command = new UpdatePollingStationCommand
             {
                 Id = pollingStationId,
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = regionConstituency.Id,
             };
@@ -270,7 +210,6 @@ namespace Application.UnitTest.Features.PollingStation
 
             var createCommand = new CreatePollingStationCommand
             {
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = constituency.Id,
             };
@@ -281,7 +220,6 @@ namespace Application.UnitTest.Features.PollingStation
             var command = new UpdatePollingStationCommand
             {
                 Id = pollingStationId,
-                StationNumber = "05",
                 Wording = "MARSEILLE",
                 ConstituencyId = constituency.Id,
             };
@@ -298,7 +236,7 @@ namespace Application.UnitTest.Features.PollingStation
                 .FirstOrDefaultAsync(x => x.Id == pollingStationId);
 
             updatedPollingStation.Should().NotBeNull();
-            updatedPollingStation!.StationNumber.Should().Be("05");
+            updatedPollingStation!.StationNumber.Should().Be("01");
             updatedPollingStation.Wording.Should().Be("MARSEILLE");
             updatedPollingStation.ConstituencyId.Should().Be(constituency.Id);
         }
@@ -320,7 +258,6 @@ namespace Application.UnitTest.Features.PollingStation
             var command = new UpdatePollingStationCommand
             {
                 Id = 999999,
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = constituency.Id,
             };
@@ -349,7 +286,6 @@ namespace Application.UnitTest.Features.PollingStation
 
             var createCommand = new CreatePollingStationCommand
             {
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = constituency.Id,
             };
@@ -360,7 +296,6 @@ namespace Application.UnitTest.Features.PollingStation
             var command = new UpdatePollingStationCommand
             {
                 Id = pollingStationId,
-                StationNumber = "10",
                 Wording = "LYON",
                 ConstituencyId = constituency.Id,
             };
@@ -395,7 +330,6 @@ namespace Application.UnitTest.Features.PollingStation
 
             var createCommand = new CreatePollingStationCommand
             {
-                StationNumber = "04",
                 Wording = "LYON",
                 ConstituencyId = constituency.Id,
             };
@@ -406,7 +340,6 @@ namespace Application.UnitTest.Features.PollingStation
             var command = new UpdatePollingStationCommand
             {
                 Id = pollingStationId,
-                StationNumber = "04",
                 Wording = "PARIS",
                 ConstituencyId = constituency.Id,
             };

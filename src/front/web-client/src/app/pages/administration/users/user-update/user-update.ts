@@ -32,15 +32,6 @@ export class UserUpdate implements OnInit {
   private readonly translateService = inject(TranslateService);
 
   ngOnInit(): void {
-    // const userId = this.route.snapshot.paramMap.get('id');
-    // this.userId.set(userId ? userId : undefined);
-    // const constituencyId = this.route.snapshot.queryParamMap.get('constituencyId');
-    // this.constituencyId.set(constituencyId ? Number(constituencyId) : undefined);
-    // if (this.userId()) {
-    //   this.loadUser(this.userId()!);
-    // }
-    // this.setBreadcrumb();
-
     this.route.params
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -66,10 +57,11 @@ export class UserUpdate implements OnInit {
         firstName: user.firstName,
         phone: user.phoneNumber,
         email: user.email,
-        // password: user.password,
+        userType: user.userType ? [user.userType] : ['none'],
+        //password: user.password,
         // confirmPassword: user.password,
-        // employeeNumber: user.employeeNumber,
-        // roles: user.roles || [],
+        employeeNumber: user.employeeNumber,
+        roles: user.roles,
         authProvider: user.authProvider,
         constituencyId: user.constituencyId,
       },

@@ -1711,7 +1711,7 @@ export class ServerClient extends CustomApiClient {
     /**
      * Récupère un Bureau de Vote par son ID.
      */
-    getPollingStationById(id: number): Observable<ResultOfPollingStationModel> {
+    getPollingStation(id: number): Observable<ResultOfGetPollingStationResponse> {
         let url_ = this.baseUrl + "/polling-station/{id}";
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
@@ -1727,20 +1727,20 @@ export class ServerClient extends CustomApiClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPollingStationById(response_);
+            return this.processGetPollingStation(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetPollingStationById(response_ as any);
+                    return this.processGetPollingStation(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ResultOfPollingStationModel>;
+                    return _observableThrow(e) as any as Observable<ResultOfGetPollingStationResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ResultOfPollingStationModel>;
+                return _observableThrow(response_) as any as Observable<ResultOfGetPollingStationResponse>;
         }));
     }
 
-    protected processGetPollingStationById(response: HttpResponseBase): Observable<ResultOfPollingStationModel> {
+    protected processGetPollingStation(response: HttpResponseBase): Observable<ResultOfGetPollingStationResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1750,7 +1750,7 @@ export class ServerClient extends CustomApiClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfPollingStationModel;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfGetPollingStationResponse;
             return _observableOf(result200);
             }));
         } else if (status === 401) {
@@ -2465,9 +2465,11 @@ export interface UserModel {
     lastName?: string | undefined;
     phoneNumber?: string | undefined;
     email?: string | undefined;
+    employeeNumber?: string | undefined;
     civility?: PersonTitle;
     isAdmin?: boolean | undefined;
     isActive?: boolean;
+    userType?: UserType;
     roles?: string[];
     constituencyId?: number | undefined;
     createdAt?: string;
@@ -2479,6 +2481,8 @@ export interface UpdateUserCommand extends UserModel {
 }
 
 export type PersonTitle = "mr" | "mrs" | "ms";
+
+export type UserType = "none" | "requester" | "agent" | "admin";
 
 export type AuthProvider = "google" | "microsoft" | "email";
 
@@ -2509,6 +2513,8 @@ export interface GetUsersResponse {
     civility?: PersonTitle;
     email?: string | undefined;
     phone?: string | undefined;
+    employeeNumber?: string | undefined;
+    userType?: UserType;
     isActive?: boolean;
     constituency?: string | undefined;
     canBeDeleted?: boolean;
@@ -2644,7 +2650,6 @@ export interface ResultOfLong extends Result {
 }
 
 export interface PollingStationModel {
-    stationNumber?: string;
     wording?: string;
     constituencyId?: number;
     isActive?: boolean;
@@ -2658,8 +2663,12 @@ export interface ToogleActivePollingStationCommand {
     id?: number;
 }
 
-export interface ResultOfPollingStationModel extends Result {
-    data?: PollingStationModel | undefined;
+export interface ResultOfGetPollingStationResponse extends Result {
+    data?: GetPollingStationResponse | undefined;
+}
+
+export interface GetPollingStationResponse extends PollingStationModel {
+    stationNumber?: string;
 }
 
 export interface ResultOfPagedListOfGetPollingStationsResponse extends Result {

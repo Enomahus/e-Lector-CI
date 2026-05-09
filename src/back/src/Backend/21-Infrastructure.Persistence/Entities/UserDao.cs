@@ -12,6 +12,8 @@ public class UserDao : IdentityUser<Guid>, IEntityBaseDao<Guid>, ITimestampedEnt
     [MaxLength(50)]
     public string FirstName { get; set; }
 
+    public UserType UserType { get; set; } = UserType.None;
+
     [MaxLength(50)]
     public string LastName { get; set; }
 

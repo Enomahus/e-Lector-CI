@@ -1,5 +1,4 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { PollingStationModel } from '@app/services/nswag/api-nswag-client';
 
 export type PollingStationForm = FormGroup<{
   stationNumber: FormControl<string | undefined>;
@@ -8,8 +7,8 @@ export type PollingStationForm = FormGroup<{
   isActive: FormControl<boolean>;
 }>;
 
-export function createPollingStationForm(): PollingStationForm {
-  return new FormGroup({
+export function createPollingStationForm(fromCreate: boolean): PollingStationForm {
+  const form = new FormGroup({
     stationNumber: new FormControl<string | undefined>(undefined, {
       validators: Validators.required,
       nonNullable: true,
@@ -27,13 +26,21 @@ export function createPollingStationForm(): PollingStationForm {
       nonNullable: true,
     }),
   }) as PollingStationForm;
+
+  form.controls.stationNumber.valueChanges.subscribe(() =>
+    updateStationNumberValidators(form, fromCreate),
+  );
+
+  return form;
 }
 
-export function createPollingStationModelFromForm(form: PollingStationForm): PollingStationModel {
-  return {
-    stationNumber: form.value.stationNumber,
-    wording: form.value.wording,
-    constituencyId: form.value.constituencyId,
-    isActive: form.value.isActive,
-  };
+export function updateStationNumberValidators(form: PollingStationForm, isCreate: boolean) {
+  const stationNumberControl = form.controls.stationNumber;
+
+  if (!isCreate) {
+    stationNumberControl.disable();
+  } else {
+    stationNumberControl.clearValidators();
+  }
+  stationNumberControl.updateValueAndValidity({ emitEvent: false });
 }

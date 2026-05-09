@@ -1,6 +1,5 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Activity } from '@app/pages/types/enumerations';
-import { AuthProvider, PersonTitle } from '@app/services/nswag/api-nswag-client';
+import { AuthProvider, PersonTitle, UserType } from '@app/services/nswag/api-nswag-client';
 import { passwordMatchValidator } from '../helpers/form.helper';
 import { phoneNumberValidator } from '../phone-input/phone-input-intl.validator';
 
@@ -13,7 +12,8 @@ export type UserFormFactory = FormGroup<{
   password: FormControl<string | undefined>;
   confirmPassword: FormControl<string | undefined>;
   employeeNumber: FormControl<string | undefined>;
-  roles: FormControl<Activity[]>;
+  userType: FormControl<UserType[]>;
+  roles: FormControl<string[]>;
   authProvider: FormControl<AuthProvider | undefined>;
   constituencyId: FormControl<number | undefined>;
 }>;
@@ -35,7 +35,8 @@ export function createUserForm(): UserFormFactory {
       ]),
       password: new FormControl<string | undefined>(undefined, [Validators.required]),
       confirmPassword: new FormControl<string | undefined>(undefined, [Validators.required]),
-      roles: new FormControl<Activity[]>(['demandeur'], { nonNullable: true }),
+      userType: new FormControl<UserType[]>(['none'], { nonNullable: true }),
+      roles: new FormControl<string[]>([''], { nonNullable: true }),
       authProvider: new FormControl<AuthProvider | undefined>({ value: undefined, disabled: true }),
       constituencyId: new FormControl<number | undefined>({ value: undefined, disabled: true }),
     },
@@ -54,7 +55,7 @@ export function updateEmployeeValidators(form: UserFormFactory) {
   const isOnlyDemandeur =
     Array.isArray(rolesControl.value) &&
     rolesControl.value.length === 1 &&
-    rolesControl.value[0] === 'demandeur';
+    rolesControl.value[0] === 'requester';
 
   if (!isOnlyDemandeur) {
     employeeControl.setValidators([Validators.required]);

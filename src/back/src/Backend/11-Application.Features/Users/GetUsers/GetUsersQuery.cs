@@ -97,6 +97,8 @@ namespace Application.Features.Users.GetUsers
                         FirstName = x.FirstName,
                         Email = x.Email,
                         Phone = x.PhoneNumber,
+                        EmployeeNumber = x.EmployeeNumber,
+                        UserType = x.UserType,
                         CanBeDeleted = x.Id != currentUserId && x.CreatedRegistrationRequests.Count == 0,
                         CanBeToggled = x.Id != currentUserId,
                         CreatedAt = x.CreatedAt,

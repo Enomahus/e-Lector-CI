@@ -38,7 +38,9 @@ namespace Application.Features.Users.Common
             dao.FirstName = model.FirstName;
             dao.LastName = model.LastName;
             dao.PhoneNumber = model.PhoneNumber;
-            dao.Civility = model.Civility;            
+            dao.Civility = model.Civility;
+            dao.UserType = model.UserType;
+            dao.EmployeeNumber = model.EmployeeNumber;
             dao.ModifiedAt = dateNow;
 
             if (!skipAdminFields)
