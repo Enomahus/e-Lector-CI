@@ -27,6 +27,32 @@
       "email": "Email"
     }
   },
+  "breadcrumb": {
+    "bonusAdd": "Nouveau bonus",
+    "bonusEdit": "Modification du bonus",
+    "bonuses": "Référentiel bonus",
+    "brandAdd": "Nouvelle marque",
+    "brandEdit": "Modification de la marque",
+    "brands": "Liste des marques",
+    "certificateRequestAdd": "Nouvelle demande",
+    "certificateRequestEdit": "Modification de demande",
+    "certificateRequests": "Mes demandes",
+    "certificateRequestsForAdmin": "Liste des demandes",
+    "certificateRequestsForManagement": "Liste des demandes",
+    "criteriaAdd": "Nouveau critère",
+    "criteriaEdit": "Modification du critère",
+    "criterias": "Référentiel critères",
+    "panelReferenceAdd": "Nouvelle référence de panneau",
+    "panelReferences": "Références de panneaux photovoltaïques",
+    "scaleVersionAdd": "Version {{versionName}}",
+    "scaleVersionEdit": "Version {{versionName}}",
+    "scaleVersions": "Liste des versions de barème d'éco modulation",
+    "stakeholderAdd": "Nouvelle société",
+    "stakeholders": "Liste des sociétés",
+    "userCreate": "Création d'un utilisateur",
+    "userEdit": "Modification de l'utilisateur",
+    "users": "Liste des utilisateurs"
+  },
   "formError": {
     "required": "Champ requis",
     "emailInvalid": "L'email n'est pas au bon format",
@@ -200,6 +226,7 @@
     "createdAt": "Créé le",
     "authProvider": "Authentification",
     "errorCreating": "Erreur lors de la création de l'utilisateur.",
+    "successCreating": "Utilisateur créé avec succès",
     "activateError": "Erreur lors de l'activation de l'utilisateur.",
     "deactivateError": "Erreur lors de la désactivation de l'utilisateur.",
     "activated": "Utilisateur activé avec succès",
@@ -228,7 +255,9 @@
       "personalInformation": "Informations personnelles",
       "updateMyInformationsSuccess": "Informations modifiées avec succès",
       "updateError": "Erreur lors de la mise à jour de l'utilisateur",
-      "updateSuccess": "Utilisateur mis à jour avec succès"
+      "updateSuccess": "Utilisateur mis à jour avec succès",
+      "registerError": "Erreur lors de la création de compte",
+      "registerSuccess": "Votre compte a été créé avec succès"
     }
   },
   "dialog": {

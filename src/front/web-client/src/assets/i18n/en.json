@@ -195,7 +195,9 @@
     "form": {
       "updateMyInformationsSuccess": "Information updated successfully",
       "updateError": "Error updating the user",
-      "updateSuccess": "User updated successfully"
+      "updateSuccess": "User updated successfully",
+      "registerError": "Error creating the account",
+      "registerSuccess": "Your account has been created successfully"
     }
   },
   "dialog": {

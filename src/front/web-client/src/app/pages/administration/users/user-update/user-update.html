@@ -1,1 +1,14 @@
-<p>user-update works!</p>
+<h1>{{ 'users.form.edit' | translate }}</h1>
+@if (user()) {
+  <app-user-form
+    [form]="form()"
+    [isSaving]="isSaving()"
+    [isUpdate]="true"
+    [constituencyId]="constituencyId()"
+    (formSubmitted)="onSubmit($event)"
+    (goBack)="goBack()"
+  >
+  </app-user-form>
+} @else {
+  <app-loader></app-loader>
+}

@@ -5,7 +5,7 @@ import { CurrentUserService } from '@app/services/current-user.service';
 import { GetCurrentUserResponse, UserModel } from '@app/services/nswag/api-nswag-client';
 import { Loader } from '@app/shared/loader/loader';
 import { UserForm } from '@app/shared/user-form/user-form';
-import { createUserForm } from '@app/shared/user-form/user-form-factory';
+import { createUserForm, updateEmployeeValidators } from '@app/shared/user-form/user-form-factory';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -40,11 +40,13 @@ export class MyAccountUi implements OnInit {
             //confirmPassword: userInfo.password,
             constituencyId: userInfo.constituencyId,
             employeeNumber: '', //TODO: handle employee number in my account
-            roles: [], //TODO: handle roles in my account
+            roles: ['agent', 'demandeur'], //TODO: handle roles in my account
             email: userInfo.email,
+            authProvider: userInfo.authProvider,
           },
           { emitEvent: false },
         );
+        updateEmployeeValidators(this.form);
         this.user.set(userInfo);
         this.constituencyId.set(userInfo.constituencyId);
         this.isLoading.set(false);

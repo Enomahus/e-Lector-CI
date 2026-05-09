@@ -1,5 +1,3 @@
-import { effect } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Activity } from '@app/pages/types/enumerations';
 import { AuthProvider, PersonTitle } from '@app/services/nswag/api-nswag-client';
@@ -44,42 +42,24 @@ export function createUserForm(): UserFormFactory {
     { validators: passwordMatchValidator('password', 'confirmPassword') },
   ) as UserFormFactory;
 
-  const employeeControl = form.controls.employeeNumber;
-  const rolesControl = form.controls.roles;
-  const updateEmployeeValidators = (roles: Activity[] | null) => {
-    const isOnlyDemandeur = roles?.length === 1 && roles[0] === 'demandeur';
-    if (!isOnlyDemandeur) {
-      employeeControl.setValidators([Validators.required]);
-    } else {
-      employeeControl.clearValidators();
-    }
-    employeeControl.updateValueAndValidity({ emitEvent: false });
-  };
-
-  updateEmployeeValidators(rolesControl.value);
-
-  rolesControl.valueChanges.subscribe((roles) => {
-    updateEmployeeValidators(roles);
-  });
+  form.controls.roles.valueChanges.subscribe((roles) => updateEmployeeValidators(form));
 
   return form;
 }
 
-export function setupUserFormFactoryLogic(form: UserFormFactory) {
+export function updateEmployeeValidators(form: UserFormFactory) {
   const employeeControl = form.controls.employeeNumber;
   const rolesControl = form.controls.roles;
 
-  const rolesSignal = toSignal(rolesControl.valueChanges, { initialValue: rolesControl.value });
+  const isOnlyDemandeur =
+    Array.isArray(rolesControl.value) &&
+    rolesControl.value.length === 1 &&
+    rolesControl.value[0] === 'demandeur';
 
-  effect(() => {
-    const roles = rolesSignal();
-    const isOnlyDemandeur = roles.length === 1 && roles[0] === 'demandeur';
-
-    if (!isOnlyDemandeur) {
-      employeeControl.setValidators([Validators.required]);
-    } else {
-      employeeControl.clearValidators();
-    }
-    employeeControl.updateValueAndValidity({ emitEvent: false });
-  });
+  if (!isOnlyDemandeur) {
+    employeeControl.setValidators([Validators.required]);
+  } else {
+    employeeControl.clearValidators();
+  }
+  employeeControl.updateValueAndValidity({ emitEvent: false });
 }

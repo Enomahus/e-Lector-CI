@@ -1,1 +1,9 @@
-<p>user-create works!</p>
+<h1>{{ 'users.createUser' | translate }}</h1>
+<app-user-form
+  [form]="form()"
+  [isSaving]="isSaving()"
+  [constituencyId]="constituencyId()"
+  (formSubmitted)="onSubmit($event)"
+  (goBack)="goBack()"
+>
+</app-user-form>

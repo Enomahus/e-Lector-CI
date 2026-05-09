@@ -157,7 +157,7 @@
       <div class="inputs-container">
         <div class="input-block required">
           <label for="roles-select">{{ 'users.role' | translate }}</label>
-          <select id="roles-select" formControlName="roles">
+          <select id="roles-select" formControlName="roles" multiple>
             <option value="">Activité</option>
             @for (activity of activityOptions; track activity) {
               <option [value]="activity">{{ activity }}</option>
@@ -235,7 +235,7 @@
     type="button"
     class="btn primary"
     (click)="onSubmit()"
-    [disabled]="form().invalid || isSaving() || isUpdate()"
+    [disabled]="form().invalid || isSaving()"
   >
     {{ 'global.save' | translate }}
     @if (isSaving()) {

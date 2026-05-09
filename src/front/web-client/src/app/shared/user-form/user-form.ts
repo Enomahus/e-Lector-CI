@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ConstituencyNode } from '@app/models/constituency.model';
 import { Activity, allActivities } from '@app/pages/types/enumerations';
@@ -27,7 +26,7 @@ import { UserFormFactory } from './user-form-factory';
     StickyButtonsContainer,
   ],
   templateUrl: './user-form.html',
-  styleUrl: './user-form.scss',
+  styleUrls: ['./user-form.scss'],
 })
 export class UserForm {
   form = input.required<UserFormFactory>();
@@ -52,12 +51,12 @@ export class UserForm {
   nodes = this.store.nodesData;
   selectedNode = this.store.selectedNode;
   initialTreeSelectedId = computed(() => (!this.isUpdate() ? this.constituencyId() : undefined));
-  currentForm = this.form;
-  roleSelected = toSignal(this.currentForm().controls.roles.valueChanges, {
-    initialValue: this.currentForm().controls.roles.value,
-  });
 
-  isRequester = computed(() => this.roleSelected().includes('demandeur'));
+  // On ajoute un helper pour simplifier le template
+  isRequester = computed(() => {
+    const roles = this.form().controls.roles.value;
+    return Array.isArray(roles) && roles.length === 1 && roles[0] === 'demandeur';
+  });
 
   constructor() {
     effect(() => {
