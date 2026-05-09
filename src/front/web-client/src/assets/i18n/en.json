@@ -15,6 +15,16 @@
     "lang": {
       "fr": "French",
       "en": "English"
+    },
+    "civility": {
+      "mr": "Mr.",
+      "mrs": "Mrs.",
+      "ms": "Ms."
+    },
+    "authProvider": {
+      "google": "Google",
+      "microsoft": "Microsoft",
+      "email": "Email"
     }
   },
   "formError": {
@@ -150,18 +160,19 @@
     "firstName": "First name",
     "lastName": "Last name",
     "email": "Email",
-    "phone": "Phone",
+    "phone": "Phone number",
     "constituency": "Constituency",
-    "role": "RRole",
+    "role": "Role",
     "isActive": "Active",
     "isAdmin": "Administrator",
     "createdAt": "Created at",
-    "authProvider": "Authentication provider",
+    "authProvider": "Authentication",
     "errorCreating": "Error creating the user.",
     "activateError": "Error activating the user.",
     "deactivateError": "Error deactivating the user.",
     "activated": "User activated successfully",
     "deactivated": "User deactivated successfully",
+    "myInformations": "Update my informations",
     "action": "Actions",
     "authMethods": {
       "label": "Authentication",
@@ -175,12 +186,18 @@
       "ms": "Ms.",
       "other": "Other"
     },
-
     "actions": {
       "edit": "Edit",
       "delete": "Delete",
       "toggleEnable": "Enable",
       "toggleDisable": "Disable"
+    },
+    "form": {
+      "updateMyInformationsSuccess": "Information updated successfully",
+      "updateError": "Error updating the user",
+      "updateSuccess": "User updated successfully",
+      "registerError": "Error creating the account",
+      "registerSuccess": "Your account has been created successfully"
     }
   },
   "dialog": {
@@ -195,5 +212,15 @@
     "subPrefecture": "Sub-prefecture",
     "municipality": "Town / Village",
     "votingLocation": "Polling station"
+  },
+  "register": {
+    "title": "Create an account",
+    "subtitle": "I'm signing up !",
+    "email": "E-mail",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "register": "Register",
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Log in"
   }
 }

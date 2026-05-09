@@ -1,0 +1,253 @@
+<div class="user-form-container">
+  <div class="constituency-tree">
+    <h2 class="constituency-tree-title">{{ 'users.constituency' | translate }}</h2>
+    <app-constituency-tree
+      [nodes]="nodes()"
+      [initialSelectedId]="initialTreeSelectedId()"
+      (nodeSelected)="onNodeSelected($event)"
+    ></app-constituency-tree>
+  </div>
+
+  <div class="user-form">
+    <h2 class="user-form-title">
+      {{
+        isUpdate()
+          ? ('users.form.personalInformation' | translate)
+          : ('users.createUser' | translate)
+      }}
+    </h2>
+    <form class="basic-form" [formGroup]="form()">
+      <!-- Civilité -->
+      <div class="civility-group">
+        <label class="radio radio-card">
+          <input type="radio" formControlName="civility" value="mr" />
+          <span>{{ 'global.civility.mr' | translate }}</span>
+        </label>
+        <label class="radio radio-card">
+          <input type="radio" formControlName="civility" value="mrs" />
+          <span>{{ 'global.civility.mrs' | translate }}</span>
+        </label>
+        <label class="radio radio-card">
+          <input type="radio" formControlName="civility" value="ms" />
+          <span>{{ 'global.civility.ms' | translate }}</span>
+        </label>
+      </div>
+
+      <!-- Nom et Prénom -->
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="firstName">{{ 'users.firstName' | translate }}</label>
+          <input id="firstName" type="text" formControlName="firstName" />
+          @if (form().controls.firstName.touched && form().controls.firstName.errors) {
+            <ul class="form-error">
+              @if (form().controls.firstName.errors?.['required']) {
+                <li>
+                  {{ 'formError.required' | translate }}
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <div class="input-block required">
+          <label for="lastName">{{ 'users.lastName' | translate }}</label>
+          <input id="lastName" type="text" formControlName="lastName" />
+          @if (form().controls.lastName.touched && form().controls.lastName.errors) {
+            <ul class="form-error">
+              @if (form().controls.lastName.errors?.['required']) {
+                <li>
+                  {{ 'formError.required' | translate }}
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <!-- Téléphone et Email -->
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="phone">{{ 'users.phone' | translate }}</label>
+          <app-phone-input [required]="true" formControlName="phone"></app-phone-input>
+          @if (form().controls.phone.touched && form().controls.phone.errors) {
+            <ul class="form-error">
+              @if (form().controls.phone.errors?.['required']) {
+                <li>
+                  {{ 'formError.required' | translate }}
+                </li>
+              }
+              @if (form().controls.phone.errors?.['pattern']) {
+                <li>
+                  {{ 'formError.phoneInvalid' | translate }}
+                </li>
+              }
+            </ul>
+          }
+        </div>
+        <div class="input-block required">
+          <label for="email">{{ 'users.email' | translate }}</label>
+          <input id="email" type="email" formControlName="email" />
+          @if (form().controls.email.touched && form().controls.email.errors) {
+            <ul class="form-error">
+              @if (form().controls.email.errors?.['required']) {
+                <li>
+                  {{ 'formError.required' | translate }}
+                </li>
+              }
+              @if (form().controls.email.errors?.['pattern']) {
+                <li>
+                  {{ 'formError.emailInvalid' | translate }}
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <!-- Mots de passe -->
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="password">{{ 'users.password' | translate }}</label>
+          <div class="password-container">
+            <input
+              id="password"
+              [type]="hidePassword() ? 'password' : 'text'"
+              formControlName="password"
+            />
+            <button type="button" class="toggle-password" (click)="togglePassword()">
+              <i [class]="hidePassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"></i>
+            </button>
+          </div>
+          @if (form().controls.password.touched && form().controls.password.errors) {
+            <ul class="form-error">
+              @if (form().controls.password.errors?.['required']) {
+                <li>
+                  {{ 'formError.required' | translate }}
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <div class="input-block required">
+          <label for="confirmPassword">{{ 'users.confirmPassword' | translate }}</label>
+          <div class="password-container">
+            <input
+              id="confirmPassword"
+              [type]="hideConfirmPassword() ? 'password' : 'text'"
+              formControlName="confirmPassword"
+            />
+            <button type="button" class="toggle-password" (click)="toggleConfirmPassword()">
+              <i [class]="hideConfirmPassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"></i>
+            </button>
+          </div>
+          @if (form().controls.confirmPassword.touched && form().controls.confirmPassword.errors) {
+            <ul class="form-error">
+              @if (form().controls.confirmPassword.errors?.['required']) {
+                <li>
+                  {{ 'formError.required' | translate }}
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <!-- activité user et matricule -->
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="roles-select">{{ 'users.role' | translate }}</label>
+          <select id="roles-select" formControlName="roles" multiple>
+            <option value="">Activité</option>
+            @for (activity of activityOptions; track activity) {
+              <option [value]="activity">{{ activity }}</option>
+            }
+          </select>
+        </div>
+        @if (!isRequester()) {
+          <div class="input-block required">
+            <label for="employeeNumber">{{ 'users.employeeNumber' | translate }}</label>
+            <input type="text" id="employeeNumber" formControlName="employeeNumber" />
+            @if (form().controls.employeeNumber.touched && form().controls.employeeNumber.errors) {
+              <ul class="form-error">
+                @if (form().controls.employeeNumber.errors?.['required']) {
+                  <li>
+                    {{ 'formError.required' | translate }}
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- circonscription et authentification -->
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="constituency">{{ 'users.constituency' | translate }}</label>
+          <input id="constituency" type="number" formControlName="constituencyId" />
+          @if (form().controls.constituencyId.touched && form().controls.constituencyId.errors) {
+            <ul class="form-error">
+              @if (form().controls.constituencyId.errors?.['required']) {
+                <li>
+                  {{ 'formError.required' | translate }}
+                </li>
+              }
+            </ul>
+          }
+        </div>
+        <div class="input-block">
+          <div class="label-container">
+            <span class="label">{{ 'users.authMethods.label' | translate }}</span>
+          </div>
+          <div class="options-container">
+            <label for="email-method" class="radio">
+              <input type="radio" id="email-method" [value]="null" formControlName="authProvider" />
+              {{ 'users.authMethods.email' | translate }}
+            </label>
+            <label for="microsoft-method" class="radio">
+              <input
+                type="radio"
+                id="microsoft-method"
+                [value]="'microsoft'"
+                formControlName="authProvider"
+              />
+              {{ 'users.authMethods.microsoft' | translate }}
+            </label>
+            <label for="google-method" class="radio">
+              <input
+                type="radio"
+                id="google-method"
+                [value]="'google'"
+                formControlName="authProvider"
+              />
+              {{ 'users.authMethods.google' | translate }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<app-sticky-buttons-container>
+  <button
+    type="button"
+    class="btn primary"
+    (click)="onSubmit()"
+    [disabled]="form().invalid || isSaving()"
+  >
+    {{ 'global.save' | translate }}
+    @if (isSaving()) {
+      <app-loader></app-loader>
+    }
+  </button>
+  <button
+    type="button"
+    class="btn outline outline-primary"
+    (click)="goBack.emit()"
+    [disabled]="isSaving()"
+  >
+    {{ 'global.back' | translate }}
+  </button>
+</app-sticky-buttons-container>

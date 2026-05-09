@@ -59,7 +59,7 @@
     </ul>
 
     <ul class="menu menu-user">
-      @if (userName$ | async; as userName) {
+      @if (userName$() | async; as userName) {
         <li class="menu-item" [routerLinkActive]="'active'">
           <a class="menu-item-interaction user" routerLink="my-account">
             <i class="ph ph-user"></i>
@@ -70,16 +70,18 @@
       <li class="language-switcher">
         <app-language-switcher></app-language-switcher>
       </li>
-      <li>
-        <button
-          class="btn primary"
-          type="button"
-          (click)="logout.emit()"
-          [title]="'navbar.logout' | translate"
-        >
-          <i class="ph ph-sign-out"></i>
-        </button>
-      </li>
+      @if (!isRegister()) {
+        <li>
+          <button
+            class="btn primary"
+            type="button"
+            (click)="logout.emit()"
+            [title]="'navbar.logout' | translate"
+          >
+            <i class="ph ph-sign-out"></i>
+          </button>
+        </li>
+      }
     </ul>
   </div>
 </nav>

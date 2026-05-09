@@ -1,12 +1,20 @@
 <header>
-    @if(isToggleMobileMenu()) {
-        <app-navbar-mobile [userName$]="userName$" (logout)="handleLogout()"></app-navbar-mobile>
-    } @else {
-        <app-navbar-desktop [userName$]="userName$" (logout)="handleLogout()"></app-navbar-desktop>
-    }
+  @if (isToggleMobileMenu()) {
+    <app-navbar-mobile
+      [userName$]="userName$"
+      [isRegister]="isRegisterRoute()"
+      (logout)="handleLogout()"
+    ></app-navbar-mobile>
+  } @else {
+    <app-navbar-desktop
+      [userName$]="userName$"
+      [isRegister]="isRegisterRoute()"
+      (logout)="handleLogout()"
+    ></app-navbar-desktop>
+  }
 
-     <div class="mobile-toggle">
-         <button
+  <div class="mobile-toggle">
+    <button
       class="btn outline outline-primary"
       type="button"
       (click)="toggleMobileMenu()"
@@ -14,5 +22,5 @@
     >
       <i class="ph ph-list"></i>
     </button>
-    </div>
+  </div>
 </header>

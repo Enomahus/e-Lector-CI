@@ -4,6 +4,7 @@ import {
   CreateUserCommand,
   GetCurrentUserResponse,
   GetUsersQuery,
+  RegisterUserCommand,
   Result,
   ResultOfPagedListOfGetUsersResponse,
   UpdateCurrentUserCommand,
@@ -49,5 +50,9 @@ export class UsersApiService extends ApiBaseService {
 
   deleteUser(id: string, options: ApiToastOptions = {}): Observable<Result> {
     return this.apiClient.deleteUser(id).pipe(this.handleResult(options));
+  }
+
+  registerUser(command: RegisterUserCommand, options: ApiToastOptions = {}): Observable<string> {
+    return this.apiClient.registerUser(command).pipe(this.handleDataResult(options));
   }
 }

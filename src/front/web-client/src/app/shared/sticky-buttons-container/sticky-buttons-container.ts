@@ -36,7 +36,7 @@ export class StickyButtonsContainer implements AfterViewInit, OnDestroy {
         if (entry.intersectionRatio < 1) {
           entry.target.classList.add('sticky');
         } else {
-          entry.target.classList.remove('sticky');
+          entry.target.classList.remove('stuck');
         }
       },
       { threshold: [1], root: modalContainer },

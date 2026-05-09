@@ -1,17 +1,18 @@
 import {
   Component,
+  computed,
   DestroyRef,
-  EventEmitter,
   HostListener,
   inject,
-  Input,
-  Output,
+  input,
+  output,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '@app/services/auth/auth.service';
-import { filter, map, Observable, tap } from 'rxjs';
+import { AppPermission } from '@app/services/nswag/api-nswag-client';
+import { filter, Observable, tap } from 'rxjs';
 import { Language } from '../../../enums/language.enum';
 import { LanguageService } from '../../../services/language.service';
 
@@ -20,16 +21,32 @@ import { LanguageService } from '../../../services/language.service';
   template: '',
 })
 export abstract class BaseNavbar {
-  @Input({ required: true }) userName$!: Observable<string>;
-  @Output() logout = new EventEmitter<void>();
+  //@Input({ required: true }) userName$!: Observable<string>;
+  isRegister = input.required<boolean>();
+  logout = output<void>();
+  userName$ = input.required<Observable<string>>();
 
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly languageService = inject(LanguageService);
   private readonly authService = inject(AuthService);
 
+  private readonly permissions = toSignal(this.authService.getPermissions(), {
+    initialValue: [] as AppPermission[],
+  });
+
+  readonly showAdminRequestsText = computed(() =>
+    this.permissions().includes('accessRegistrationRequestsForAdminPage'),
+  );
+  // readonly showOrganismRequestsText = computed(() =>
+  //   this.permissions().includes('accessRegistrationRequestsForOrganismPage'),
+  // );
+  // readonly showElectorRequestsText = computed(() =>
+  //   this.permissions().includes('accessRegistrationRequestsForElectorPage'),
+  // );
+
   dropdownOpen = signal(false);
-  showAdminRequestsText = signal(false);
+  //showAdminRequestsText = signal(false);
   showOrganismRequestsText = signal(false);
   showElectorRequestsText = signal(false);
 
@@ -42,23 +59,6 @@ export abstract class BaseNavbar {
           this.dropdownOpen.set(false);
         }),
         takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-
-    this.authService
-      .getPermissions()
-      .pipe(
-        map((permissions) => {
-          if (permissions.includes('accessRegistrationRequestsForAdminPage')) {
-            this.showAdminRequestsText.set(true);
-          }
-          // if(permissions.includes('accessRegistrationRequestsForOrganismPage')) {
-          //   this.showOrganismRequestsText.set(true);
-          // }
-          // if(permissions.includes('accessRegistrationRequestsForElectorPage')) {
-          //   this.showElectorRequestsText.set(true);
-          // }
-        }),
       )
       .subscribe();
   }

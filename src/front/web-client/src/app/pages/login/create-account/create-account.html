@@ -1,2 +1,9 @@
-<p>create-account works!</p>
-<p>Register a new account</p>
+<h1>{{ 'register.title' | translate }}</h1>
+<app-user-form
+  [form]="form"
+  [isSaving]="isSaving()"
+  [constituencyId]="constituencyId()"
+  (formSubmitted)="onSubmit($event)"
+  (goBack)="goBack()"
+>
+</app-user-form>

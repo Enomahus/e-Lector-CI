@@ -105,9 +105,6 @@ export class Users extends BaseTable<GetUsersResponse> {
         total: result.data?.totalCount ?? 0,
       })),
       catchError(() => {
-        // this.translateService
-        //   .get('users.loadError')
-        //   .subscribe((message) => this.dialog.open(ConfirmDialog, { data: { message } }));
         return of({ data: [], total: 0 });
       }),
     );
