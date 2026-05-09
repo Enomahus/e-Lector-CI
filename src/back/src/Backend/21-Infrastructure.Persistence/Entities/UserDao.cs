@@ -15,6 +15,8 @@ public class UserDao : IdentityUser<Guid>, IEntityBaseDao<Guid>, ITimestampedEnt
     [MaxLength(50)]
     public string LastName { get; set; }
 
+    public string EmployeeNumber { get; set; }
+
     [MaxLength(20)]
     public AuthProvider? AuthProvider { get; set; }
     public DateTimeOffset? DisabledDate { get; set; }

@@ -24,7 +24,7 @@ public abstract class SeederBase(WritableDbContext context, UserManager<UserDao>
                 FirstName = firstName,
                 LastName = lastName,
                 Email = email,
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,                
             };
             await SeedUserAsync(userDao, password, roles);
         }

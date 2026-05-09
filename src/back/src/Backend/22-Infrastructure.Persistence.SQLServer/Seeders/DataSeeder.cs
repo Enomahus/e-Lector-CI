@@ -67,6 +67,7 @@ public class DataSeeder(
         {
             throw new ConfigurationMissingException("Missing configuration : DataConfig.DefaultUserConfig");
         }
+       
         await SeedUserAsync(
             AdminUserName,
             "Pcea",

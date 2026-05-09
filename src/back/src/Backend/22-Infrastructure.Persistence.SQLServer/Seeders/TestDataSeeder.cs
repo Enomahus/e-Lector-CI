@@ -82,6 +82,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Doe",
                         Email = "john.doe@pcea.com",
                         PhoneNumber = "01 02 03 04 05",
+                        UserConstituencies = [new() { ConstituencyId = 16}]
                     },
                     new List<string> { AppConstants.SuperAdminRole }
                 ),
@@ -93,6 +94,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Gamegie",
                         Email = "sam.gamegie@pcea.com",
                         PhoneNumber = "01 02 03 04 05",
+                        UserConstituencies = [new() { ConstituencyId = 16}]
                     },
                     new List<string> { AppConstants.OrganismAgentRole }
                 ),
@@ -104,6 +106,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Baggins",
                         PhoneNumber = "01 02 03 04 05",
                         Email = "bilbo.baggins@pcea.com",
+                        UserConstituencies = [new() { ConstituencyId = 151}]
                     },
                     new List<string> { AppConstants.ElectorRole }
                 ),
@@ -115,6 +118,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Shieldmaiden",
                         PhoneNumber = "01 02 03 04 05",
                         Email = "eowyn.shieldmaiden@pcea.com",
+                        UserConstituencies = [new() { ConstituencyId = 151}]
                     },
                     new List<string> { AppConstants.ElectorRole }
                 ),
@@ -126,6 +130,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "RiderOfRohan",
                         PhoneNumber = "01 02 03 04 05",
                         Email = "eomer.riderofrohan@pcea.com",
+                        UserConstituencies = [new() { ConstituencyId = 16}]
                     },
                     new List<string> { AppConstants.OrganismAgentRole }
                 ),

@@ -6,6 +6,7 @@ import { PollingStationCreate } from './pages/administration/polling-stations/po
 import { PollingStationUpdate } from './pages/administration/polling-stations/polling-station-update/polling-station-update';
 import { PollingStations } from './pages/administration/polling-stations/polling-stations';
 import { UserCreate } from './pages/administration/users/user-create/user-create';
+import { UserUpdate } from './pages/administration/users/user-update/user-update';
 import { Users } from './pages/administration/users/users';
 import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { Home } from './pages/home/home';
@@ -99,7 +100,7 @@ export const routes: Routes = [
           },
           {
             path: 'users/:id/edit',
-            component: UserCreate,
+            component: UserUpdate,
             canActivate: [PermissionGuard],
             title: 'Update User',
           },

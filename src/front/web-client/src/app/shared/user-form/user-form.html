@@ -9,13 +9,7 @@
   </div>
 
   <div class="user-form">
-    <h2 class="user-form-title">
-      {{
-        isUpdate()
-          ? ('users.form.personalInformation' | translate)
-          : ('users.createUser' | translate)
-      }}
-    </h2>
+    <h2 class="user-form-title">{{ 'users.form.personalInformation' | translate }}</h2>
     <form class="basic-form" [formGroup]="form()">
       <!-- Civilité -->
       <div class="civility-group">
