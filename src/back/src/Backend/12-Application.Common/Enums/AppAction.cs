@@ -10,4 +10,5 @@ public enum AppAction
     RegistrationRequestManagement,
     RegistrationRequestCreation,
     RegistrationRequestConsultation,
+    CommonAccess,
 }

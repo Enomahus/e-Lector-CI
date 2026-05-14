@@ -28,7 +28,7 @@ public class GetUserQueryValidator : AbstractValidator<GetUserQuery>
 }
 
 public class GetUserQueryHandler(ReadOnlyDbContext context, TimeProvider timeProvider)
-: IRequestHandler<GetUserQuery, Result<UserModel>>
+    : IRequestHandler<GetUserQuery, Result<UserModel>>
 {
     public async Task<Result<UserModel>> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
@@ -38,6 +38,7 @@ public class GetUserQueryHandler(ReadOnlyDbContext context, TimeProvider timePro
             await context
                 .Users.Include(s => s.UserConstituencies)
                 .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken)
             ?? throw new NotFoundException(nameof(UserDao), request.UserId);
 

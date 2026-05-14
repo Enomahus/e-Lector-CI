@@ -722,6 +722,74 @@ export class ServerClient extends CustomApiClient {
     }
 
     /**
+     * Récupère tous les rôles possibles pour un utilisateur.
+     */
+    getRoles(): Observable<ResultOfListOfRoleModel> {
+        let url_ = this.baseUrl + "/user/roles";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRoles(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRoles(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfListOfRoleModel>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfListOfRoleModel>;
+        }));
+    }
+
+    protected processGetRoles(response: HttpResponseBase): Observable<ResultOfListOfRoleModel> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfListOfRoleModel;
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result401: any = null;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result403: any = null;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * Récupère les informations de l'utilisateur connecté.
      */
     getCurrentUser(): Observable<ResultOfGetCurrentUserResponse> {
@@ -2469,7 +2537,6 @@ export interface UserModel {
     civility?: PersonTitle;
     isAdmin?: boolean | undefined;
     isActive?: boolean;
-    userType?: UserType;
     roles?: string[];
     constituencyId?: number | undefined;
     createdAt?: string;
@@ -2481,8 +2548,6 @@ export interface UpdateUserCommand extends UserModel {
 }
 
 export type PersonTitle = "mr" | "mrs" | "ms";
-
-export type UserType = "none" | "requester" | "agent" | "admin";
 
 export type AuthProvider = "google" | "microsoft" | "email";
 
@@ -2514,7 +2579,6 @@ export interface GetUsersResponse {
     email?: string | undefined;
     phone?: string | undefined;
     employeeNumber?: string | undefined;
-    userType?: UserType;
     isActive?: boolean;
     constituency?: string | undefined;
     canBeDeleted?: boolean;
@@ -2533,6 +2597,15 @@ export interface GetUsersQuery {
     search?: string | undefined;
 }
 
+export interface ResultOfListOfRoleModel extends Result {
+    data?: RoleModel[] | undefined;
+}
+
+export interface RoleModel {
+    name?: string;
+    id?: string;
+}
+
 export interface ResultOfGetCurrentUserResponse extends Result {
     data?: GetCurrentUserResponse | undefined;
 }
@@ -2542,7 +2615,7 @@ export interface GetCurrentUserResponse extends UserModel {
     permissions?: AppPermission[];
 }
 
-export type AppPermission = "superAdmin" | "accessUsersAdminPage" | "createUser" | "updateUser" | "deleteUser" | "getCurrentUser" | "getUser" | "getUsers" | "checkEmailBeUnique" | "accessConstituenciesAdminPage" | "createConstituency" | "updateConstituency" | "deleteConstituency" | "getConstituency" | "getConstituencies" | "accessPollingStationsAdminPage" | "createPollingStation" | "updatePollingStation" | "deletePollingStation" | "getPollingStation" | "getPollingStations" | "createRegistrationRequest" | "updateRegistrationRequest" | "deleteRegistrationRequest" | "getRegistrationRequest" | "getRegistrationRequests" | "getRegistrationRequestForCurrentUser" | "accessUpdateRegistrationRequest" | "accessRegistrationRequestsForAdminPage" | "accessRegistrationRequestsForManagementPage" | "getRegistrationRequestsForManagement" | "updateRegistrationRequestsForManagement" | "deleteRegistrationRequestsForManagement" | "triggerActionOnRegistrationRequest" | "checkRegistrationReferenceBeUnique" | "accessRegistrationRequestsPage" | "uploadRegistrationRequestTempDocument" | "updateRegistrationRequestDraft" | "importExcelData" | "exportExcelData";
+export type AppPermission = "superAdmin" | "accessUsersAdminPage" | "createUser" | "updateUser" | "deleteUser" | "getCurrentUser" | "getUser" | "getUsers" | "checkEmailBeUnique" | "getRoles" | "accessConstituenciesAdminPage" | "createConstituency" | "updateConstituency" | "deleteConstituency" | "getConstituency" | "getConstituencies" | "accessPollingStationsAdminPage" | "createPollingStation" | "updatePollingStation" | "deletePollingStation" | "getPollingStation" | "getPollingStations" | "createRegistrationRequest" | "updateRegistrationRequest" | "deleteRegistrationRequest" | "getRegistrationRequest" | "getRegistrationRequests" | "getRegistrationRequestForCurrentUser" | "accessUpdateRegistrationRequest" | "accessRegistrationRequestsForAdminPage" | "accessRegistrationRequestsForManagementPage" | "getRegistrationRequestsForManagement" | "updateRegistrationRequestsForManagement" | "deleteRegistrationRequestsForManagement" | "triggerActionOnRegistrationRequest" | "checkRegistrationReferenceBeUnique" | "accessRegistrationRequestsPage" | "uploadRegistrationRequestTempDocument" | "updateRegistrationRequestDraft" | "importExcelData" | "exportExcelData";
 
 export interface CreateUserCommand extends UserModel {
     password?: string | undefined;

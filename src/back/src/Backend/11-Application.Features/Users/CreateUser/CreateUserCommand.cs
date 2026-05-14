@@ -23,9 +23,10 @@ namespace Application.Features.Users.CreateUser
         public string? Password { get; set; }
     }
 
-    public class CreateUserCommandValidator: UserCommandValidatorBase<CreateUserCommand>
+    public class CreateUserCommandValidator : UserCommandValidatorBase<CreateUserCommand>
     {
-        public CreateUserCommandValidator(ReadOnlyDbContext context): base(context)
+        public CreateUserCommandValidator(ReadOnlyDbContext context)
+            : base(context)
         {
             RuleFor(u => u.Password)
                 .NotEmpty()
@@ -43,10 +44,10 @@ namespace Application.Features.Users.CreateUser
         IOptions<AppConfiguration> config,
         //IEmailService emailService,
         TimeProvider timeProvider
-    ) : UserCommandHandlerBase(context, userManager,config,timeProvider), 
+    )
+        : UserCommandHandlerBase(context, userManager, config, timeProvider),
             IRequestHandler<CreateUserCommand, Result<Guid>>
     {
-
         public async Task<Result<Guid>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
         {
             using var activity = ActivitySourceLog.CQRS.Start();

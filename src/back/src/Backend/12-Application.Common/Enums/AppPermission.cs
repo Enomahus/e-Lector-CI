@@ -12,6 +12,8 @@ public enum AppPermission
     GetUser,
     GetUsers,
     CheckEmailBeUnique,
+    GetRoles,
+    GetProfile,
 
     AccessConstituenciesAdminPage,
     CreateConstituency,

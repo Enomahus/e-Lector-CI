@@ -31,10 +31,12 @@ namespace Application.Features.Users.GetUsers
         WritableDbContext context,
         TimeProvider timeProvider,
         ICurrentUserService currentUserService
-    )
-        : IRequestHandler<GetUsersQuery, Result<PagedList<GetUsersResponse>>>
+    ) : IRequestHandler<GetUsersQuery, Result<PagedList<GetUsersResponse>>>
     {
-        public async Task<Result<PagedList<GetUsersResponse>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
+        public async Task<Result<PagedList<GetUsersResponse>>> Handle(
+            GetUsersQuery request,
+            CancellationToken cancellationToken
+        )
         {
             using var activity = ActivitySourceLog.CQRS.Start();
             var now = timeProvider.GetUtcNow();
@@ -46,17 +48,19 @@ namespace Application.Features.Users.GetUsers
 
                 // Filtre par circonscription
                 if (request.ConstituencyId.HasValue)
-                    query = query.Where(u => u.UserConstituencies.Any(uc => uc.ConstituencyId == request.ConstituencyId));
+                    query = query.Where(u =>
+                        u.UserConstituencies.Any(uc => uc.ConstituencyId == request.ConstituencyId)
+                    );
 
                 // Recherche globale
                 if (!string.IsNullOrWhiteSpace(request.Search))
                 {
                     var search = request.Search.ToLower();
                     query = query.Where(u =>
-                        (u.LastName != null && u.LastName.ToLower().Contains(search)) ||
-                        (u.FirstName != null && u.FirstName.ToLower().Contains(search)) ||
-                        (u.Email != null && u.Email.ToLower().Contains(search)) ||
-                        (u.PhoneNumber != null && u.PhoneNumber.ToLower().Contains(search))
+                        (u.LastName != null && u.LastName.ToLower().Contains(search))
+                        || (u.FirstName != null && u.FirstName.ToLower().Contains(search))
+                        || (u.Email != null && u.Email.ToLower().Contains(search))
+                        || (u.PhoneNumber != null && u.PhoneNumber.ToLower().Contains(search))
                     );
                 }
 
@@ -65,24 +69,30 @@ namespace Application.Features.Users.GetUsers
                 // Tri (whitelist des colonnes autorisées)
                 var allowedSortColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    "lastName", "firstName", "email", "createdAt", "isActive"
+                    "lastName",
+                    "firstName",
+                    "email",
+                    "createdAt",
+                    "isActive",
                 };
 
-                string sortColumn = allowedSortColumns.Contains(request.Sort ?? "") ? request.Sort!.ToLower() : "lastname";
+                string sortColumn = allowedSortColumns.Contains(request.Sort ?? "")
+                    ? request.Sort!.ToLower()
+                    : "lastname";
                 bool descending = string.Equals(request.Order, "desc", StringComparison.OrdinalIgnoreCase);
 
                 query = (sortColumn, descending) switch
                 {
-                    ("firstname",  false) => query.OrderBy(u => u.FirstName),
-                    ("firstname",  true)  => query.OrderByDescending(u => u.FirstName),
-                    ("email",      false) => query.OrderBy(u => u.Email),
-                    ("email",      true)  => query.OrderByDescending(u => u.Email),
-                    ("createdat",  false) => query.OrderBy(u => u.CreatedAt),
-                    ("createdat",  true)  => query.OrderByDescending(u => u.CreatedAt),
-                    ("isactive",   false) => query.OrderBy(u => u.DisabledDate),
-                    ("isactive",   true)  => query.OrderByDescending(u => u.DisabledDate),
-                    (_,            false) => query.OrderBy(u => u.LastName),
-                    (_,            true)  => query.OrderByDescending(u => u.LastName),
+                    ("firstname", false) => query.OrderBy(u => u.FirstName),
+                    ("firstname", true) => query.OrderByDescending(u => u.FirstName),
+                    ("email", false) => query.OrderBy(u => u.Email),
+                    ("email", true) => query.OrderByDescending(u => u.Email),
+                    ("createdat", false) => query.OrderBy(u => u.CreatedAt),
+                    ("createdat", true) => query.OrderByDescending(u => u.CreatedAt),
+                    ("isactive", false) => query.OrderBy(u => u.DisabledDate),
+                    ("isactive", true) => query.OrderByDescending(u => u.DisabledDate),
+                    (_, false) => query.OrderBy(u => u.LastName),
+                    (_, true) => query.OrderByDescending(u => u.LastName),
                 };
 
                 // Pagination
@@ -98,13 +108,14 @@ namespace Application.Features.Users.GetUsers
                         Email = x.Email,
                         Phone = x.PhoneNumber,
                         EmployeeNumber = x.EmployeeNumber,
-                        UserType = x.UserType,
                         CanBeDeleted = x.Id != currentUserId && x.CreatedRegistrationRequests.Count == 0,
                         CanBeToggled = x.Id != currentUserId,
                         CreatedAt = x.CreatedAt,
                         IsActive = x.DisabledDate == null || x.DisabledDate > now,
-                        Constituency = x.UserConstituencies.Count > 0
-                            ? x.UserConstituencies.First().Constituency.Wording : null,
+                        Constituency =
+                            x.UserConstituencies.Count > 0
+                                ? x.UserConstituencies.First().Constituency.Wording
+                                : null,
                         Roles = x.UserRoles.Select(r => r.Role.Name ?? ""),
                         AuthProvider = x.AuthProvider,
                     })

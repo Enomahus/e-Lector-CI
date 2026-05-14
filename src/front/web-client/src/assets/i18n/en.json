@@ -174,6 +174,11 @@
     "deactivated": "User deactivated successfully",
     "myInformations": "Update my informations",
     "action": "Actions",
+    "roleOptions": {
+      "requester": "Requester",
+      "agent": "Organism Agent",
+      "admin": "CEI Administrator"
+    },
     "authMethods": {
       "label": "Authentication",
       "google": "Google",

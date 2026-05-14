@@ -1,8 +1,8 @@
-﻿using Infrastructure.Persistence.Entities;
+﻿using System.Web;
+using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using System.Web;
 using Tools.Configuration;
 using Tools.Constants;
 
@@ -39,7 +39,6 @@ namespace Application.Features.Users.Common
             dao.LastName = model.LastName;
             dao.PhoneNumber = model.PhoneNumber;
             dao.Civility = model.Civility;
-            dao.UserType = model.UserType;
             dao.EmployeeNumber = model.EmployeeNumber;
             dao.ModifiedAt = dateNow;
 

@@ -80,7 +80,7 @@
         </div>
         <div class="input-block required">
           <label for="email">{{ 'users.email' | translate }}</label>
-          <input id="email" type="email" formControlName="email" />
+          <input id="email" type="email" formControlName="email" [readOnly]="isEditMode()" />
           @if (form().controls.email.touched && form().controls.email.errors) {
             <ul class="form-error">
               @if (form().controls.email.errors?.['required']) {
@@ -99,66 +99,78 @@
       </div>
 
       <!-- Mots de passe -->
-      <div class="inputs-container">
-        <div class="input-block required">
-          <label for="password">{{ 'users.password' | translate }}</label>
-          <div class="password-container">
-            <input
-              id="password"
-              [type]="hidePassword() ? 'password' : 'text'"
-              formControlName="password"
-            />
-            <button type="button" class="toggle-password" (click)="togglePassword()">
-              <i [class]="hidePassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"></i>
-            </button>
+      @if (!isEditMode()) {
+        <div class="inputs-container">
+          <div class="input-block required">
+            <label for="password">{{ 'users.password' | translate }}</label>
+            <div class="password-container">
+              <input
+                id="password"
+                [type]="hidePassword() ? 'password' : 'text'"
+                formControlName="password"
+              />
+              <button type="button" class="toggle-password" (click)="togglePassword()">
+                <i [class]="hidePassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"></i>
+              </button>
+            </div>
+            @if (form().controls.password.touched && form().controls.password.errors) {
+              <ul class="form-error">
+                @if (form().controls.password.errors?.['required']) {
+                  <li>
+                    {{ 'formError.required' | translate }}
+                  </li>
+                }
+              </ul>
+            }
           </div>
-          @if (form().controls.password.touched && form().controls.password.errors) {
-            <ul class="form-error">
-              @if (form().controls.password.errors?.['required']) {
-                <li>
-                  {{ 'formError.required' | translate }}
-                </li>
-              }
-            </ul>
-          }
-        </div>
 
-        <div class="input-block required">
-          <label for="confirmPassword">{{ 'users.confirmPassword' | translate }}</label>
-          <div class="password-container">
-            <input
-              id="confirmPassword"
-              [type]="hideConfirmPassword() ? 'password' : 'text'"
-              formControlName="confirmPassword"
-            />
-            <button type="button" class="toggle-password" (click)="toggleConfirmPassword()">
-              <i [class]="hideConfirmPassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"></i>
-            </button>
+          <div class="input-block required">
+            <label for="confirmPassword">{{ 'users.confirmPassword' | translate }}</label>
+            <div class="password-container">
+              <input
+                id="confirmPassword"
+                [type]="hideConfirmPassword() ? 'password' : 'text'"
+                formControlName="confirmPassword"
+              />
+              <button type="button" class="toggle-password" (click)="toggleConfirmPassword()">
+                <i [class]="hideConfirmPassword() ? 'ph ph-eye' : 'ph ph-eye-slash'"></i>
+              </button>
+            </div>
+            @if (
+              form().controls.confirmPassword.touched && form().controls.confirmPassword.errors
+            ) {
+              <ul class="form-error">
+                @if (form().controls.confirmPassword.errors?.['required']) {
+                  <li>
+                    {{ 'formError.required' | translate }}
+                  </li>
+                }
+              </ul>
+            }
           </div>
-          @if (form().controls.confirmPassword.touched && form().controls.confirmPassword.errors) {
-            <ul class="form-error">
-              @if (form().controls.confirmPassword.errors?.['required']) {
-                <li>
-                  {{ 'formError.required' | translate }}
-                </li>
-              }
-            </ul>
-          }
         </div>
-      </div>
+      }
 
       <!-- activité user et matricule -->
       <div class="inputs-container">
         <div class="input-block required">
           <label for="roles-select">{{ 'users.role' | translate }}</label>
-          <select id="roles-select" formControlName="roles" multiple>
-            <option value="">Activité</option>
-            @for (activity of activityOptions; track activity) {
-              <option [value]="activity">{{ activity }}</option>
+          <select id="roles-select" formControlName="roles">
+            @for (role of roles; track role.id) {
+              <option [value]="role.id">{{ 'roles.' + role.name | translate }}</option>
             }
           </select>
+          @if (form().controls.roles.touched && form().controls.roles.errors) {
+            <ul class="form-error">
+              @if (form().controls.roles.errors?.['required']) {
+                <li>
+                  {{ 'formError.required' | translate }}
+                </li>
+              }
+            </ul>
+          }
         </div>
-        @if (!isRequester()) {
+        @if (requiredEmployeeNumber()) {
           <div class="input-block required">
             <label for="employeeNumber">{{ 'users.employeeNumber' | translate }}</label>
             <input type="text" id="employeeNumber" formControlName="employeeNumber" />
@@ -173,6 +185,21 @@
             }
           </div>
         }
+        <!-- @if (!isRequester()) {
+          <div class="input-block required">
+            <label for="employeeNumber">{{ 'users.employeeNumber' | translate }}</label>
+            <input type="text" id="employeeNumber" formControlName="employeeNumber" />
+            @if (form().controls.employeeNumber.touched && form().controls.employeeNumber.errors) {
+              <ul class="form-error">
+                @if (form().controls.employeeNumber.errors?.['required']) {
+                  <li>
+                    {{ 'formError.required' | translate }}
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        } -->
       </div>
 
       <!-- circonscription et authentification -->

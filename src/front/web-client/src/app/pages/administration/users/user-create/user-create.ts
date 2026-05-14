@@ -15,7 +15,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styleUrls: ['./user-create.scss'],
 })
 export class UserCreate implements OnInit {
-  form = signal<UserFormFactory>(createUserForm());
+  form = signal<UserFormFactory>(createUserForm(false));
   isSaving = signal(false);
   constituencyId = signal<number | undefined>(undefined);
 

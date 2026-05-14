@@ -23,7 +23,7 @@ export class MyAccountUi implements OnInit {
   constituencyId = signal<number | undefined>(undefined);
   isSaving = signal(false);
   isLoading = signal(false);
-  form = createUserForm();
+  form = createUserForm(false);
   user = signal<GetCurrentUserResponse | undefined>(undefined);
 
   ngOnInit(): void {
@@ -36,11 +36,9 @@ export class MyAccountUi implements OnInit {
             firstName: userInfo.firstName,
             lastName: userInfo.lastName,
             phone: userInfo.phoneNumber,
-            //password: userInfo.password,
-            //confirmPassword: userInfo.password,
             constituencyId: userInfo.constituencyId,
-            employeeNumber: '', //TODO: handle employee number in my account
-            roles: ['agent', 'demandeur'], //TODO: handle roles in my account
+            employeeNumber: userInfo.employeeNumber,
+            roles: userInfo.roles,
             email: userInfo.email,
             authProvider: userInfo.authProvider,
           },

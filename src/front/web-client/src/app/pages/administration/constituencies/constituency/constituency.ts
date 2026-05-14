@@ -6,7 +6,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { Breadcrumbs } from '@app/models/breadcrumb.model';
 import { ConstituencyNode } from '@app/models/constituency.model';
 import { ConstituencyApiService } from '@app/services/api/constituency.api.service';
@@ -37,7 +36,6 @@ export class Constituency implements OnInit {
   private readonly constituecyService = inject(ConstituencyApiService);
   private readonly translateService = inject(TranslateService);
   private readonly breadcrumbService = inject(BreadcrumbService);
-  private readonly route = inject(ActivatedRoute);
 
   constituency = input<GetConstituencyResponse | undefined>(undefined);
   constituencyId = input<number | undefined>(undefined);

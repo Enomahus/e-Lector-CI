@@ -28,22 +28,11 @@
     }
   },
   "breadcrumb": {
-    "bonusAdd": "Nouveau bonus",
-    "bonusEdit": "Modification du bonus",
-    "bonuses": "Référentiel bonus",
-    "brandAdd": "Nouvelle marque",
-    "brandEdit": "Modification de la marque",
-    "brands": "Liste des marques",
-    "certificateRequestAdd": "Nouvelle demande",
-    "certificateRequestEdit": "Modification de demande",
-    "certificateRequests": "Mes demandes",
-    "certificateRequestsForAdmin": "Liste des demandes",
-    "certificateRequestsForManagement": "Liste des demandes",
-    "criteriaAdd": "Nouveau critère",
-    "criteriaEdit": "Modification du critère",
-    "criterias": "Référentiel critères",
-    "panelReferenceAdd": "Nouvelle référence de panneau",
-    "panelReferences": "Références de panneaux photovoltaïques",
+    "pollingStations": "Les bureaux de vote",
+    "pollingStationCreate": "Nouveau bureau de vote",
+    "pollingStationEdit": "Modifier un bureau de vote",
+    "constituencies": "Les circonscriptions",
+    "constituencyCreate": "Nouvelle circonscription",
     "scaleVersionAdd": "Version {{versionName}}",
     "scaleVersionEdit": "Version {{versionName}}",
     "scaleVersions": "Liste des versions de barème d'éco modulation",
@@ -95,8 +84,8 @@
   },
   "roles": {
     "OrganismAgentRole": "Agent d'organisme",
-    "DefaultRole": "Electeur",
-    "SuperAdmin": "Administrateur CEI"
+    "ElectorRole": "Electeur",
+    "SuperAdminRole": "Administrateur CEI"
   },
   "errors": {
     "backendCodes": {

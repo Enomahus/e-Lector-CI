@@ -3,6 +3,7 @@ import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, effect, input, output, signal, untracked } from '@angular/core';
 import { ConstituencyNode } from '@app/models/constituency.model';
+import { PermissionDirective } from '@app/services/auth/permission.directive';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -16,6 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
     CdkMenuTrigger,
     CdkMenu,
     CdkMenuItem,
+    PermissionDirective,
   ],
   templateUrl: './constituency-tree.html',
   styleUrl: './constituency-tree.scss',

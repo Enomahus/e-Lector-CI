@@ -1,4 +1,5 @@
-﻿using Infrastructure.Persistence.Configurations;
+﻿using Application.Common.Enums;
+using Infrastructure.Persistence.Configurations;
 using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Microsoft.AspNetCore.Identity;
@@ -6,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using Tools.Constants;
-using Application.Common.Enums;
 
 namespace Infrastructure.Persistence.SQLServer.Seeders
 {
@@ -83,8 +83,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Doe",
                         Email = "john.doe@pcea.com",
                         PhoneNumber = "01 02 03 04 05",
-                        UserType = UserType.Admin,
-                        UserConstituencies = [new() { ConstituencyId = 16}]
+                        UserConstituencies = [new() { ConstituencyId = 16 }],
                     },
                     new List<string> { AppConstants.SuperAdminRole }
                 ),
@@ -96,8 +95,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Gamegie",
                         Email = "sam.gamegie@pcea.com",
                         PhoneNumber = "01 02 03 04 05",
-                        UserType = UserType.Agent,
-                        UserConstituencies = [new() { ConstituencyId = 16}]
+                        UserConstituencies = [new() { ConstituencyId = 16 }],
                     },
                     new List<string> { AppConstants.OrganismAgentRole }
                 ),
@@ -109,8 +107,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Baggins",
                         PhoneNumber = "01 02 03 04 05",
                         Email = "bilbo.baggins@pcea.com",
-                        UserType = UserType.Requester,
-                        UserConstituencies = [new() { ConstituencyId = 151}]
+                        UserConstituencies = [new() { ConstituencyId = 151 }],
                     },
                     new List<string> { AppConstants.ElectorRole }
                 ),
@@ -122,8 +119,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "Shieldmaiden",
                         PhoneNumber = "01 02 03 04 05",
                         Email = "eowyn.shieldmaiden@pcea.com",
-                        UserType = UserType.Requester,
-                        UserConstituencies = [new() { ConstituencyId = 151}]
+                        UserConstituencies = [new() { ConstituencyId = 151 }],
                     },
                     new List<string> { AppConstants.ElectorRole }
                 ),
@@ -135,8 +131,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                         LastName = "RiderOfRohan",
                         PhoneNumber = "01 02 03 04 05",
                         Email = "eomer.riderofrohan@pcea.com",
-                        UserType = UserType.Agent,
-                        UserConstituencies = [new() { ConstituencyId = 16}]
+                        UserConstituencies = [new() { ConstituencyId = 16 }],
                     },
                     new List<string> { AppConstants.OrganismAgentRole }
                 ),

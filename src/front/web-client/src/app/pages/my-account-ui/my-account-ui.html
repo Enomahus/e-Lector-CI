@@ -3,7 +3,7 @@
   <app-user-form
     [isSaving]="isSaving()"
     [constituencyId]="constituencyId()"
-    [isUpdate]="true"
+    [isEditMode]="true"
     [form]="form"
     (formSubmitted)="updateMyAccountInformations($event)"
     (goBack)="reloadUi()"
