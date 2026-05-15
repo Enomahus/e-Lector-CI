@@ -34,16 +34,14 @@ export class PollingStation {
 
   save = output<PollingStationModel>();
   goBack = output<void>();
-  //pollingStation = input<PollingStationModel | undefined>(undefined);
+
   constituencyId = input<number | undefined>(undefined);
   isToCreate = input<boolean>(false);
   isSaving = input<boolean>(false);
   form = input.required<PollingStationForm>();
-  // private fg = inject(NonNullableFormBuilder);
 
   nodes = this.store.nodesData;
   selectedNode = this.store.selectedNode;
-  //selectedNodes = signal<ConstituencyNode[]>([]);
   initialTreeSelectedId = computed(() => (!this.isToCreate() ? this.constituencyId() : undefined));
 
   isSubmitting = signal(false);
@@ -71,24 +69,6 @@ export class PollingStation {
     const updateModel = this.form().getRawValue() as PollingStationModel;
     this.save.emit(updateModel);
   }
-
-  // setBreadcrumbs(station: PollingStationModel | undefined): void {
-  //   let breadcrumbs: Breadcrumbs[] = [];
-
-  //   breadcrumbs = [
-  //     ...breadcrumbs,
-  //     {
-  //       label: this.translateService.instant('pollingStations.title'),
-  //       url: '/admin/polling-stations',
-  //     },
-  //     {
-  //       label: this.isToCreate()
-  //         ? this.translateService.instant('pollingStation.newStationTitle')
-  //         : (station?.wording ?? ''),
-  //     },
-  //   ];
-  //   this.breadcrumbService.setBreadcrumbs(breadcrumbs);
-  // }
 
   onNodeSelected(info: ConstituencyNode): void {
     const votingLocationNode = info.level === 'votingLocation' ? info : null;
