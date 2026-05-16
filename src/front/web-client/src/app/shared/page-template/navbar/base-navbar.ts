@@ -38,17 +38,15 @@ export abstract class BaseNavbar {
   readonly showAdminRequestsText = computed(() =>
     this.permissions().includes('accessRegistrationRequestsForAdminPage'),
   );
-  // readonly showOrganismRequestsText = computed(() =>
-  //   this.permissions().includes('accessRegistrationRequestsForOrganismPage'),
-  // );
-  // readonly showElectorRequestsText = computed(() =>
-  //   this.permissions().includes('accessRegistrationRequestsForElectorPage'),
-  // );
+  readonly showOrganismRequestsText = computed(() =>
+    this.permissions().includes('accessRegistrationRequestsForManagementPage'),
+  );
+  readonly showElectorRequestsText = computed(() =>
+    this.permissions().includes('accessRegistrationRequestsPage'),
+  );
+  isAdmin = this.permissions().includes('superAdmin');
 
   dropdownOpen = signal(false);
-  //showAdminRequestsText = signal(false);
-  showOrganismRequestsText = signal(false);
-  showElectorRequestsText = signal(false);
 
   constructor() {
     // Hide dropdown after having navigated to another page.

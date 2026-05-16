@@ -13,6 +13,11 @@ import { Home } from './pages/home/home';
 import { CreateAccount } from './pages/login/create-account/create-account';
 import { Login } from './pages/login/login';
 import { MyAccountUi } from './pages/my-account-ui/my-account-ui';
+import { CreateRegistrationRequestUi } from './pages/registration-request-home/create-registration-request-ui/create-registration-request-ui';
+import { RegistrationRequestsForAdminUi } from './pages/registration-request-home/registration-requests-for-admin-ui/registration-requests-for-admin-ui';
+import { RegistrationRequestsForManagementUi } from './pages/registration-request-home/registration-requests-for-management-ui/registration-requests-for-management-ui';
+import { RegistrationRequestsUi } from './pages/registration-request-home/registration-requests-ui/registration-requests-ui';
+import { UpdateRegistrationRequestUi } from './pages/registration-request-home/update-registration-request-ui/update-registration-request-ui';
 import { PermissionGuard } from './services/auth/permission.guard';
 import { PageTemplate } from './shared/page-template/page-template';
 
@@ -46,6 +51,42 @@ export const routes: Routes = [
         path: 'register',
         component: CreateAccount,
         title: 'Create an account',
+      },
+      {
+        path: 'registration-requests',
+        component: RegistrationRequestsUi,
+        canActivate: [PermissionGuard],
+        title: 'Registration Requests',
+      },
+      {
+        path: 'registration-requests-for-management',
+        component: RegistrationRequestsForManagementUi,
+        canActivate: [PermissionGuard],
+        title: 'Registration Requests for Management',
+      },
+      {
+        path: 'registration-requests-for-admin',
+        component: RegistrationRequestsForAdminUi,
+        canActivate: [PermissionGuard],
+        title: 'Registration Requests for Admin',
+      },
+      {
+        path: 'registration-requests/new',
+        component: CreateRegistrationRequestUi,
+        canActivate: [PermissionGuard],
+        data: {
+          requiredPermission: 'createRegistrationRequest',
+        },
+        title: 'Create Registration Request',
+      },
+      {
+        path: 'registration-requests/:id',
+        component: UpdateRegistrationRequestUi,
+        canActivate: [PermissionGuard],
+        data: {
+          requiredPermission: 'updateRegistrationRequest',
+        },
+        title: 'Update Registration Request',
       },
       {
         path: 'admin',

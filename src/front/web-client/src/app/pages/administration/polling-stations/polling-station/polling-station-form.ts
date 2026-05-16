@@ -7,7 +7,7 @@ export type PollingStationForm = FormGroup<{
   isActive: FormControl<boolean>;
 }>;
 
-export function createPollingStationForm(fromCreate: boolean): PollingStationForm {
+export function createPollingStationForm(isToCreate: boolean): PollingStationForm {
   const form = new FormGroup({
     stationNumber: new FormControl<string | undefined>(undefined, {
       validators: Validators.required,
@@ -27,20 +27,12 @@ export function createPollingStationForm(fromCreate: boolean): PollingStationFor
     }),
   }) as PollingStationForm;
 
-  form.controls.stationNumber.valueChanges.subscribe(() =>
-    updateStationNumberValidators(form, fromCreate),
-  );
+  if (!isToCreate) {
+    form.controls.stationNumber.disable();
+  } else {
+    form.controls.stationNumber.clearValidators();
+  }
+  form.controls.stationNumber.updateValueAndValidity({ emitEvent: false });
 
   return form;
-}
-
-export function updateStationNumberValidators(form: PollingStationForm, isCreate: boolean) {
-  const stationNumberControl = form.controls.stationNumber;
-
-  if (!isCreate) {
-    stationNumberControl.disable();
-  } else {
-    stationNumberControl.clearValidators();
-  }
-  stationNumberControl.updateValueAndValidity({ emitEvent: false });
 }

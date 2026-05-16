@@ -52,7 +52,9 @@
           <label for="parentId">{{ 'constituency.fields.parentConstituency' | translate }}</label>
           <select id="parentId" formControlName="parentId" class="form-control">
             @for (constituency of parentConstituencies(); track constituency.id) {
-              <option [value]="constituency.id">{{ constituency.wording }}</option>
+              <option [value]="constituency.id">
+                {{ constituency.code }} - {{ constituency.wording }}
+              </option>
             }
           </select>
           @if (form().controls.parentId.touched && form().controls.parentId.errors) {

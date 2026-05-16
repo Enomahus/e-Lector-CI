@@ -8,19 +8,23 @@
   </div>
   <div class="station-form">
     <form [formGroup]="form()">
-      <div class="inputs-container">
-        <div class="input-block required">
-          <label for="stationNumber">{{ 'pollingStation.fields.stationNumber' | translate }}</label>
-          <input id="stationNumber" formControlName="stationNumber" />
-          @if (form().controls.stationNumber.touched && form().controls.stationNumber.errors) {
-            <ul class="form-error">
-              @if (form().controls.stationNumber.errors?.['required']) {
-                <li>{{ 'formError.required' | translate }}</li>
-              }
-            </ul>
-          }
+      @if (!isToCreate()) {
+        <div class="inputs-container">
+          <div class="input-block required">
+            <label for="stationNumber">{{
+              'pollingStation.fields.stationNumber' | translate
+            }}</label>
+            <input id="stationNumber" formControlName="stationNumber" />
+            @if (form().controls.stationNumber.touched && form().controls.stationNumber.errors) {
+              <ul class="form-error">
+                @if (form().controls.stationNumber.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
         </div>
-      </div>
+      }
 
       <div class="inputs-container">
         <div class="input-block required">
@@ -78,7 +82,7 @@
   <button
     id="save-station"
     type="button"
-    [disabled]="form().invalid || !form().dirty || isSubmitting()"
+    [disabled]="form().invalid || isSubmitting()"
     class="btn primary"
     (click)="savePollingStation()"
   >

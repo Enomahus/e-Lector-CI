@@ -56,10 +56,18 @@ export class Constituency implements OnInit {
     effect(() => {
       const nodes = this.nodes();
       const id = this.constituencyId();
+      const constituency = this.constituency();
 
       if (nodes.length > 0 && id) {
         this.store.expandNodePath(id);
         this.store.setSelectedNode(id);
+      }
+
+      if (nodes.length > 0 && constituency?.parentId) {
+        const parentNode = this.store.findNode(constituency.parentId);
+        if (parentNode) {
+          this.parentConstituencies.set([parentNode]);
+        }
       }
     });
   }
@@ -77,7 +85,7 @@ export class Constituency implements OnInit {
     }
   }
 
-  setBreadcrumbs(constituency: ConstituencyModel | undefined): void {
+  private setBreadcrumbs(constituency: ConstituencyModel | undefined): void {
     let breadcrumbs: Breadcrumbs[] = [];
     breadcrumbs = [
       {

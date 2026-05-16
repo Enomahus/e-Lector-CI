@@ -26,25 +26,15 @@ export class ConstituencyTreeHelperService {
   //readonly nodes = this._nodes.asReadonly();
   readonly selectedNode = this._selectedNode.asReadonly();
 
-  // loadNodes(targetIdToExpand?: number) {
-  //   return this.constituencyService.getConstituencyTree({}).pipe(
-  //     tap((res) => {
-  //       const rawData = res.data ?? [];
-  //       const mappedNodes = rawData.map((c) => this.mapToNode(c));
-
-  //       if (targetIdToExpand) {
-  //         this.expandPathToNode(mappedNodes, targetIdToExpand);
-  //       }
-  //       this._nodes.set(mappedNodes);
-  //     }),
-  //   );
-  // }
-
   expandNodePath(targetId: number): void {
     const currentNodes = this.nodesData();
     if (currentNodes.length > 0) {
       this.expandPathToNode(currentNodes, targetId);
     }
+  }
+
+  findNode(id: number): ConstituencyNode | undefined {
+    return this.findNodeInTree(this.nodesData(), id);
   }
 
   setSelectedNode(node: ConstituencyNode | number | undefined): void {
