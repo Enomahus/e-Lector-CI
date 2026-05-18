@@ -11,6 +11,8 @@
     "login": "Se connecter",
     "no": "Non",
     "yes": "Oui",
+    "noTitleTemplate": "E-Lector-CI",
+    "titleTemplate": "{{title}} | E-Lector-CI",
     "language": "Langue",
     "lang": {
       "fr": "Français",
@@ -62,6 +64,22 @@
     "signUp": "Inscrivez-vous",
     "externalLoginFailed": "Une erreur est survenue lors de la connexion, veuillez réessayer.",
     "continueWithEmail": "Ou continuez avec votre adresse e-mail"
+  },
+  "forgotPassword": {
+    "email": "Adresse mail",
+    "forgotActionButton": "Recevoir le mail de réinitialisation",
+    "forgotPassword": "Mot de passe oublié",
+    "mailAlreadySendButton": "Mail envoyé !",
+    "returnToLogin": "Retour à la page de connexion",
+    "success": "Mail de réinitialisation envoyé si un compte existe avec cet email."
+  },
+  "resetPassword": {
+    "invalidLink": "Le lien de réinitialisation du mot de passe est invalide. Veuillez à nouveau réinitialiser votre mot de passe.",
+    "missingParams": "L'url de réinitialisation du mot de passe est erronée",
+    "password": "Mot de passe",
+    "resetActionButton": "Valider mon mot de passe",
+    "resetPassword": "Réinitialiser mot de passe",
+    "resetSuccess": "Mot de passe enregistré"
   },
   "footer": {
     "text": "© 2026 Commission Électorale Indépendante (CEI) - Côte d'Ivoire.",
@@ -116,6 +134,8 @@
     "title": "Liste des circonscriptions",
     "createConstituency": "Créer une circonscription",
     "editConstituency": "Modifier la circonscription",
+    "titleNewConstituency": "Nouvelle circonscription",
+    "titleEditConstituency": "Modifier la circonscription",
     "name": "Nom de la circonscription",
     "level": "Niveau de la circonscription",
     "parentConstituency": "Circonscription parente",
@@ -180,6 +200,8 @@
     "title": "Les Bureaux de vote",
     "createPollingStation": "Créer un bureau de vote",
     "editPollingStation": "Modifier le bureau de vote",
+    "titleNewPollingStation": "Nouveau bureau de vote",
+    "titleEditPollingStation": "Modifier le bureau de vote",
     "votingLocationName": "Lieu de vote",
     "stationNumber": "Bureau",
     "municipalityName": "Commune / Village",
@@ -201,6 +223,8 @@
   "users": {
     "title": "Liste des utilisateurs",
     "createUser": "Créer un utilisateur",
+    "titleNewUser": "Nouvel utilisateur",
+    "titleEditUser": "Modifier l'utilisateur",
     "firstName": "Prénom",
     "lastName": "Nom",
     "email": "Email",
@@ -271,5 +295,29 @@
     "register": "S'inscrire",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "login": "Connectez-vous"
+  },
+  "registrationRequests": {
+    "title": "Demande d'inscription",
+    "myRequests": "Mes demandes",
+    "myRequestsForOrganism": "Les demandes",
+    "myRequestsForAdmin": "Les demandes",
+    "titleForManagement": "Liste des demandes",
+    "titleForAdmin": "Liste des demandes",
+    "titleNewRegistrationRequest": "Nouvelle demande",
+    "titleEditRegistrationRequest": "Modifier la demande",
+    "status": {
+      "pending": "En attente",
+      "approved": "Approuvée",
+      "rejected": "Rejetée"
+    },
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "employeeNumber": "Numéro matricule",
+      "phone": "Téléphone",
+      "constituency": "Circonscription",
+      "civility": "Civilité"
+    }
   }
 }

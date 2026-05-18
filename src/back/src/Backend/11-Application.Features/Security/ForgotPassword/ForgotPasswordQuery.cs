@@ -1,6 +1,6 @@
-﻿using Application.Audit;
+﻿using System.Web;
+using Application.Audit;
 using Application.Exceptions;
-using Application.Interfaces.Services;
 using Application.Models;
 using Application.Models.Errors;
 using FluentValidation;
@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Pcea.Core.Net.AuditTrail.Attributes;
-using System.Web;
 using Tools.Configuration;
 using Tools.Constants;
 using Tools.Logging;
@@ -57,8 +56,9 @@ namespace Application.Features.Security.ForgotPassword
 
                 var user =
                     await context.Users.FirstOrDefaultAsync(
-                        u => u.Email == request.UserEmail 
-                        && (u.DisabledDate == null || u.DisabledDate > dateNow),
+                        u =>
+                            u.Email == request.UserEmail
+                            && (u.DisabledDate == null || u.DisabledDate > dateNow),
                         cancellationToken
                     ) ?? throw new NotFoundException(nameof(UserDao), request.UserEmail);
 

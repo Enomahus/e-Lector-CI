@@ -10,7 +10,8 @@ public class RegistrationRequestDao : EntityBaseDao<Guid>
     [MaxLength(25)]
     [Required]
     public string Reference { get; set; }
-    public DateTimeOffset SoumissionDate { get; set; }
+    public DateTimeOffset SubmissionDate { get; set; }
+    public RegistrationRequestType RequestType { get; set; }
     public RegistrationStatus Status { get; set; }
     public string ReasonForRejection { get; set; }
     public Guid? AuthorId { get; set; }
@@ -26,7 +27,9 @@ public class RegistrationRequestDao : EntityBaseDao<Guid>
     [ForeignKey(nameof(CitizenId))]
     public virtual CitizenDao Citizen { get; set; } = null!;
     public long ConstituencyId { get; set; }
+
     [ForeignKey(nameof(ConstituencyId))]
     public ConstituencyDao Constituency { get; set; }
-    public virtual ICollection<RegistrationRequestDocumentDao> RegistrationRequestDocuments { get; set; } = [];
+    public virtual ICollection<RegistrationRequestDocumentDao> RegistrationRequestDocuments { get; set; } =
+    [];
 }

@@ -13,7 +13,7 @@
     </div>
 
     <ul class="menu menu-left">
-      <li class="menu-item" [routerLinkActive]="'active'">
+      <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
         <a routerLink="/registration-requests/new">{{
           'navbar.registrationRequest' | translate
         }}</a>

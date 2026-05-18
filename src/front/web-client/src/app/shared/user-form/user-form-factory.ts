@@ -6,6 +6,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { patternPassword } from '@app/pages/constants';
 import { AuthProvider, PersonTitle } from '@app/services/nswag/api-nswag-client';
 import { passwordMatchValidator } from '../helpers/form.helper';
 import { phoneNumberValidator } from '../phone-input/phone-input-intl.validator';
@@ -39,7 +40,10 @@ export function createUserForm(isEditMode: boolean): UserFormFactory {
         Validators.required,
         Validators.email,
       ]),
-      password: new FormControl<string | undefined>(undefined, [Validators.required]),
+      password: new FormControl<string | undefined>(undefined, [
+        Validators.required,
+        Validators.pattern(patternPassword),
+      ]),
       confirmPassword: new FormControl<string | undefined>(undefined, [Validators.required]),
       roles: new FormControl<string[]>([]),
       authProvider: new FormControl<AuthProvider | undefined>({ value: undefined, disabled: true }),

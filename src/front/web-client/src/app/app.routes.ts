@@ -18,8 +18,14 @@ import { RegistrationRequestsForAdminUi } from './pages/registration-request-hom
 import { RegistrationRequestsForManagementUi } from './pages/registration-request-home/registration-requests-for-management-ui/registration-requests-for-management-ui';
 import { RegistrationRequestsUi } from './pages/registration-request-home/registration-requests-ui/registration-requests-ui';
 import { UpdateRegistrationRequestUi } from './pages/registration-request-home/update-registration-request-ui/update-registration-request-ui';
+import { ResetPasswordUi } from './pages/reset-password-ui/reset-password-ui';
 import { PermissionGuard } from './services/auth/permission.guard';
+import { AppPermission } from './services/nswag/api-nswag-client';
 import { PageTemplate } from './shared/page-template/page-template';
+
+export function perm(p: AppPermission): AppPermission {
+  return p;
+}
 
 export const routes: Routes = [
   {
@@ -30,12 +36,22 @@ export const routes: Routes = [
   {
     path: 'login',
     component: Login,
-    title: 'Login',
+    title: 'login.title',
+  },
+  {
+    path: 'login/:provider',
+    component: Login,
+    title: 'login.title',
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordUi,
+    title: 'resetPassword.resetPassword',
   },
   {
     path: 'forgot-password',
     component: ForgotPassword,
-    title: 'Forgot Password',
+    title: 'forgotPassword.forgotPassword',
   },
   {
     path: '',
@@ -45,48 +61,49 @@ export const routes: Routes = [
         path: 'home',
         component: Home,
         canActivate: [PermissionGuard],
-        title: 'Home',
+        title: 'home.title',
       },
       {
         path: 'register',
         component: CreateAccount,
-        title: 'Create an account',
+        title: 'register.title',
+        canActivate: [PermissionGuard],
       },
       {
         path: 'registration-requests',
         component: RegistrationRequestsUi,
         canActivate: [PermissionGuard],
-        title: 'Registration Requests',
+        title: 'registrationRequests.title',
       },
       {
         path: 'registration-requests-for-management',
         component: RegistrationRequestsForManagementUi,
         canActivate: [PermissionGuard],
-        title: 'Registration Requests for Management',
+        title: 'registrationRequests.titleForManagement',
       },
       {
         path: 'registration-requests-for-admin',
         component: RegistrationRequestsForAdminUi,
         canActivate: [PermissionGuard],
-        title: 'Registration Requests for Admin',
+        title: 'registrationRequests.titleForAdmin',
       },
       {
         path: 'registration-requests/new',
         component: CreateRegistrationRequestUi,
         canActivate: [PermissionGuard],
         data: {
-          requiredPermission: 'createRegistrationRequest',
+          permission: perm('createRegistrationRequest'),
         },
-        title: 'Create Registration Request',
+        title: 'registrationRequests.titleNewRegistrationRequest',
       },
       {
         path: 'registration-requests/:id',
         component: UpdateRegistrationRequestUi,
         canActivate: [PermissionGuard],
         data: {
-          requiredPermission: 'updateRegistrationRequest',
+          permission: perm('updateRegistrationRequest'),
         },
-        title: 'Update Registration Request',
+        title: 'registrationRequests.titleEditRegistrationRequest',
       },
       {
         path: 'admin',
@@ -95,55 +112,82 @@ export const routes: Routes = [
             path: 'constituencies',
             component: Constituencies,
             canActivate: [PermissionGuard],
-            title: 'Constituencies',
+            title: 'constituencies.title',
+            data: {
+              permission: perm('accessConstituenciesAdminPage'),
+            },
           },
           {
             path: 'constituencies/new',
             component: ConstituencyCreate,
             canActivate: [PermissionGuard],
-            title: 'Create constituency',
+            title: 'constituencies.titleNewConstituency',
+            data: {
+              permission: perm('createConstituency'),
+            },
           },
           {
             path: 'constituencies/:id/edit',
             component: ConstituencyUpdate,
             canActivate: [PermissionGuard],
-            title: 'Update constituency',
+            title: 'constituencies.titleEditConstituency',
+            data: {
+              permission: perm('updateConstituency'),
+            },
           },
           {
             path: 'polling-stations',
             component: PollingStations,
             canActivate: [PermissionGuard],
-            title: 'Polling Stations',
+            title: 'pollingStations.title',
+            data: {
+              permission: perm('accessPollingStationsAdminPage'),
+            },
           },
           {
             path: 'polling-stations/new',
             component: PollingStationCreate,
             canActivate: [PermissionGuard],
-            title: 'Create Polling Station',
+            title: 'pollingStations.titleNewPollingStation',
+            data: {
+              permission: perm('createPollingStation'),
+            },
           },
           {
             path: 'polling-stations/:id/edit',
             component: PollingStationUpdate,
             canActivate: [PermissionGuard],
-            title: 'Update Polling Station',
+            title: 'pollingStations.titleEditPollingStation',
+            data: {
+              permission: perm('updatePollingStation'),
+            },
           },
           {
             path: 'users',
             component: Users,
             canActivate: [PermissionGuard],
-            title: 'Users',
+            title: 'users.title',
+            data: {
+              permission: perm('accessUsersAdminPage'),
+            },
           },
           {
             path: 'users/new',
             component: UserCreate,
             canActivate: [PermissionGuard],
-            title: 'Create User',
+            title: 'users.titleNewUser',
+            data: {
+              permission: perm('createUser'),
+            },
           },
           {
             path: 'users/:id/edit',
             component: UserUpdate,
             canActivate: [PermissionGuard],
-            title: 'Update User',
+            data: {
+              permission: perm('updateUser'),
+            },
+            title: 'users.titleEditUser',
           },
         ],
       },
@@ -151,8 +195,9 @@ export const routes: Routes = [
         path: 'my-account',
         component: MyAccountUi,
         canActivate: [PermissionGuard],
-        title: 'My Account',
+        title: 'register.title',
       },
     ],
   },
+  { path: '**', redirectTo: '/home' },
 ];

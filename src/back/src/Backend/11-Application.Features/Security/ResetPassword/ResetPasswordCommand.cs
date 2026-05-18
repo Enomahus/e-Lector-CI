@@ -30,7 +30,6 @@ namespace Application.Features.Security.ResetPassword
         public string? Password { get; set; }
     }
 
-
     public class ResetPasswordCommandValidator : AbstractValidator<ResetPasswordCommand>
     {
         public ResetPasswordCommandValidator(ReadOnlyDbContext context)
@@ -65,9 +64,8 @@ namespace Application.Features.Security.ResetPassword
         }
     }
 
-
     public class ResetPasswordCommandHandler(UserManager<UserDao> userManager, WritableDbContext context)
-       : IRequestHandler<ResetPasswordCommand, Result>
+        : IRequestHandler<ResetPasswordCommand, Result>
     {
         public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {

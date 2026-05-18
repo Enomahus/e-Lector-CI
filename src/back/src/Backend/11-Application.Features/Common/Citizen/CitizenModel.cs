@@ -64,9 +64,8 @@ namespace Application.Features.Common.Citizen
                 FatherId = FatherId,
                 Father = Father?.ToDao(),
                 MotherId = MotherId,
-                Mother = Mother?.ToDao()
+                Mother = Mother?.ToDao(),
             };
         }
-
     }
 }
