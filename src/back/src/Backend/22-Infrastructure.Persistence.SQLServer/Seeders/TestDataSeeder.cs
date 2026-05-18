@@ -7,13 +7,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using Tools.Constants;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Infrastructure.Persistence.SQLServer.Seeders
 {
     public class TestDataSeeder(
         WritableDbContext context,
         UserManager<UserDao> userManager,
-        IOptions<DataConfiguration> dataConfig
+        IOptions<DataConfiguration> dataConfig,
+        TimeProvider timeProvider
     ) : SeederBase(context, userManager)
     {
         public override async Task SeedDataAsync()
@@ -28,6 +30,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                 {
                     await SeedUsersAsync();
                     await SeedPollingStationAsync();
+                    await SeedRegistrationRequestsAsync();
                 },
                 () => Task.FromResult(true)
             );
@@ -65,6 +68,80 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                     _context.PollingStations.Update(dbStation);
                 }
             }
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task SeedRegistrationRequestsAsync()
+        {
+            var constituencies = await _context
+                .Constituencies.Include(uc => uc.UserConstituencies)
+                    .ThenInclude(u => u.User)
+                .ToListAsync();
+            var pollingStations = await _context.PollingStations.Include(s => s.Constituency).ToListAsync();
+
+            var stationTest = pollingStations.FirstOrDefault(s =>
+                s.Wording == "EPP Allanikro" && s.StationNumber == "01"
+            );
+
+            if (stationTest == null)
+                return;
+
+            var registrationRequests = GetMockRegistrationRequests(constituencies);
+            var mockReferences = registrationRequests.Select(rr => rr.Reference).ToList();
+            var existingReferences = await _context
+                .RegistrationRequests.Where(rr => mockReferences.Contains(rr.Reference))
+                .Select(rr => rr.Reference)
+                .ToHashSetAsync();
+
+            int sequence = 0;
+            string zoneCode = stationTest.Constituency.Code.PadLeft(5, '0');
+            var now = timeProvider.GetUtcNow();
+
+            // Listes pour le traitement par lot (Bulk preparation)
+            var requestsToInsert = new List<RegistrationRequestDao>();
+            var electorsToInsert = new List<ElectorDao>();
+
+            foreach (var item in registrationRequests)
+            {
+                if (existingReferences.Contains(item.Reference))
+                {
+                    continue;
+                }
+
+                requestsToInsert.Add(item);
+
+                if (item.Status == RegistrationStatus.Approuved)
+                {
+                    sequence++;
+                    string sequenceStr = sequence.ToString().PadLeft(6, '0');
+                    long rawNumber = long.Parse($"{zoneCode}{sequenceStr}");
+                    string checKey = (rawNumber % 97).ToString().PadLeft(2, '0');
+                    var elector = new ElectorDao
+                    {
+                        Id = item.Id,
+                        RegistrationDate = now,
+                        Status = ElectorStatus.Active,
+                        PollingStationId = stationTest.Id,
+                        PollingStation = stationTest,
+                        CreatedAt = now,
+                        ModifiedAt = now,
+                        VoterRegistrationNumber = $"V {zoneCode} {sequenceStr} {checKey}",
+                    };
+
+                    electorsToInsert.Add(elector);
+                }
+            }
+
+            if (requestsToInsert.Count > 0)
+            {
+                await _context.RegistrationRequests.AddRangeAsync(requestsToInsert);
+            }
+
+            if (electorsToInsert.Count > 0)
+            {
+                await _context.Electors.AddRangeAsync(electorsToInsert); // Correction : Ajout manquant dans ton code initial
+            }
+
             await _context.SaveChangesAsync();
         }
         #endregion
@@ -258,6 +335,534 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                 },
             ];
         }
+
+        //private List<RegistrationRequestDao> GetMockRegistrationRequests(
+        //    List<ConstituencyDao> constituencies,
+        //    List<PollingStationDao> pollingStations
+        //)
+        //{
+        //    // 1. Indexation en mémoire (Dictionnaires) pour une recherche en O(1)
+        //    // Au lieu de parcourir les listes à chaque fois, on accède directement à l'élément par sa clé.
+        //    var constituenciesByCode = constituencies.ToDictionary(c => c.Code);
+
+        //    // On isole le bureau de test pour lui attribuer la majorité des demandes
+        //    var targetStation = pollingStations.FirstOrDefault(s =>
+        //        s.Wording == "EPP Allanikro" && s.StationNumber == "01"
+        //    );
+
+        //    var now = timeProvider.GetUtcNow();
+        //    var list = new List<RegistrationRequestDao>(50); // Allocation initiale de la capacité pour éviter les redimensionnements
+
+        //    // 2. Génération des données avec le bureau cible
+        //    if (targetStation != null)
+        //    {
+        //        // Exemple : Génération en boucle de demandes approuvées pour ton bureau test
+        //        for (int i = 1; i <= 20; i++)
+        //        {
+        //            var id = Guid.NewGuid();
+        //            list.Add(
+        //                new RegistrationRequestDao
+        //                {
+        //                    Id = id,
+        //                    Reference = $"REQ-2026-{i:D5}", // Format propre : REQ-2026-00001
+        //                    Status = RegistrationStatus.Approuved,
+        //                    PollingStationId = targetStation.Id,
+        //                    PollingStation = targetStation,
+        //                    CreatedAt = now,
+        //                    ModifiedAt = now,
+        //                    // Remplis le reste de tes propriétés ici (Nom, Prénom, etc.)
+        //                }
+        //            );
+        //        }
+        //    }
+
+        //    // 3. Génération de cas de test secondaires (ex: Demandes en attente ou rejetées)
+        //    // On utilise notre dictionnaire pour associer une circonscription au hasard de manière ultra-rapide
+        //    if (constituenciesByCode.TryGetValue("Z-001", out var specificConstituency))
+        //    {
+        //        list.Add(
+        //            new RegistrationRequestDao
+        //            {
+        //                Id = Guid.NewGuid(),
+        //                Reference = "REQ-PENDING-01",
+        //                Status = RegistrationStatus.Pending,
+        //                PollingStationId = targetStation?.Id ?? Guid.Empty,
+        //                CreatedAt = now,
+        //                ModifiedAt = now,
+        //            }
+        //        );
+        //    }
+
+        //    return list;
+        //}
+
+        public static IEnumerable<RegistrationRequestDao> GetMockRegistrationRequests(
+            List<ConstituencyDao> constituencies
+        )
+        {
+            if (constituencies.Count == 0)
+                yield break;
+
+            CitizenSeedData[] citizens =
+            [
+                new(
+                    "Koné",
+                    "Amadou",
+                    Gender.M,
+                    new(1985, 3, 15),
+                    "Bouaké",
+                    "Ivoirienne",
+                    MaritalStatus.Married,
+                    "Agriculteur",
+                    "Quartier Liberté, Bouaké"
+                ),
+                new(
+                    "Touré",
+                    "Fatoumata",
+                    Gender.F,
+                    new(1992, 7, 22),
+                    "Abidjan",
+                    "Ivoirienne",
+                    MaritalStatus.Married,
+                    "Commerçante",
+                    "Cocody, Abidjan"
+                ),
+                new(
+                    "Diabaté",
+                    "Ibrahim",
+                    Gender.M,
+                    new(1978, 11, 5),
+                    "Korhogo",
+                    "Ivoirienne",
+                    MaritalStatus.Divorced,
+                    "Enseignant",
+                    "Quartier Commerce, Korhogo"
+                ),
+                new(
+                    "Coulibaly",
+                    "Mariama",
+                    Gender.F,
+                    new(1990, 4, 18),
+                    "Yamoussoukro",
+                    "Ivoirienne",
+                    MaritalStatus.Single,
+                    "Secrétaire",
+                    "Habitat, Yamoussoukro"
+                ),
+                new(
+                    "Bamba",
+                    "Ousmane",
+                    Gender.M,
+                    new(1983, 9, 1),
+                    "Daloa",
+                    "Ivoirienne",
+                    MaritalStatus.Married,
+                    "Chauffeur",
+                    "Orly 1, Daloa"
+                ),
+                new(
+                    "Traoré",
+                    "Aïcha",
+                    Gender.F,
+                    new(1995, 1, 30),
+                    "Gagnoa",
+                    "Ivoirienne",
+                    MaritalStatus.Single,
+                    "Infirmière",
+                    "Résidence Kossou, Gagnoa"
+                ),
+                new(
+                    "Diomandé",
+                    "Moussa",
+                    Gender.M,
+                    new(1972, 6, 10),
+                    "San-Pédro",
+                    "Ivoirienne",
+                    MaritalStatus.Widowed,
+                    "Pêcheur",
+                    "Cité des Pêcheurs, San-Pédro"
+                ),
+                new(
+                    "Ouattara",
+                    "Aminata",
+                    Gender.F,
+                    new(1988, 2, 25),
+                    "Abengourou",
+                    "Ivoirienne",
+                    MaritalStatus.Married,
+                    "Institutrice",
+                    "Dioulakro, Abengourou"
+                ),
+                new(
+                    "Sanogo",
+                    "Seydou",
+                    Gender.M,
+                    new(1991, 8, 14),
+                    "Man",
+                    "Ivoirienne",
+                    MaritalStatus.Single,
+                    "Mécanicien",
+                    "Carrefour, Man"
+                ),
+                new(
+                    "Gbagbo",
+                    "Aya",
+                    Gender.F,
+                    new(1980, 12, 3),
+                    "Sassandra",
+                    "Ivoirienne",
+                    MaritalStatus.Divorced,
+                    "Couturière",
+                    "Quartier Lahou, Sassandra"
+                ),
+                new(
+                    "Yao",
+                    "Kouassi",
+                    Gender.M,
+                    new(1975, 5, 20),
+                    "Bondoukou",
+                    "Ivoirienne",
+                    MaritalStatus.Married,
+                    "Fonctionnaire",
+                    "Résidence Administrative, Bondoukou"
+                ),
+                new(
+                    "Assi",
+                    "Adjoua",
+                    Gender.F,
+                    new(1993, 10, 8),
+                    "Divo",
+                    "Ivoirienne",
+                    MaritalStatus.Single,
+                    "Étudiante",
+                    "Cité Universitaire, Divo"
+                ),
+                new(
+                    "N'Guessan",
+                    "Franck",
+                    Gender.M,
+                    new(1987, 7, 17),
+                    "Issia",
+                    "Ivoirienne",
+                    MaritalStatus.Single,
+                    "Ingénieur",
+                    "Zone Industrielle, Issia"
+                ),
+                new(
+                    "Kouamé",
+                    "Rosine",
+                    Gender.F,
+                    new(1982, 3, 29),
+                    "Agboville",
+                    "Ivoirienne",
+                    MaritalStatus.Married,
+                    "Commerçante",
+                    "Marché Central, Agboville"
+                ),
+                new(
+                    "Dembélé",
+                    "Bakary",
+                    Gender.M,
+                    new(1969, 11, 12),
+                    "Odienné",
+                    "Ivoirienne",
+                    MaritalStatus.Widowed,
+                    "Éleveur",
+                    "Quartier Dioulabougou, Odienné"
+                ),
+                new(
+                    "Tchéhi",
+                    "Pélagie",
+                    Gender.F,
+                    new(1996, 6, 4),
+                    "Lakota",
+                    "Ivoirienne",
+                    MaritalStatus.Single,
+                    "Vendeuse",
+                    "Quartier Résidentiel, Lakota"
+                ),
+                new(
+                    "Méïté",
+                    "Aboubakar",
+                    Gender.M,
+                    new(1984, 2, 11),
+                    "Soubré",
+                    "Ivoirienne",
+                    MaritalStatus.Married,
+                    "Commerçant",
+                    "Cité Cacaoyère, Soubré"
+                ),
+                new(
+                    "Silué",
+                    "Mariam",
+                    Gender.F,
+                    new(1979, 9, 23),
+                    "Séguéla",
+                    "Ivoirienne",
+                    MaritalStatus.Divorced,
+                    "Infirmière",
+                    "Quartier Nimboyo, Séguéla"
+                ),
+                new(
+                    "Gnahoua",
+                    "Bi Ernest",
+                    Gender.M,
+                    new(1994, 4, 7),
+                    "Tabou",
+                    "Ivoirienne",
+                    MaritalStatus.Single,
+                    "Technicien",
+                    "Bord de Mer, Tabou"
+                ),
+                new(
+                    "Akissi",
+                    "Bénédicte",
+                    Gender.F,
+                    new(1986, 1, 16),
+                    "Tiassalé",
+                    "Ivoirienne",
+                    MaritalStatus.Married,
+                    "Enseignante",
+                    "Quartier Résidence, Tiassalé"
+                ),
+            ];
+
+            (
+                RegistrationStatus Status,
+                RegistrationRequestType Type,
+                DateTimeOffset Date,
+                string? Rejection
+            )[] configs =
+            [
+                (
+                    RegistrationStatus.ToBeProcessed,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 1, 10, 9, 0, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.Approuved,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 1, 12, 10, 30, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.Rejected,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 1, 15, 14, 0, 0, TimeSpan.Zero),
+                    "Dossier incomplet : certificat de nationalité manquant"
+                ),
+                (
+                    RegistrationStatus.ToBeProcessed,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 1, 20, 8, 45, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.Approuved,
+                    RegistrationRequestType.RegistrationDataUpdate,
+                    new(2026, 2, 3, 11, 0, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.ToBeProcessed,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 2, 8, 9, 15, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.Rejected,
+                    RegistrationRequestType.RegistrationDataUpdate,
+                    new(2026, 2, 14, 16, 0, 0, TimeSpan.Zero),
+                    "Défaut de CNI valide"
+                ),
+                (
+                    RegistrationStatus.Approuved,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 2, 18, 10, 0, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.ToBeProcessed,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 3, 1, 8, 30, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.ToBeProcessed,
+                    RegistrationRequestType.RegistrationDataUpdate,
+                    new(2026, 3, 5, 9, 45, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.Approuved,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 3, 10, 14, 30, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.ToBeProcessed,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 3, 17, 11, 0, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.Rejected,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 3, 22, 10, 0, 0, TimeSpan.Zero),
+                    "Photo non conforme"
+                ),
+                (
+                    RegistrationStatus.Approuved,
+                    RegistrationRequestType.RegistrationDataUpdate,
+                    new(2026, 4, 2, 9, 0, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.ToBeProcessed,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 4, 8, 8, 0, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.ToBeProcessed,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 4, 14, 10, 15, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.Approuved,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 4, 20, 9, 30, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.ToBeProcessed,
+                    RegistrationRequestType.RegistrationDataUpdate,
+                    new(2026, 5, 3, 11, 45, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.ToBeProcessed,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 5, 7, 8, 0, 0, TimeSpan.Zero),
+                    null
+                ),
+                (
+                    RegistrationStatus.Approuved,
+                    RegistrationRequestType.RegistrationRequest,
+                    new(2026, 5, 12, 10, 0, 0, TimeSpan.Zero),
+                    null
+                ),
+            ];
+
+            for (int i = 0; i < citizens.Length; i++)
+            {
+                var cfg = configs[i];
+                var constituency = constituencies[i % constituencies.Count];
+                yield return BuildRegistrationRequest(
+                    citizens[i],
+                    constituency.Id,
+                    cfg.Status,
+                    cfg.Type,
+                    $"DE-2026-{(i + 1):D7}",
+                    cfg.Date,
+                    cfg.Rejection
+                );
+            }
+        }
+
+        private record CitizenSeedData(
+            string LastName,
+            string FirstName,
+            Gender Gender,
+            DateTime BirthDate,
+            string BirthPlace,
+            string Nationality,
+            MaritalStatus MaritalStatus,
+            string Profession,
+            string PhysicalAddress
+        );
+
+        private static RegistrationRequestDao BuildRegistrationRequest(
+            CitizenSeedData data,
+            long constituencyId,
+            RegistrationStatus status,
+            RegistrationRequestType requestType,
+            string reference,
+            DateTimeOffset submissionDate,
+            string? rejectionReason = null
+        )
+        {
+            var citizen = new CitizenDao
+            {
+                Id = Guid.NewGuid(),
+                LastName = data.LastName,
+                FirstName = data.FirstName,
+                Gender = data.Gender,
+                BirthDate = new DateTimeOffset(data.BirthDate, TimeSpan.Zero),
+                BirthPlace = data.BirthPlace,
+                Nationality = data.Nationality,
+                MaritalStatus = data.MaritalStatus,
+                Profession = data.Profession,
+                PhysicalAddress = data.PhysicalAddress,
+                CreatedAt = submissionDate,
+                ModifiedAt = submissionDate,
+            };
+
+            var idDoc = new DocumentDao
+            {
+                FileName = $"CNI_{data.LastName}.pdf",
+                ContentType = "application/pdf",
+                FileSize = 512_000,
+                UploadDate = submissionDate,
+            };
+            var certDoc = new DocumentDao
+            {
+                FileName = $"CERT_NAT_{data.LastName}.pdf",
+                ContentType = "application/pdf",
+                FileSize = 256_000,
+                UploadDate = submissionDate,
+            };
+            var photoDoc = new DocumentDao
+            {
+                FileName = $"PHOTO_{data.LastName}.jpg",
+                ContentType = "image/jpeg",
+                FileSize = 128_000,
+                UploadDate = submissionDate,
+            };
+
+            return new RegistrationRequestDao
+            {
+                Reference = reference,
+                SubmissionDate = submissionDate,
+                RequestType = requestType,
+                Status = status,
+                ReasonForRejection = rejectionReason,
+                Citizen = citizen,
+                ConstituencyId = constituencyId,
+                RegistrationRequestDocuments =
+                [
+                    new()
+                    {
+                        RegistrationRequestDocumentType = RegistrationRequestDocumentType.IdentityDocument,
+                        Document = idDoc,
+                    },
+                    new()
+                    {
+                        RegistrationRequestDocumentType =
+                            RegistrationRequestDocumentType.CertificateOfNationality,
+                        Document = certDoc,
+                    },
+                    new()
+                    {
+                        RegistrationRequestDocumentType = RegistrationRequestDocumentType.Photo,
+                        Document = photoDoc,
+                    },
+                ],
+            };
+        }
+
         #endregion
     }
 }

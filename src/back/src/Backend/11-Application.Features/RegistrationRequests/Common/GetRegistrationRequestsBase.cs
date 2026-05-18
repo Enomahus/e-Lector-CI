@@ -5,6 +5,6 @@ using Application.Features.Common;
 
 namespace Application.Features.RegistrationRequests.Common
 {
-    public class GetRegistrationRequestsBase<T> : PagedList<T>
-        where T : GetRegistrationRequestsResponseModel { }
+    public class GetRegistrationRequestsBase() { } //<T> //:PagedList<T>
+    // where T : GetRegistrationRequestsResponseModel { }
 }
