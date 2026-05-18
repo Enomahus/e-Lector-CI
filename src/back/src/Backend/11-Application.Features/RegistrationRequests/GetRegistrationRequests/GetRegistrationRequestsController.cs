@@ -17,8 +17,8 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
     {
         [HttpPost("get-registration-requests")]
         [OpenApiOperation(
-            "GetCertificateRequests",
-            "Récupère toutes les demandes d'attestations de l'utilisateur.",
+            "GetRegistrationRequests",
+            "Récupère toutes les demandes d'enregistrement utilisateur.",
             ""
         )]
         [ProducesResponseType(

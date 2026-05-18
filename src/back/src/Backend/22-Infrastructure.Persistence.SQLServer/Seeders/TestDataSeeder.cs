@@ -118,7 +118,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                     string checKey = (rawNumber % 97).ToString().PadLeft(2, '0');
                     var elector = new ElectorDao
                     {
-                        Id = item.Id,
+                        Id = item.Citizen.Id,
                         RegistrationDate = now,
                         Status = ElectorStatus.Active,
                         PollingStationId = stationTest.Id,
@@ -335,66 +335,6 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                 },
             ];
         }
-
-        //private List<RegistrationRequestDao> GetMockRegistrationRequests(
-        //    List<ConstituencyDao> constituencies,
-        //    List<PollingStationDao> pollingStations
-        //)
-        //{
-        //    // 1. Indexation en mémoire (Dictionnaires) pour une recherche en O(1)
-        //    // Au lieu de parcourir les listes à chaque fois, on accède directement à l'élément par sa clé.
-        //    var constituenciesByCode = constituencies.ToDictionary(c => c.Code);
-
-        //    // On isole le bureau de test pour lui attribuer la majorité des demandes
-        //    var targetStation = pollingStations.FirstOrDefault(s =>
-        //        s.Wording == "EPP Allanikro" && s.StationNumber == "01"
-        //    );
-
-        //    var now = timeProvider.GetUtcNow();
-        //    var list = new List<RegistrationRequestDao>(50); // Allocation initiale de la capacité pour éviter les redimensionnements
-
-        //    // 2. Génération des données avec le bureau cible
-        //    if (targetStation != null)
-        //    {
-        //        // Exemple : Génération en boucle de demandes approuvées pour ton bureau test
-        //        for (int i = 1; i <= 20; i++)
-        //        {
-        //            var id = Guid.NewGuid();
-        //            list.Add(
-        //                new RegistrationRequestDao
-        //                {
-        //                    Id = id,
-        //                    Reference = $"REQ-2026-{i:D5}", // Format propre : REQ-2026-00001
-        //                    Status = RegistrationStatus.Approuved,
-        //                    PollingStationId = targetStation.Id,
-        //                    PollingStation = targetStation,
-        //                    CreatedAt = now,
-        //                    ModifiedAt = now,
-        //                    // Remplis le reste de tes propriétés ici (Nom, Prénom, etc.)
-        //                }
-        //            );
-        //        }
-        //    }
-
-        //    // 3. Génération de cas de test secondaires (ex: Demandes en attente ou rejetées)
-        //    // On utilise notre dictionnaire pour associer une circonscription au hasard de manière ultra-rapide
-        //    if (constituenciesByCode.TryGetValue("Z-001", out var specificConstituency))
-        //    {
-        //        list.Add(
-        //            new RegistrationRequestDao
-        //            {
-        //                Id = Guid.NewGuid(),
-        //                Reference = "REQ-PENDING-01",
-        //                Status = RegistrationStatus.Pending,
-        //                PollingStationId = targetStation?.Id ?? Guid.Empty,
-        //                CreatedAt = now,
-        //                ModifiedAt = now,
-        //            }
-        //        );
-        //    }
-
-        //    return list;
-        //}
 
         public static IEnumerable<RegistrationRequestDao> GetMockRegistrationRequests(
             List<ConstituencyDao> constituencies

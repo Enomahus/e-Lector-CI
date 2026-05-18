@@ -1613,6 +1613,78 @@ export class ServerClient extends CustomApiClient {
     }
 
     /**
+     * Récupère toutes les demandes d'enregistrement utilisateur.
+     */
+    getRegistrationRequests(query: GetRegistrationRequestsQuery): Observable<ResultOfPagedListOfGetRegistrationRequestsResponse> {
+        let url_ = this.baseUrl + "/registration-requests/get-registration-requests";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = this.customStringify(query);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRegistrationRequests(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRegistrationRequests(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfPagedListOfGetRegistrationRequestsResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfPagedListOfGetRegistrationRequestsResponse>;
+        }));
+    }
+
+    protected processGetRegistrationRequests(response: HttpResponseBase): Observable<ResultOfPagedListOfGetRegistrationRequestsResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfPagedListOfGetRegistrationRequestsResponse;
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result401: any = null;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result403: any = null;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * Enregistre une nouvelle demande d'enrôlement.
      * @param registrationRequestJson (optional) 
      * @param registrationRequestCertificateAttachments (optional) 
@@ -2652,6 +2724,7 @@ export interface RegistrationRequestModel {
     constituencyId?: number | undefined;
     author?: UserModel | undefined;
     citizen?: CitizenModel | undefined;
+    registrationRequestType?: RegistrationRequestType;
     certificateOfNationalityDocumentIds?: string[] | undefined;
     identityDocumentIds?: string[] | undefined;
     photoIds?: string[] | undefined;
@@ -2689,6 +2762,8 @@ export interface ElectorModel {
 
 export type ElectorStatus = "active" | "inactive";
 
+export type RegistrationRequestType = "registrationRequest" | "registrationDataUpdate";
+
 export interface ResultOfUpdateRegistrationRequestStatusResponse extends Result {
     data?: UpdateRegistrationRequestStatusResponse | undefined;
 }
@@ -2716,6 +2791,38 @@ export interface GetRegistrationRequestResponse extends RegistrationRequestModel
     reference?: string | undefined;
     soumissionDate?: string;
     status?: RegistrationStatus;
+}
+
+export interface ResultOfPagedListOfGetRegistrationRequestsResponse extends Result {
+    data?: PagedListOfGetRegistrationRequestsResponse | undefined;
+}
+
+export interface PagedListOfGetRegistrationRequestsResponse {
+    items?: GetRegistrationRequestsResponse[];
+    totalCount?: number;
+}
+
+export interface GetRegistrationRequestsResponseModel {
+    id?: string;
+    reference?: string;
+    submissionDate?: string;
+    status?: RegistrationStatus;
+    constituencyId?: number;
+    constituencyName?: string;
+    comment?: string;
+    citizen?: CitizenModel;
+    canBeDeleted?: boolean;
+}
+
+export interface GetRegistrationRequestsResponse extends GetRegistrationRequestsResponseModel {
+}
+
+export interface GetRegistrationRequestsQuery {
+    sort?: string | undefined;
+    order?: string | undefined;
+    pageIndex?: number | undefined;
+    pageSize?: number;
+    search?: string | undefined;
 }
 
 export interface ResultOfLong extends Result {

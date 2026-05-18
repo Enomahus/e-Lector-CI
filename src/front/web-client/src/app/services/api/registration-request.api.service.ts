@@ -2,8 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   FileParameter,
+  GetRegistrationRequestsQuery,
   RegistrationRequestModel,
+  ResultOfGetRegistrationRequestResponse,
   ResultOfGuid,
+  ResultOfPagedListOfGetRegistrationRequestsResponse,
   ResultOfUpdateRegistrationRequestStatusResponse,
   UpdateRegistrationRequestStatusCommand,
 } from '../nswag/api-nswag-client';
@@ -58,5 +61,19 @@ export class RegistrationRequestApiService extends ApiBaseService {
     return this.apiClient
       .updateRegistrationRequestStatus(id, command)
       .pipe(this.handleResult(options));
+  }
+
+  getRegistrationRequest(
+    id: string,
+    options: ApiToastOptions = {},
+  ): Observable<ResultOfGetRegistrationRequestResponse> {
+    return this.apiClient.getRegistrationRequest(id).pipe(this.handleResult(options));
+  }
+
+  getRegistrationRequests(
+    query: GetRegistrationRequestsQuery,
+    options: ApiToastOptions = {},
+  ): Observable<ResultOfPagedListOfGetRegistrationRequestsResponse> {
+    return this.apiClient.getRegistrationRequests(query).pipe(this.handleResult(options));
   }
 }

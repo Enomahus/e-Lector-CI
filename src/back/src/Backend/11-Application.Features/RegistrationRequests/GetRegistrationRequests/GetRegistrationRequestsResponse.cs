@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Application.Features.RegistrationRequests.Common;
+﻿using Application.Features.RegistrationRequests.Common;
 
 namespace Application.Features.RegistrationRequests.GetRegistrationRequests
 {
