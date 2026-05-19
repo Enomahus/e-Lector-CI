@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore;
 using Pcea.Core.Net.Authorization.Application.Attributes;
 using Tools.Logging;
 
-namespace Application.Features.RegistrationRequests.GetRegistrationRequests
+namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForManagement
 {
-    [WithPermission([nameof(AppPermission.GetRegistrationRequests)])]
-    public class GetRegistrationRequestsQuery
-        : IRequest<Result<PagedList<GetRegistrationRequestsResponse>>>,
+    [WithPermission([nameof(AppPermission.GetRegistrationRequestsForManagement)])]
+    public class GetRegistrationRequestsForManagementQuery
+        : IRequest<Result<PagedList<GetRegistrationRequestsForManagementResponse>>>,
             IPagedQuery
     {
         public string? Sort { get; set; }
@@ -26,18 +26,23 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
         public string? Search { get; set; }
     }
 
-    public class GetRegistrationRequestsQueryValidator : AbstractValidator<GetRegistrationRequestsQuery>
+    public class GetRegistrationRequestsForManagementQueryValidator
+        : AbstractValidator<GetRegistrationRequestsForManagementQuery>
     {
-        public GetRegistrationRequestsQueryValidator() { }
+        public GetRegistrationRequestsForManagementQueryValidator() { }
     }
 
-    public class GetRegistrationRequestsQueryHandler(
+    public class GetRegistrationRequestsForManagementQueryHandler(
         ReadOnlyDbContext context,
         ICurrentUserService currentUserService
-    ) : IRequestHandler<GetRegistrationRequestsQuery, Result<PagedList<GetRegistrationRequestsResponse>>>
+    )
+        : IRequestHandler<
+            GetRegistrationRequestsForManagementQuery,
+            Result<PagedList<GetRegistrationRequestsForManagementResponse>>
+        >
     {
-        public async Task<Result<PagedList<GetRegistrationRequestsResponse>>> Handle(
-            GetRegistrationRequestsQuery request,
+        public async Task<Result<PagedList<GetRegistrationRequestsForManagementResponse>>> Handle(
+            GetRegistrationRequestsForManagementQuery request,
             CancellationToken cancellationToken
         )
         {
@@ -46,9 +51,14 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
 
             try
             {
+                // Filtre par les circonscriptions assignées à l'agent courant
                 var query = context
                     .RegistrationRequests.Include(r => r.Citizen)
-                    .Where(r => r.AuthorId == currentUserId)
+                    .Where(r =>
+                        context.UserConstituencies.Any(uc =>
+                            uc.UserId == currentUserId && uc.ConstituencyId == r.ConstituencyId
+                        )
+                    )
                     .ApplySearch(request.Search)
                     .ApplySort(request.Sort, request.Order);
 
@@ -57,7 +67,7 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
                 var result = await query.ToPagedListAsync(
                     pageIndex,
                     request.PageSize,
-                    r => new GetRegistrationRequestsResponse
+                    r => new GetRegistrationRequestsForManagementResponse
                     {
                         Id = r.Id,
                         Reference = r.Reference,
@@ -67,13 +77,13 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
                         ConstituencyName = r.Constituency.Wording,
                         Comment = r.ReasonForRejection,
                         Citizen = CitizenModel.FromDao(r.Citizen),
-                        CanBeDeleted =
-                            currentUserId == r.AuthorId && r.Status == RegistrationStatus.ToBeProcessed,
+                        CanBeDeleted = r.Status == RegistrationStatus.ToBeProcessed,
+                        AuthorName = ((r.Author.FirstName ?? "") + " " + (r.Author.LastName ?? "")).Trim(),
                     },
                     cancellationToken
                 );
 
-                return Result<PagedList<GetRegistrationRequestsResponse>>.From(result);
+                return Result<PagedList<GetRegistrationRequestsForManagementResponse>>.From(result);
             }
             catch (OperationCanceledException ex)
             {
@@ -83,7 +93,7 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
             catch (Exception ex)
             {
                 activity?.SetException(ex);
-                return Result<PagedList<GetRegistrationRequestsResponse>>.From();
+                return Result<PagedList<GetRegistrationRequestsForManagementResponse>>.From();
             }
         }
     }

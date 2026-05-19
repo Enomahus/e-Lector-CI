@@ -1,0 +1,175 @@
+<div class="registration-requests-table">
+  <!-- ── Header: title + optional "create" button ─────────────────────────── -->
+  <div class="table-header">
+    <h1>{{ titleKey() | translate }}</h1>
+
+    @if (createRouteLink()) {
+      <a
+        mat-flat-button
+        class="btn primary2"
+        *appHasPermission="createPermission()"
+        [routerLink]="createRouteLink()"
+      >
+        <mat-icon>add</mat-icon>
+        {{ 'registrationRequests.create' | translate }}
+      </a>
+    }
+  </div>
+
+  <!-- ── Search field ─────────────────────────────────────────────────────── -->
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>{{ 'global.search' | translate }}</mat-label>
+    <input matInput [formControl]="searchControl" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <!-- ── Table ────────────────────────────────────────────────────────────── -->
+  <div class="table-container">
+    <table mat-table [dataSource]="data()" matSort class="mat-elevation-z8">
+      <!-- Reference -->
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'registrationRequests.fields.reference' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.reference }}</td>
+      </ng-container>
+
+      <!-- Submission Date -->
+      <ng-container matColumnDef="submissionDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'registrationRequests.fields.submissionDate' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.submissionDate | date: 'dd/MM/yyyy' }}
+        </td>
+      </ng-container>
+
+      <!-- Citizen full name (lastName + firstName) -->
+      <ng-container matColumnDef="citizenName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'registrationRequests.fields.citizenName' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.citizen?.lastName }} {{ row.citizen?.firstName }}
+        </td>
+      </ng-container>
+
+      <!--Citizen birth date-->
+      <ng-container matColumnDef="citizenBirthDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'registrationRequests.fields.citizenBirthDate' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.citizen?.birthDate | date: 'dd/MM/yyyy' }}
+        </td>
+      </ng-container>
+
+      <!--Citizen birth place-->
+      <ng-container matColumnDef="citizenBirthPlace">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'registrationRequests.fields.citizenBirthPlace' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.citizen?.birthPlace }}
+        </td>
+      </ng-container>
+
+      <!-- Author name – visible in management / admin views -->
+      <ng-container matColumnDef="authorName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'registrationRequests.fields.author' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.authorName }}</td>
+      </ng-container>
+
+      <!-- Status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'registrationRequests.fields.status' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">
+          @if (row.status) {
+            <span [class]="'registration-status ' + getRegistrationStatusClass(row.status)">
+              {{ 'registrationRequests.status.' + row.status | translate }}
+            </span>
+          }
+        </td>
+      </ng-container>
+
+      <!-- Remark -->
+      <ng-container matColumnDef="remark">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'registrationRequests.fields.remark' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.remark }}</td>
+      </ng-container>
+
+      <!-- Constituency -->
+      <ng-container matColumnDef="constituencyName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'registrationRequests.fields.constituency' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.constituencyName }}</td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'global.actions' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <div class="action-buttons">
+            @if (editRoutePrefix() && row.id) {
+              <a
+                mat-icon-button
+                *appHasPermission="editPermission()"
+                [routerLink]="['/', editRoutePrefix(), row.id]"
+                [matTooltip]="'global.actions.edit' | translate"
+              >
+                <mat-icon>edit</mat-icon>
+              </a>
+            }
+
+            @if (row.canBeDeleted) {
+              <button
+                mat-icon-button
+                color="warn"
+                *appHasPermission="deletePermission()"
+                [matTooltip]="'global.actions.delete' | translate"
+                (click)="requestDelete.emit(row)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
+
+      <!-- Empty-state row -->
+      <tr *matNoDataRow>
+        <td class="no-data-cell" [attr.colspan]="displayedColumns().length">
+          @if (!isLoading()) {
+            {{ 'global.noData' | translate }}
+          }
+        </td>
+      </tr>
+    </table>
+
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="48"></mat-spinner>
+      </div>
+    }
+  </div>
+
+  <!-- ── Paginator ─────────────────────────────────────────────────────────── -->
+  <mat-paginator
+    [length]="resultsLength()"
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 25, 50]"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>

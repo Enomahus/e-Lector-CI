@@ -1,16 +1,22 @@
 ﻿using Application.Common.Enums;
+using Application.Common.Pagination;
 using Application.Features.Common;
+using Application.Features.Common.Citizen;
+using Application.Features.RegistrationRequests.Common;
 using Application.Models;
 using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Pcea.Core.Net.Authorization.Application.Attributes;
+using Tools.Logging;
 
 namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAdmin
 {
     [WithPermission([nameof(AppPermission.GetRegistrationRequestsFormAdmin)])]
     public class GetRegistrationRequestsForAdminQuery
-        : IRequest<Result<PagedList<GetRegistrationRequestsForAdminResponse>>>
+        : IRequest<Result<PagedList<GetRegistrationRequestsForAdminResponse>>>,
+            IPagedQuery
     {
         public string? Sort { get; set; }
         public string? Order { get; set; }
@@ -31,12 +37,53 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
             Result<PagedList<GetRegistrationRequestsForAdminResponse>>
         >
     {
-        public Task<Result<PagedList<GetRegistrationRequestsForAdminResponse>>> Handle(
+        public async Task<Result<PagedList<GetRegistrationRequestsForAdminResponse>>> Handle(
             GetRegistrationRequestsForAdminQuery request,
             CancellationToken cancellationToken
         )
         {
-            throw new NotImplementedException();
+            using var activity = ActivitySourceLog.CQRS.Start();
+
+            try
+            {
+                var query = context
+                    .RegistrationRequests.Include(r => r.Citizen)
+                    .ApplySearch(request.Search)
+                    .ApplySort(request.Sort, request.Order);
+
+                int pageIndex = request.PageIndex ?? 0;
+
+                var result = await query.ToPagedListAsync(
+                    pageIndex,
+                    request.PageSize,
+                    r => new GetRegistrationRequestsForAdminResponse
+                    {
+                        Id = r.Id,
+                        Reference = r.Reference,
+                        SubmissionDate = r.SubmissionDate,
+                        Status = r.Status,
+                        ConstituencyId = r.ConstituencyId,
+                        ConstituencyName = r.Constituency.Wording,
+                        Comment = r.ReasonForRejection,
+                        Citizen = CitizenModel.FromDao(r.Citizen),
+                        CanBeDeleted = false,
+                        AuthorName = ((r.Author.FirstName ?? "") + " " + (r.Author.LastName ?? "")).Trim(),
+                    },
+                    cancellationToken
+                );
+
+                return Result<PagedList<GetRegistrationRequestsForAdminResponse>>.From(result);
+            }
+            catch (OperationCanceledException ex)
+            {
+                activity?.SetException(ex);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                activity?.SetException(ex);
+                return Result<PagedList<GetRegistrationRequestsForAdminResponse>>.From();
+            }
         }
     }
 }

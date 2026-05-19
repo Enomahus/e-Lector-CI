@@ -20,8 +20,10 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
         {
             return new GetRegistrationRequestResponse()
             {
+                Id = dao.Id,
                 Reference = dao.Reference,
                 Status = dao.Status,
+                RegistrationRequestType = dao.RequestType,
                 SoumissionDate = dao.SubmissionDate,
                 ConstituencyId = dao.ConstituencyId,
                 ReasonForRejection = dao.ReasonForRejection,

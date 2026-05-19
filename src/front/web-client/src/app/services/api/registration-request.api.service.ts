@@ -2,10 +2,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   FileParameter,
+  GetRegistrationRequestsForAdminQuery,
   GetRegistrationRequestsQuery,
   RegistrationRequestModel,
   ResultOfGetRegistrationRequestResponse,
   ResultOfGuid,
+  ResultOfPagedListOfGetRegistrationRequestsForAdminResponse,
+  ResultOfPagedListOfGetRegistrationRequestsForManagementResponse,
   ResultOfPagedListOfGetRegistrationRequestsResponse,
   ResultOfUpdateRegistrationRequestStatusResponse,
   UpdateRegistrationRequestStatusCommand,
@@ -75,5 +78,21 @@ export class RegistrationRequestApiService extends ApiBaseService {
     options: ApiToastOptions = {},
   ): Observable<ResultOfPagedListOfGetRegistrationRequestsResponse> {
     return this.apiClient.getRegistrationRequests(query).pipe(this.handleResult(options));
+  }
+
+  getRegistrationRequestsForAdmin(
+    query: GetRegistrationRequestsForAdminQuery,
+    options: ApiToastOptions = {},
+  ): Observable<ResultOfPagedListOfGetRegistrationRequestsForAdminResponse> {
+    return this.apiClient.getRegistrationRequestsForAdmin(query).pipe(this.handleResult(options));
+  }
+
+  getRegistrationRequestsForManagement(
+    query: GetRegistrationRequestsForAdminQuery,
+    options: ApiToastOptions = {},
+  ): Observable<ResultOfPagedListOfGetRegistrationRequestsForManagementResponse> {
+    return this.apiClient
+      .getRegistrationRequestsForManagement(query)
+      .pipe(this.handleResult(options));
   }
 }

@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Infrastructure.Persistence.SQLServer</RootNamespace>
@@ -8,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="10.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2">
       <PrivateAssets>all</PrivateAssets>
@@ -29,5 +28,4 @@
     <ProjectReference Include="..\21-Infrastructure.Persistence\21-Infrastructure.Persistence.csproj" />
     <ProjectReference Include="..\99-Tools\99-Tools.csproj" />
   </ItemGroup>
-
 </Project>

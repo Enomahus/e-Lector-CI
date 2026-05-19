@@ -1,0 +1,26 @@
+.registration-status {
+  &.status-registration-pending {
+    background-color: #f0ad4e;
+    color: #f0ad4e;
+  }
+
+  &.status-registration-to-be-processed {
+    background-color: #5bc0de;
+    color: #5bc0de;
+  }
+
+  &.status-registration-approved {
+    background-color: #5cb85c;
+    color: #5cb85c;
+  }
+
+  &.status-registration-rejected {
+    background-color: #d9534f;
+    color: #d9534f;
+  }
+
+  &.status-registration-no-status {
+    background-color: #6c757d;
+    color: #6c757d;
+  }
+}

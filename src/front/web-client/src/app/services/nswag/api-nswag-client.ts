@@ -1685,6 +1685,150 @@ export class ServerClient extends CustomApiClient {
     }
 
     /**
+     * Récupère toutes les demandes d'enregistrements pour les admins.
+     */
+    getRegistrationRequestsForManagement(query: GetRegistrationRequestsForManagementQuery): Observable<ResultOfPagedListOfGetRegistrationRequestsForManagementResponse> {
+        let url_ = this.baseUrl + "/registration-requests/for-management/get-registration-requests";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = this.customStringify(query);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRegistrationRequestsForManagement(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRegistrationRequestsForManagement(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfPagedListOfGetRegistrationRequestsForManagementResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfPagedListOfGetRegistrationRequestsForManagementResponse>;
+        }));
+    }
+
+    protected processGetRegistrationRequestsForManagement(response: HttpResponseBase): Observable<ResultOfPagedListOfGetRegistrationRequestsForManagementResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfPagedListOfGetRegistrationRequestsForManagementResponse;
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result401: any = null;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result403: any = null;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Récupère toutes les demandes d'enregistrements pour les admins.
+     */
+    getRegistrationRequestsForAdmin(query: GetRegistrationRequestsForAdminQuery): Observable<ResultOfPagedListOfGetRegistrationRequestsForAdminResponse> {
+        let url_ = this.baseUrl + "/registration-requests/for-admin/get-registration-requests";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = this.customStringify(query);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRegistrationRequestsForAdmin(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRegistrationRequestsForAdmin(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfPagedListOfGetRegistrationRequestsForAdminResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfPagedListOfGetRegistrationRequestsForAdminResponse>;
+        }));
+    }
+
+    protected processGetRegistrationRequestsForAdmin(response: HttpResponseBase): Observable<ResultOfPagedListOfGetRegistrationRequestsForAdminResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfPagedListOfGetRegistrationRequestsForAdminResponse;
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result401: any = null;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result403: any = null;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * Enregistre une nouvelle demande d'enrôlement.
      * @param registrationRequestJson (optional) 
      * @param registrationRequestCertificateAttachments (optional) 
@@ -2687,7 +2831,7 @@ export interface GetCurrentUserResponse extends UserModel {
     permissions?: AppPermission[];
 }
 
-export type AppPermission = "superAdmin" | "accessUsersAdminPage" | "createUser" | "updateUser" | "deleteUser" | "getCurrentUser" | "getUser" | "getUsers" | "checkEmailBeUnique" | "getRoles" | "getProfile" | "accessConstituenciesAdminPage" | "createConstituency" | "updateConstituency" | "deleteConstituency" | "getConstituency" | "getConstituencies" | "accessPollingStationsAdminPage" | "createPollingStation" | "updatePollingStation" | "deletePollingStation" | "getPollingStation" | "getPollingStations" | "createRegistrationRequest" | "updateRegistrationRequest" | "deleteRegistrationRequest" | "getRegistrationRequest" | "getRegistrationRequests" | "getRegistrationRequestForCurrentUser" | "accessUpdateRegistrationRequest" | "accessRegistrationRequestsForAdminPage" | "accessRegistrationRequestsForManagementPage" | "getRegistrationRequestsForManagement" | "updateRegistrationRequestsForManagement" | "deleteRegistrationRequestsForManagement" | "triggerActionOnRegistrationRequest" | "checkRegistrationReferenceBeUnique" | "accessRegistrationRequestsPage" | "uploadRegistrationRequestTempDocument" | "updateRegistrationRequestDraft" | "importExcelData" | "exportExcelData";
+export type AppPermission = "superAdmin" | "accessUsersAdminPage" | "createUser" | "updateUser" | "deleteUser" | "getCurrentUser" | "getUser" | "getUsers" | "checkEmailBeUnique" | "getRoles" | "getProfile" | "accessConstituenciesAdminPage" | "createConstituency" | "updateConstituency" | "deleteConstituency" | "getConstituency" | "getConstituencies" | "accessPollingStationsAdminPage" | "createPollingStation" | "updatePollingStation" | "deletePollingStation" | "getPollingStation" | "getPollingStations" | "createRegistrationRequest" | "updateRegistrationRequest" | "deleteRegistrationRequest" | "getRegistrationRequest" | "getRegistrationRequests" | "getRegistrationRequestForCurrentUser" | "accessUpdateRegistrationRequest" | "accessRegistrationRequestsForAdminPage" | "accessRegistrationRequestsForManagementPage" | "getRegistrationRequestsForManagement" | "getRegistrationRequestsFormAdmin" | "updateRegistrationRequestsForManagement" | "deleteRegistrationRequestsForManagement" | "triggerActionOnRegistrationRequest" | "checkRegistrationReferenceBeUnique" | "accessRegistrationRequestsPage" | "uploadRegistrationRequestTempDocument" | "updateRegistrationRequestDraft" | "importExcelData" | "exportExcelData";
 
 export interface CreateUserCommand extends UserModel {
     password?: string | undefined;
@@ -2818,6 +2962,48 @@ export interface GetRegistrationRequestsResponse extends GetRegistrationRequests
 }
 
 export interface GetRegistrationRequestsQuery {
+    sort?: string | undefined;
+    order?: string | undefined;
+    pageIndex?: number | undefined;
+    pageSize?: number;
+    search?: string | undefined;
+}
+
+export interface ResultOfPagedListOfGetRegistrationRequestsForManagementResponse extends Result {
+    data?: PagedListOfGetRegistrationRequestsForManagementResponse | undefined;
+}
+
+export interface PagedListOfGetRegistrationRequestsForManagementResponse {
+    items?: GetRegistrationRequestsForManagementResponse[];
+    totalCount?: number;
+}
+
+export interface GetRegistrationRequestsForManagementResponse extends GetRegistrationRequestsResponseModel {
+    authorName?: string;
+}
+
+export interface GetRegistrationRequestsForManagementQuery {
+    sort?: string | undefined;
+    order?: string | undefined;
+    pageIndex?: number | undefined;
+    pageSize?: number;
+    search?: string | undefined;
+}
+
+export interface ResultOfPagedListOfGetRegistrationRequestsForAdminResponse extends Result {
+    data?: PagedListOfGetRegistrationRequestsForAdminResponse | undefined;
+}
+
+export interface PagedListOfGetRegistrationRequestsForAdminResponse {
+    items?: GetRegistrationRequestsForAdminResponse[];
+    totalCount?: number;
+}
+
+export interface GetRegistrationRequestsForAdminResponse extends GetRegistrationRequestsResponseModel {
+    authorName?: string;
+}
+
+export interface GetRegistrationRequestsForAdminQuery {
     sort?: string | undefined;
     order?: string | undefined;
     pageIndex?: number | undefined;
