@@ -1,36 +1,53 @@
 import { Component, inject, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { GetRegistrationRequestsResponse } from '@app/services/nswag/api-nswag-client';
 import { BaseTable } from '@app/shared/base-table/base-table';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Component({
   standalone: true,
   providers: [],
   template: '',
 })
-export abstract class AbstractRegistrationRequestsUI extends BaseTable<GetRegistrationRequestsResponse> {
+export abstract class AbstractRegistrationRequestsUI<
+  TResponse extends GetRegistrationRequestsResponse,
+> extends BaseTable<TResponse> {
   private readonly translateService = inject(TranslateService);
-  private readonly router = inject(Router);
-  private readonly dialog = inject(MatDialog);
+
+  protected abstract titleKey: string;
+  protected abstract routePrefix: string;
 
   isDeleting = signal(false);
-  private searchSubject = new BehaviorSubject<string>('');
-  private currentSearch = signal('');
 
   constructor() {
     super();
+  }
 
-    this.searchSubject
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
-      .subscribe((value) => {
-        this.currentSearch.set(value);
-        if (this.paginator) {
-          this.paginator.pageIndex = 0;
-        }
-        this.refreshData();
-      });
+  protected abstract override getData(
+    sort: string,
+    order: string,
+    page: number,
+  ): Observable<{
+    data: TResponse[];
+    total: number;
+  }>;
+
+  protected getYesOrNo(bool: boolean | undefined): string {
+    return bool
+      ? this.translateService.instant('global.yes')
+      : this.translateService.instant('global.no');
+  }
+
+  protected getStatusLabel(status: string | string[]): string {
+    return this.translateValue(status, 'registrationRequest.status');
+  }
+
+  private translateValue(value: string | string[], prefix: string): string {
+    if (!value) return '';
+
+    const values = Array.isArray(value) ? value : [value];
+    return values
+      .map((v) => this.translateService.instant(`${prefix}.${v.toLowerCase()}`))
+      .join(', ');
   }
 }

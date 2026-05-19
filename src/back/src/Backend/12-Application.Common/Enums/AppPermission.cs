@@ -39,6 +39,7 @@ public enum AppPermission
     AccessRegistrationRequestsForAdminPage,
     AccessRegistrationRequestsForManagementPage,
     GetRegistrationRequestsForManagement,
+    GetRegistrationRequestsFormAdmin,
     UpdateRegistrationRequestsForManagement,
     DeleteRegistrationRequestsForManagement,
     TriggerActionOnRegistrationRequest,
