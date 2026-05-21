@@ -10,6 +10,7 @@
     "refresh": "Actualiser",
     "login": "Se connecter",
     "actions": "Actions",
+    "select": "...Veuillez choisir une option...",
     "no": "Non",
     "yes": "Oui",
     "noTitleTemplate": "E-Lector-CI",
@@ -307,11 +308,21 @@
     "titleForAdmin": "Liste des demandes",
     "titleNewRegistrationRequest": "Nouvelle demande",
     "titleEditRegistrationRequest": "Modifier la demande",
+    "gender": {
+      "m": "Masculin",
+      "f": "Féminin"
+    },
     "status": {
       "pending": "En attente",
       "toBeProcessed": "À traiter",
       "approved": "Approuvée",
       "rejected": "Rejetée"
+    },
+    "maritalStatus": {
+      "single": "Célibataire",
+      "married": "Marié(e)",
+      "divorced": "Divorcé(e)",
+      "widowed": "Veuf(ve)"
     },
     "fields": {
       "reference": "Référence",
@@ -326,6 +337,8 @@
       "physicalAddress": "Adresse physique",
       "postalAddress": "Adresse postale",
       "maritalStatus": "Situation matrimoniale",
+      "father": "Père",
+      "mother": "Mère",
       "remark": "Remarque",
       "firstName": "Prénom",
       "lastName": "Nom",
@@ -334,14 +347,25 @@
       "employeeNumber": "Numéro matricule",
       "phone": "Téléphone",
       "constituency": "Circonscription",
-      "civility": "Civilité"
+      "civility": "Civilité",
+      "registrationRequestType": "Type de demande d'inscription",
+      "requestDocuments": "Documents justificatifs",
+      "reasonForRejection": "Commentaire"
+    },
+    "registrationRequestTypes": {
+      "registrationRequest": "Demande d'inscription",
+      "registrationDataUpdate": "Demande de mise à jour des données d'inscription"
     }
   },
   "registrationRequest": {
+    "requestDetails": "Détails de la demande d'inscription",
     "newRegistrationRequestTitle": "Nouvelle demande d'inscription",
     "errorCreating": "Erreur lors de la création de la demande d'inscription.",
     "successCreating": "Demande d'inscription créée avec succès",
     "errorUpdating": "Erreur lors de la mise à jour de la demande d'inscription.",
-    "successUpdating": "Demande d'inscription mise à jour avec succès"
+    "successUpdating": "Demande d'inscription mise à jour avec succès",
+    "supportingDocuments": "Documents justificatifs",
+    "citizenInformation": "Informations du citoyen",
+    "requestInformation": "Informations de la demande"
   }
 }

@@ -12,7 +12,6 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConstituencyNode } from '@app/models/constituency.model';
 import {
@@ -20,11 +19,13 @@ import {
   allMaritalStatus,
   allRegistrationRequestType,
 } from '@app/pages/types/enumerations';
+import { CitizenApiService } from '@app/services/api/citizen.api.service';
 import { AuthService } from '@app/services/auth/auth.service';
 import { PermissionDirective } from '@app/services/auth/permission.directive';
 import { BreadcrumbService } from '@app/services/breadcrumb.service';
 import { ConstituencyTreeHelperService } from '@app/services/constituency-tree-helper.service';
 import {
+  GetCitizensResponse,
   GetRegistrationRequestResponse,
   RegistrationRequestModel,
   RegistrationStatus,
@@ -42,6 +43,15 @@ import {
   RequestsForm,
 } from './registration-request-form';
 
+// On assume que ton parent ressemble à ça
+interface ParentModel {
+  id: string;
+  firstName: string;
+  lastName: string;
+  birthDate: string | Date;
+  birthPlace: string;
+}
+
 @Component({
   selector: 'app-registration-request-ui',
   imports: [
@@ -53,7 +63,7 @@ import {
     Upload,
     StickyButtonsContainer,
     Loader,
-    FormField,
+    DatePipe,
   ],
   providers: [DatePipe],
   templateUrl: './registration-request-ui.html',
@@ -78,6 +88,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   private readonly translateService = inject(TranslateService);
   private readonly authService = inject(AuthService);
   private readonly store = inject(ConstituencyTreeHelperService);
+  private readonly citizenService = inject(CitizenApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -93,6 +104,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   );
 
   constituencySelected = signal<ConstituencyNode[]>([]);
+  parents = signal<GetCitizensResponse[]>([]);
 
   allRegistrationRequestType = allRegistrationRequestType;
   allMaritalStatus = allMaritalStatus;
@@ -128,6 +140,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         this.isEditMode.set(true);
       }
     }
+    this.loadParents();
     this.setBreadcrumbs();
   }
 
@@ -139,6 +152,12 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   }
   requestDocumentsForm(): RequestDocumentsForm {
     return this.form().controls.requestDocuments;
+  }
+
+  private loadParents(): void {
+    this.citizenService.getCitizens().subscribe((response) => {
+      this.parents.set(response.data ?? []);
+    });
   }
 
   onNodeSelected(node: ConstituencyNode): void {
@@ -262,5 +281,53 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         },
       ]);
     });
+  }
+
+  // À l'intérieur de ton composant :
+  protected fatherSearchQuery = signal<string>('');
+
+  // Signal calculé : filtre automatiquement la liste selon la saisie de l'utilisateur
+  protected filteredParents = computed(() => {
+    const query = this.fatherSearchQuery().toLowerCase().trim();
+    const allParents = this.parents(); // Ton signal parent initial
+
+    if (!query) return allParents;
+
+    return allParents.filter(
+      (p) =>
+        p.firstName?.toLowerCase().includes(query) ||
+        p.lastName?.toLowerCase().includes(query) ||
+        p.birthPlace?.toLowerCase().includes(query),
+    );
+  });
+
+  // Signal calculé : Garde le nom affiché synchrone si le formulaire est pré-rempli (mode édition)
+  protected selectedFatherName = computed(() => {
+    const currentId = this.citizenForm().controls.fatherId.value;
+    if (!currentId) return '';
+
+    const found = this.parents().find((p) => p.id === currentId);
+    return found ? `${found.firstName} ${found.lastName}` : '';
+  });
+
+  // Gère la saisie et répercute l'ID exact dans le FormControl sous-jacent
+  protected onFatherSearchChange(event: Event): void {
+    const inputVal = (event.target as HTMLInputElement).value;
+    this.fatherSearchQuery.set(inputVal);
+
+    // Recherche si la valeur saisie ou sélectionnée correspond à un parent existant
+    const matchedParent = this.parents().find((p) => {
+      const fullNameString = `${p.firstName} ${p.lastName}`.toLowerCase();
+      return inputVal.toLowerCase().startsWith(fullNameString);
+    });
+
+    if (matchedParent) {
+      // Si correspondance trouvée (clic dans la liste ou saisie complète), on pousse l'ID dans le formulaire
+      this.citizenForm().controls.fatherId.setValue(matchedParent.id);
+      this.citizenForm().controls.fatherId.markAsDirty();
+    } else {
+      // Si l'utilisateur efface ou tape un texte incomplet, l'ID redevient nul
+      this.citizenForm().controls.fatherId.setValue('');
+    }
   }
 }

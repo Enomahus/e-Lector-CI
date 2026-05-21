@@ -2917,6 +2917,80 @@ export class ServerClient extends CustomApiClient {
         }
         return _observableOf(null as any);
     }
+
+    /**
+     * Récupère tous les départements.
+     */
+    getCitizens(): Observable<ResultOfListOfGetCitizensResponse> {
+        let url_ = this.baseUrl + "/citizens/citizens";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCitizens(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCitizens(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfListOfGetCitizensResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfListOfGetCitizensResponse>;
+        }));
+    }
+
+    protected processGetCitizens(response: HttpResponseBase): Observable<ResultOfListOfGetCitizensResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfListOfGetCitizensResponse;
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result401: any = null;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result403: any = null;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            result404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export interface WeatherForecast {
@@ -3091,6 +3165,7 @@ export interface CitizenModel {
     marriedName?: string | undefined;
     nationality?: string | undefined;
     profession?: string | undefined;
+    email?: string | undefined;
     physicalAddress?: string | undefined;
     postalAddress?: string | undefined;
     fatherId?: string | undefined;
@@ -3125,7 +3200,7 @@ export interface UpdateRegistrationRequestStatusResponse {
     reasonForRejection?: string | undefined;
 }
 
-export type RegistrationStatus = "toBeProcessed" | "approuved" | "rejected";
+export type RegistrationStatus = "toBeProcessed" | "approved" | "rejected";
 
 export interface UpdateRegistrationRequestStatusCommand {
     registrationRequestId?: string;
@@ -3356,6 +3431,18 @@ export interface GetConstituenciesQuery {
 }
 
 export interface CreateConstituencyCommand extends ConstituencyModel {
+}
+
+export interface ResultOfListOfGetCitizensResponse extends Result {
+    data?: GetCitizensResponse[] | undefined;
+}
+
+export interface GetCitizensResponse {
+    id?: string;
+    firstName?: string;
+    lastName?: string;
+    birthDate?: string;
+    birthPlace?: string;
 }
 
 export interface FileParameter {

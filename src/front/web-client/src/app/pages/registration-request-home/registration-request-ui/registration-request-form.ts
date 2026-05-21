@@ -35,6 +35,7 @@ export type CitizenForm = FormGroup<{
   marriedName: FormControl<string | undefined>;
   nationality: FormControl<string | undefined>;
   profession: FormControl<string | undefined>;
+  email: FormControl<string | undefined>;
   physicalAddress: FormControl<string | undefined>;
   postalAddress: FormControl<string | undefined>;
   fatherId: FormControl<string | undefined>;
@@ -51,7 +52,10 @@ export function createRequestsForm(): RequestsForm {
       validators: Validators.required,
       nonNullable: true,
     }),
-    reasonForRejection: new FormControl<string | undefined>(undefined),
+    reasonForRejection: new FormControl<string | undefined>(undefined, {
+      validators: Validators.maxLength(500),
+      nonNullable: true,
+    }),
   }) as RequestsForm;
   return form;
 }
@@ -89,6 +93,9 @@ export function createCitizenForm(): CitizenForm {
     }),
     profession: new FormControl<string | undefined>(undefined, {
       validators: Validators.required,
+      nonNullable: true,
+    }),
+    email: new FormControl<string | undefined>(undefined, {
       nonNullable: true,
     }),
     physicalAddress: new FormControl<string | undefined>(undefined, {
