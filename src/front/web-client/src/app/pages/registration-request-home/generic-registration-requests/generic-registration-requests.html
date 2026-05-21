@@ -1,0 +1,12 @@
+<app-registration-requests-table
+  [data]="data()"
+  [resultsLength]="resultsLength()"
+  [isLoading]="isLoading()"
+  [displayedColumns]="displayedColumns"
+  [titleKey]="titleKey"
+  [editRoutePrefix]="routePrefix"
+  [editPermission]="editPermission"
+  [deletePermission]="deletePermission"
+  (paramsChange)="onParamsChange($event)"
+  (requestDelete)="onDelete($event)"
+></app-registration-requests-table>

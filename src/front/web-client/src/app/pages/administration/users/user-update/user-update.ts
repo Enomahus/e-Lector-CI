@@ -18,7 +18,7 @@ import { map, switchMap, tap } from 'rxjs';
   styleUrls: ['./user-update.scss'],
 })
 export class UserUpdate implements OnInit {
-  form = signal<UserFormFactory>(createUserForm());
+  form = signal<UserFormFactory>(createUserForm(true));
   isSaving = signal(false);
   constituencyId = signal<number | undefined>(undefined);
   user = signal<UserModel | null>(null);
@@ -57,7 +57,6 @@ export class UserUpdate implements OnInit {
         firstName: user.firstName,
         phone: user.phoneNumber,
         email: user.email,
-        userType: user.userType ? [user.userType] : ['none'],
         //password: user.password,
         // confirmPassword: user.password,
         employeeNumber: user.employeeNumber,

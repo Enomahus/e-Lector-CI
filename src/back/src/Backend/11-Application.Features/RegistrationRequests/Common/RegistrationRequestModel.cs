@@ -7,20 +7,19 @@ namespace Application.Features.RegistrationRequests.Common
 {
     public class RegistrationRequestModel
     {
-        public Guid? Id { get; set; }        
+        public Guid? Id { get; set; }
         public string? ReasonForRejection { get; set; }
         public long? ConstituencyId { get; set; }
         public UserModel? Author { get; set; }
         public CitizenModel? Citizen { get; set; }
+        public RegistrationRequestType RegistrationRequestType { get; set; }
 
         public ICollection<Guid>? CertificateOfNationalityDocumentIds { get; set; }
         public ICollection<Guid>? IdentityDocumentIds { get; set; }
         public ICollection<Guid>? PhotoIds { get; set; }
 
-
-        public static RegistrationRequestModel FromDao(RegistrationRequestDao dao, TimeProvider timeProvider)  
-        {                     
-
+        public static RegistrationRequestModel FromDao(RegistrationRequestDao dao, TimeProvider timeProvider)
+        {
             var dateNow = timeProvider.GetUtcNow();
 
             return new RegistrationRequestModel()
@@ -29,10 +28,11 @@ namespace Application.Features.RegistrationRequests.Common
                 //Status = dao.Status,
                 //SoumissionDate = dao.SoumissionDate,
                 ReasonForRejection = dao.ReasonForRejection,
+                RegistrationRequestType = dao.RequestType,
                 Author = UserModel.FromDao(dao.Author, dateNow),
                 Citizen = CitizenModel.FromDao(dao.Citizen),
-                ConstituencyId = dao.ConstituencyId
-            };                                              
+                ConstituencyId = dao.ConstituencyId,
+            };
         }
 
         public RegistrationRequestDao ToDao(long constituencyId)
@@ -43,8 +43,8 @@ namespace Application.Features.RegistrationRequests.Common
                 ReasonForRejection = ReasonForRejection,
                 ConstituencyId = constituencyId,
                 Citizen = Citizen?.ToDao(),
+                RequestType = RegistrationRequestType,
             };
         }
-
     }
 }

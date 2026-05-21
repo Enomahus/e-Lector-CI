@@ -17,8 +17,8 @@
   </ng-template>
 
   <mat-form-field appearance="outline" class="search-field">
-    <mat-label>Filter</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Bureau 01" #input />
+    <mat-label>{{ 'global.search' | translate }}</mat-label>
+    <input matInput (keyup)="applyFilter($event)" #input />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
   <div class="table-container">

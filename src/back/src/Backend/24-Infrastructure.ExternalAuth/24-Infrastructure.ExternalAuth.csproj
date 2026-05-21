@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.PeopleService.v1" Version="1.72.0.3973" />
-    <PackageReference Include="Microsoft.Graph" Version="5.103.0" />
+    <PackageReference Include="Microsoft.Graph" Version="6.0.3" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.83.3" />
   </ItemGroup>
 

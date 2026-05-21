@@ -12,6 +12,8 @@ public enum AppPermission
     GetUser,
     GetUsers,
     CheckEmailBeUnique,
+    GetRoles,
+    GetProfile,
 
     AccessConstituenciesAdminPage,
     CreateConstituency,
@@ -37,6 +39,7 @@ public enum AppPermission
     AccessRegistrationRequestsForAdminPage,
     AccessRegistrationRequestsForManagementPage,
     GetRegistrationRequestsForManagement,
+    GetRegistrationRequestsFormAdmin,
     UpdateRegistrationRequestsForManagement,
     DeleteRegistrationRequestsForManagement,
     TriggerActionOnRegistrationRequest,

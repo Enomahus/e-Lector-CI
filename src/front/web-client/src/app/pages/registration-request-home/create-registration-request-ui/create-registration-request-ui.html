@@ -1,0 +1,8 @@
+<h1>{{ 'registrationRequest.newRegistrationRequestTitle' | translate }}</h1>
+<app-registration-request-ui
+  [isSaving]="isSaving()"
+  [isCreateMode]="true"
+  (constituencyId)="constituencyId()"
+  (saveTriggered)="create($event)"
+  (goBack)="goBack()"
+></app-registration-request-ui>

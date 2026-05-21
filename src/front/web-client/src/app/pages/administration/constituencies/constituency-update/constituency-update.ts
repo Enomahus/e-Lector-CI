@@ -29,32 +29,36 @@ export class ConstituencyUpdate implements OnInit {
   constituencyId$: Observable<number>;
 
   constructor() {
-    this.constituencyId$ = this.route.paramMap.pipe(map((params) => Number(params.get('id'))));
+    this.constituencyId$ = this.route.params.pipe(map((param) => parseInt(param['id'])));
   }
 
   ngOnInit(): void {
     this.constituencyId$
       .pipe(
-        takeUntilDestroyed(this.destroyRef), // on détruit l'abonnement lorsque le composant est détruit
-        tap((constituencyId) => {
-          this.constituencyId.set(constituencyId);
-          if (!constituencyId) {
-            console.error('No constituency id provided from route');
-            this.router.navigate(['/']);
+        takeUntilDestroyed(this.destroyRef),
+        tap((id) => {
+          if (!id) {
+            console.error('No constituency id provided in route');
+            this.router.navigate(['admin/constituencies']);
           }
-        }), // on redirige quand l'id est null ou undefined
-        filter((constituencyId) => !!constituencyId),
+        }),
+        filter((id) => !!id),
         tap(() => this.isLoading.set(true)),
-        switchMap((constituencyId) => this.constituencyService.getConstituency(constituencyId!)),
+        switchMap((id) =>
+          this.constituencyService.getConstituency(id, {
+            errorMessage: this.translateService.instant('constituency.errorLoading'),
+          }),
+        ),
       )
       .subscribe({
-        next: (res) => {
-          this.constituency.set(res.data);
+        next: (constituency) => {
+          this.constituency.set(constituency.data!);
+          this.constituencyId.set(constituency.data!.id);
           this.isLoading.set(false);
         },
         error: () => {
           this.isLoading.set(false);
-          this.router.navigate(['/']);
+          this.router.navigate(['admin/constituencies']);
         },
       });
   }

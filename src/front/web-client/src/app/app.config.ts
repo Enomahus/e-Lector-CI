@@ -2,10 +2,11 @@ import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import localeFr from '@angular/common/locales/fr';
 import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { provideToastr } from 'ngx-toastr';
 import { routes } from './app.routes';
 import { provideTranslations } from './config/provideTranslations';
+import { CustomTitleStrategy } from './core/custon-title-strategy';
 import { authInterceptor } from './services/api/interceptors/auth-interceptor';
 import { langInterceptor } from './services/api/interceptors/lang-interceptor';
 import { ConfigService } from './services/config.service';
@@ -25,5 +26,6 @@ export const appConfig: ApplicationConfig = {
     provideTranslations(),
     provideToastr(),
     { provide: LOCALE_ID, useValue: 'fr-FR' },
+    { provide: TitleStrategy, useClass: CustomTitleStrategy },
   ],
 };

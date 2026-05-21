@@ -12,31 +12,43 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
         public DateTimeOffset SoumissionDate { get; set; }
         public RegistrationStatus Status { get; set; }
 
-        public static GetRegistrationRequestResponse FromDao(RegistrationRequestDao dao, UserDao userDao, DateTimeOffset dateNow)
+        public static GetRegistrationRequestResponse FromDao(
+            RegistrationRequestDao dao,
+            UserDao userDao,
+            DateTimeOffset dateNow
+        )
         {
             return new GetRegistrationRequestResponse()
             {
-
+                Id = dao.Id,
                 Reference = dao.Reference,
                 Status = dao.Status,
-                SoumissionDate = dao.SoumissionDate,
+                RegistrationRequestType = dao.RequestType,
+                SoumissionDate = dao.SubmissionDate,
                 ConstituencyId = dao.ConstituencyId,
                 ReasonForRejection = dao.ReasonForRejection,
                 Citizen = CitizenModel.FromDao(dao.Citizen),
                 Author = UserModel.FromDao(userDao, dateNow),
-                CertificateOfNationalityDocumentIds = dao.RegistrationRequestDocuments
-                .Where(d => d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.CertificateOfNationality)
-                .Select(d => d.DocumentId)
-                .ToList(),
-                IdentityDocumentIds = dao.RegistrationRequestDocuments
-                    .Where(d => d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.IdentityDocument)
+                CertificateOfNationalityDocumentIds = dao
+                    .RegistrationRequestDocuments.Where(d =>
+                        d.RegistrationRequestDocumentType
+                        == RegistrationRequestDocumentType.CertificateOfNationality
+                    )
                     .Select(d => d.DocumentId)
                     .ToList(),
-                PhotoIds = dao.RegistrationRequestDocuments
-                    .Where(d => d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.Photo)
+                IdentityDocumentIds = dao
+                    .RegistrationRequestDocuments.Where(d =>
+                        d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.IdentityDocument
+                    )
                     .Select(d => d.DocumentId)
-                    .ToList()
-            };            
+                    .ToList(),
+                PhotoIds = dao
+                    .RegistrationRequestDocuments.Where(d =>
+                        d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.Photo
+                    )
+                    .Select(d => d.DocumentId)
+                    .ToList(),
+            };
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
         public static readonly Dictionary<AppAction, List<AppPermission>> ActionsSeed = new()
         {
             { AppAction.SuperAdmin, Enum.GetValues<AppPermission>().ToList() },
-            { 
+            {
                 AppAction.UsersAdministration,
                 [
                     AppPermission.AccessUsersAdminPage,
@@ -17,10 +17,11 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.CreateUser,
                     AppPermission.UpdateUser,
                     AppPermission.DeleteUser,
+                    AppPermission.GetRoles,
                     AppPermission.CheckEmailBeUnique,
-                ] 
+                ]
             },
-            { 
+            {
                 AppAction.ConstituencyAdministration,
                 [
                     AppPermission.AccessConstituenciesAdminPage,
@@ -29,9 +30,9 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.CreateConstituency,
                     AppPermission.UpdateConstituency,
                     AppPermission.DeletePollingStation,
-                ] 
+                ]
             },
-            { 
+            {
                 AppAction.PollingStationAdministration,
                 [
                     AppPermission.AccessPollingStationsAdminPage,
@@ -40,9 +41,9 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.CreatePollingStation,
                     AppPermission.UpdatePollingStation,
                     AppPermission.DeletePollingStation,
-                ] 
+                ]
             },
-            {   // C'est l'action de recevoir les demandes et les valider / refuser / 
+            { // C'est l'action de recevoir les demandes et les valider / refuser /
                 AppAction.RegistrationRequestManagement,
                 [
                     AppPermission.AccessRegistrationRequestsForManagementPage,
@@ -52,11 +53,11 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.DeleteRegistrationRequestsForManagement,
                     AppPermission.TriggerActionOnRegistrationRequest,
                     AppPermission.CheckRegistrationReferenceBeUnique,
-                ] 
+                ]
             },
-            { 
+            {
                 // C'est l'action de faire une nouvelle demande
-                // et y apporter les modifications nécessaires 
+                // et y apporter les modifications nécessaires
                 // si elle est incomplète
                 AppAction.RegistrationRequestCreation,
                 [
@@ -65,9 +66,9 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.UpdateRegistrationRequest,
                     AppPermission.UploadRegistrationRequestTempDocument,
                     AppPermission.GetRegistrationRequestForCurrentUser,
-                ] 
+                ]
             },
-            { 
+            {
                 AppAction.RegistrationRequestConsultation,
                 [
                     AppPermission.AccessRegistrationRequestsPage,
@@ -85,6 +86,15 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.GetRegistrationRequest,
                 ]
             },
+            {
+                AppAction.CommonAccess,
+                [
+                    AppPermission.GetRoles,
+                    AppPermission.GetProfile,
+                    AppPermission.GetConstituencies,
+                    AppPermission.GetPollingStations,
+                ]
+            },
         };
 
         public static readonly Dictionary<string, List<AppAction>> RolesSeed = new()
@@ -93,6 +103,7 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
             {
                 AppConstants.OrganismAgentRole,
                 [
+                    AppAction.CommonAccess,
                     AppAction.RegistrationRequestConsultation,
                     AppAction.RegistrationRequestManagement,
                     AppAction.PollingStationAdministration,
@@ -101,10 +112,11 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
             {
                 AppConstants.ElectorRole,
                 [
+                    AppAction.CommonAccess,
                     AppAction.RegistrationRequestCreation,
                     AppAction.RegistrationRequestConsultation,
                 ]
-            }
+            },
         };
     }
 }

@@ -8,12 +8,14 @@ using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Pcea.Core.Net.Authorization.Application.Attributes;
 using Tools.Logging;
 
 namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestStatus
 {
-    public class UpdateRegistrationRequestStatusCommand 
-        : IRequest<Result<UpdateRegistrationRequestStatusResponse>> 
+    [WithPermission(nameof(AppPermission.TriggerActionOnRegistrationRequest))]
+    public class UpdateRegistrationRequestStatusCommand
+        : IRequest<Result<UpdateRegistrationRequestStatusResponse>>
     {
         public Guid RegistrationRequestId { get; set; }
         public RegistrationStatus NewStatus { get; set; }
@@ -22,28 +24,34 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
     }
 
     public class UpdateRegistrationRequestStatusCommandValidator
-        :AbstractValidator<UpdateRegistrationRequestStatusCommand>
+        : AbstractValidator<UpdateRegistrationRequestStatusCommand>
     {
-        public UpdateRegistrationRequestStatusCommandValidator(ReadOnlyDbContext context) 
+        public UpdateRegistrationRequestStatusCommandValidator(ReadOnlyDbContext context)
         {
-            RuleFor(r => r.RegistrationRequestId).NotEmpty()
+            RuleFor(r => r.RegistrationRequestId)
+                .NotEmpty()
                 .WithMessage(ValidationErrorCode.Required.ToString());
 
             RuleFor(r => r.NewStatus).IsInEnum();
 
-            RuleFor(r => r.ReasonForRejection).NotEmpty()
+            RuleFor(r => r.ReasonForRejection)
+                .NotEmpty()
                 .When(r => r.NewStatus == RegistrationStatus.Rejected)
                 .WithMessage(ValidationErrorCode.Required.ToString())
                 .MaximumLength(500);
 
-            RuleFor(r => r.PollingStationId).NotEmpty()
-                .When(r => r.NewStatus == RegistrationStatus.Approuved)
+            RuleFor(r => r.PollingStationId)
+                .NotEmpty()
+                .When(r => r.NewStatus == RegistrationStatus.Approved)
                 .WithMessage(ValidationErrorCode.Required.ToString())
-                .MustAsync(async (id, token) =>
-                {
-                    if (!id.HasValue) return false;
-                    return await context.PollingStations.AnyAsync(ps => ps.Id == id.Value, token);
-                })
+                .MustAsync(
+                    async (id, token) =>
+                    {
+                        if (!id.HasValue)
+                            return false;
+                        return await context.PollingStations.AnyAsync(ps => ps.Id == id.Value, token);
+                    }
+                )
                 .WithMessage(ValidationErrorCode.PollingStationMustExist.ToString());
         }
     }
@@ -53,13 +61,20 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
         TimeProvider timeProvider,
         IReferenceGeneratorService referenceGeneratorService,
         ICurrentUserService currentUserService
-    ) : IRequestHandler<UpdateRegistrationRequestStatusCommand, Result<UpdateRegistrationRequestStatusResponse>>
+    )
+        : IRequestHandler<
+            UpdateRegistrationRequestStatusCommand,
+            Result<UpdateRegistrationRequestStatusResponse>
+        >
     {
-        
-        public async Task<Result<UpdateRegistrationRequestStatusResponse>> Handle(UpdateRegistrationRequestStatusCommand command, CancellationToken cancellationToken)
+        public async Task<Result<UpdateRegistrationRequestStatusResponse>> Handle(
+            UpdateRegistrationRequestStatusCommand command,
+            CancellationToken cancellationToken
+        )
         {
-            using var activity = ActivitySourceLog.CQRS
-                .Start().AddParameter(command, r => r.RegistrationRequestId);
+            using var activity = ActivitySourceLog
+                .CQRS.Start()
+                .AddParameter(command, r => r.RegistrationRequestId);
 
             var dateNow = timeProvider.GetUtcNow();
             var currentUserId = currentUserService.UserId;
@@ -70,22 +85,28 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
             //    .FirstOrDefaultAsync(u => u.Id == currentUserId, cancellationToken)
             //    ?? throw new NotFoundException(nameof(UserDao), currentUserId);
 
-            var registrationDao = await context.RegistrationRequests
-                .Include(r => r.Citizen)
-                .Include(r => r.Constituency)
-                .FirstOrDefaultAsync(r => r.Id == command.RegistrationRequestId 
-                    && r.Status == RegistrationStatus.ToBeProcessed, cancellationToken)
+            var registrationDao =
+                await context
+                    .RegistrationRequests.Include(r => r.Citizen)
+                    .Include(r => r.Constituency)
+                    .FirstOrDefaultAsync(
+                        r =>
+                            r.Id == command.RegistrationRequestId
+                            && r.Status == RegistrationStatus.ToBeProcessed,
+                        cancellationToken
+                    )
                 ?? throw new NotFoundException(nameof(RegistrationRequestDao), command.RegistrationRequestId);
-            
 
-            if(command.NewStatus == RegistrationStatus.Approuved)
+            if (command.NewStatus == RegistrationStatus.Approved)
             {
-                await ProcessApprovalAsync(registrationDao, 
-                    command.PollingStationId!.Value,  
-                    dateNow, 
-                    cancellationToken);
+                await ProcessApprovalAsync(
+                    registrationDao,
+                    command.PollingStationId!.Value,
+                    dateNow,
+                    cancellationToken
+                );
             }
-            else if(command.NewStatus == RegistrationStatus.Rejected)
+            else if (command.NewStatus == RegistrationStatus.Rejected)
             {
                 registrationDao.Status = RegistrationStatus.Rejected;
                 registrationDao.ReasonForRejection = command.ReasonForRejection;
@@ -97,20 +118,31 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
 
             return Result<UpdateRegistrationRequestStatusResponse>.From(
                 UpdateRegistrationRequestStatusResponse.FromDao(registrationDao)
-                );
-
+            );
         }
 
-        private async Task ProcessApprovalAsync(RegistrationRequestDao dao, long pollingSationId, DateTimeOffset now, CancellationToken token) 
+        private async Task ProcessApprovalAsync(
+            RegistrationRequestDao dao,
+            long pollingSationId,
+            DateTimeOffset now,
+            CancellationToken token
+        )
         {
             // Logique métier : Un citoyen ne peut pas avoir deux profils électeurs actifs
-            var alreadyElector = await context.Electors
-                .AnyAsync(e => e.Id == dao.CitizenId && e.Status == ElectorStatus.Active, token);
+            var alreadyElector = await context.Electors.AnyAsync(
+                e => e.Id == dao.CitizenId && e.Status == ElectorStatus.Active,
+                token
+            );
 
-            if (alreadyElector) throw new Exception("Le citoyen est déjà inscrit comme électeur.");
+            if (alreadyElector)
+                throw new Exception("Le citoyen est déjà inscrit comme électeur.");
 
-            string voterNumber = await referenceGeneratorService.GenerateElectorNumberAsync(context, pollingSationId, token);
-                        
+            string voterNumber = await referenceGeneratorService.GenerateElectorNumberAsync(
+                context,
+                pollingSationId,
+                token
+            );
+
             // Création du profil Électeur
             var elector = new ElectorDao
             {
@@ -123,7 +155,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
                 ModifiedAt = now,
             };
 
-            dao.Status = RegistrationStatus.Approuved;
+            dao.Status = RegistrationStatus.Approved;
             context.Electors.Add(elector);
         }
     }

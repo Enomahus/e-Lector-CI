@@ -2,10 +2,12 @@
 using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Tools.Constants;
 
 namespace Application.Features.Users.Common
 {
-    public class UserCommandValidatorBase<T> : AbstractValidator<T> where T : UserModel
+    public class UserCommandValidatorBase<T> : AbstractValidator<T>
+        where T : UserModel
     {
         protected readonly ReadOnlyDbContext _context;
 
@@ -16,10 +18,10 @@ namespace Application.Features.Users.Common
             RuleFor(v => v.Civility).NotNull().WithMessage(ValidationErrorCode.Required.ToString());
 
             RuleFor(v => v.FirstName)
-               .NotEmpty()
-               .WithMessage(ValidationErrorCode.Required.ToString())
-               .MaximumLength(50)
-               .WithMessage(ValidationErrorCode.MaxLength.ToString());
+                .NotEmpty()
+                .WithMessage(ValidationErrorCode.Required.ToString())
+                .MaximumLength(50)
+                .WithMessage(ValidationErrorCode.MaxLength.ToString());
 
             RuleFor(v => v.LastName)
                 .NotEmpty()
@@ -46,15 +48,40 @@ namespace Application.Features.Users.Common
                         .WithMessage(ValidationErrorCode.Unique.ToString());
                 });
 
+            RuleFor(v => v.EmployeeNumber)
+                .NotEmpty()
+                .WithMessage(ValidationErrorCode.Required.ToString())
+                .MustAsync(
+                    async (model, employerNumber, token) =>
+                    {
+                        bool needsEmployeeNumber = await _context.Roles.AnyAsync(
+                            r =>
+                                model.Roles.Contains(r.Id)
+                                && (
+                                    r.Name == AppConstants.SuperAdminRole
+                                    || r.Name == AppConstants.OrganismAgentRole
+                                ),
+                            token
+                        );
+
+                        if (needsEmployeeNumber)
+                        {
+                            return !string.IsNullOrWhiteSpace(employerNumber);
+                        }
+
+                        return true;
+                    }
+                );
+
             RuleFor(v => v.ConstituencyId)
-            .NotEmpty()
-            .WithMessage(ValidationErrorCode.Required.ToString())
-            .DependentRules(() =>
-            {
-                RuleFor(v => v.ConstituencyId)
-                    .MustAsync(ConstituencyExistsAsync)
-                    .WithMessage(ValidationErrorCode.ConstituencyMustExist.ToString());
-            });            
+                .NotEmpty()
+                .WithMessage(ValidationErrorCode.Required.ToString())
+                .DependentRules(() =>
+                {
+                    RuleFor(v => v.ConstituencyId)
+                        .MustAsync(ConstituencyExistsAsync)
+                        .WithMessage(ValidationErrorCode.ConstituencyMustExist.ToString());
+                });
 
             if (validateRoles)
             {
@@ -87,7 +114,10 @@ namespace Application.Features.Users.Common
             return existingRolesCount == rolesList.Count;
         }
 
-        private async Task<bool> ConstituencyExistsAsync(long? constituencyId, CancellationToken cancellationToken)
+        private async Task<bool> ConstituencyExistsAsync(
+            long? constituencyId,
+            CancellationToken cancellationToken
+        )
         {
             return await _context.Constituencies.AnyAsync(c => c.Id == constituencyId, cancellationToken);
         }

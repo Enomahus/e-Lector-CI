@@ -15,6 +15,7 @@ namespace Application.Features.Common.Citizen
         public string? MarriedName { get; set; }
         public string? Nationality { get; set; }
         public string? Profession { get; set; }
+        public string? Email { get; set; }
         public string? PhysicalAddress { get; set; }
         public string? PostalAddress { get; set; }
         public Guid? FatherId { get; set; }
@@ -35,6 +36,7 @@ namespace Application.Features.Common.Citizen
                 MaritalStatus = dao.MaritalStatus,
                 MarriedName = dao.MarriedName,
                 Profession = dao.Profession,
+                Email = dao.Email,
                 Nationality = dao.Nationality,
                 PhysicalAddress = dao.PhysicalAddress,
                 PostalAddress = dao.PostalAddress,
@@ -58,15 +60,15 @@ namespace Application.Features.Common.Citizen
                 MaritalStatus = MaritalStatus,
                 MarriedName = MarriedName,
                 Profession = Profession,
+                Email = Email,
                 Nationality = Nationality,
                 PhysicalAddress = PhysicalAddress,
                 PostalAddress = PostalAddress,
                 FatherId = FatherId,
                 Father = Father?.ToDao(),
                 MotherId = MotherId,
-                Mother = Mother?.ToDao()
+                Mother = Mother?.ToDao(),
             };
         }
-
     }
 }

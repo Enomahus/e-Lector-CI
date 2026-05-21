@@ -1,0 +1,12 @@
+@if (registrationRequest()) {
+  <h1>{{ 'registrationRequest.editRegistrationRequestTitle' | translate }}</h1>
+  <app-registration-request-ui
+    [isSaving]="isSaving()"
+    [isCreateMode]="false"
+    [registrationRequest]="registrationRequest()"
+    (saveTriggered)="update($event)"
+    (goBack)="goBack()"
+  ></app-registration-request-ui>
+} @else {
+  <app-loader></app-loader>
+}

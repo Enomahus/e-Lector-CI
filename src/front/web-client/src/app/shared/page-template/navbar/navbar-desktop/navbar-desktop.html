@@ -13,25 +13,27 @@
     </div>
 
     <ul class="menu menu-left">
-      <li class="menu-item" [routerLinkActive]="'active'">
-        <a routerLink="/login">{{ 'navbar.registrationRequest' | translate }}</a>
+      <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
+        <a routerLink="/registration-requests/new">{{
+          'navbar.registrationRequest' | translate
+        }}</a>
       </li>
       @if (showAdminRequestsText()) {
         <li class="menu-item" [routerLinkActive]="'active'">
-          <a class="menu-item-interaction" routerLink="certificate-requests-for-admin">
+          <a class="menu-item-interaction" routerLink="registration-requests-for-admin">
             {{ 'navbar.myRequestsForAdmin' | translate }}
           </a>
         </li>
       }
       @if (showOrganismRequestsText()) {
-        <li class="menu-item" [routerLinkActive]="'active'">
-          <a class="menu-item-interaction" routerLink="certificate-requests-for-management">
+        <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
+          <a class="menu-item-interaction" routerLink="registration-requests-for-management">
             {{ 'navbar.myRequestsForOrganism' | translate }}
           </a>
         </li>
       }
       @if (showElectorRequestsText()) {
-        <li class="menu-item" [routerLinkActive]="'active'">
+        <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
           <a class="menu-item-interaction" routerLink="/registration-requests">
             {{ 'navbar.myRequests' | translate }}
           </a>
@@ -43,7 +45,15 @@
       <li class="menu-item" [routerLinkActive]="'active'">
         <a routerLink="/faq">{{ 'navbar.faq' | translate }}</a>
       </li>
-      <li class="menu-item" [class.active]="isRouteMatching('admin')">
+      <li
+        class="menu-item"
+        [class.active]="isRouteMatching('admin')"
+        *appHasPermission="[
+          'accessConstituenciesAdminPage',
+          'accessUsersAdminPage',
+          'accessPollingStationsAdminPage',
+        ]"
+      >
         <button
           class="btn btn-no-style dropbtn menu-item-interaction"
           (click)="dropdownOpen.set(!dropdownOpen())"
@@ -53,13 +63,25 @@
         </button>
         @if (dropdownOpen()) {
           <div class="dropdown-content">
-            <a routerLink="admin/constituencies" [routerLinkActive]="'active'">
+            <a
+              *appHasPermission="['accessConstituenciesAdminPage']"
+              routerLink="admin/constituencies"
+              [routerLinkActive]="'active'"
+            >
               <span>{{ 'navbar.constituency' | translate }}</span>
             </a>
-            <a routerLink="admin/polling-stations" [routerLinkActive]="'active'">
+            <a
+              *appHasPermission="['accessPollingStationsAdminPage']"
+              routerLink="admin/polling-stations"
+              [routerLinkActive]="'active'"
+            >
               <span>{{ 'navbar.pollingStation' | translate }}</span>
             </a>
-            <a routerLink="admin/users" [routerLinkActive]="'active'">
+            <a
+              *appHasPermission="['accessUsersAdminPage']"
+              routerLink="admin/users"
+              [routerLinkActive]="'active'"
+            >
               <span>{{ 'navbar.users' | translate }}</span>
             </a>
           </div>

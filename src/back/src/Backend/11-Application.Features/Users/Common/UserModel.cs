@@ -15,7 +15,6 @@ namespace Application.Features.Users.Common
         public PersonTitle Civility { get; set; }
         public bool? IsAdmin { get; set; }
         public bool IsActive { get; set; }
-        public UserType UserType { get; set; } = UserType.None;
         public List<Guid> Roles { get; set; } = [];
         public long? ConstituencyId { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
@@ -30,8 +29,7 @@ namespace Application.Features.Users.Common
 
         public static void MapDaoToModel(UserDao dao, UserModel model, DateTimeOffset dateNow)
         {
-            var isAdmin = dao.UserRoles?.Any(ur => 
-                ur.Role.Name == AppConstants.SuperAdminRole) ?? false;
+            var isAdmin = dao.UserRoles?.Any(ur => ur.Role.Name == AppConstants.SuperAdminRole) ?? false;
 
             var isActive = dao.DisabledDate is null || dao.DisabledDate > dateNow;
 
@@ -43,7 +41,6 @@ namespace Application.Features.Users.Common
             model.Email = dao.Email;
             model.IsAdmin = isAdmin;
             model.IsActive = isActive;
-            model.UserType = dao.UserType;
             model.EmployeeNumber = dao.EmployeeNumber;
             model.Roles = [.. dao.UserRoles!.Select(ur => ur.RoleId)];
             model.ConstituencyId = dao.UserConstituencies.FirstOrDefault()?.ConstituencyId;

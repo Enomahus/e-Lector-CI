@@ -9,8 +9,12 @@
     "cancel": "Annuler",
     "refresh": "Actualiser",
     "login": "Se connecter",
+    "actions": "Actions",
+    "select": "...Veuillez choisir une option...",
     "no": "Non",
     "yes": "Oui",
+    "noTitleTemplate": "E-Lector-CI",
+    "titleTemplate": "{{title}} | E-Lector-CI",
     "language": "Langue",
     "lang": {
       "fr": "Français",
@@ -28,25 +32,15 @@
     }
   },
   "breadcrumb": {
-    "bonusAdd": "Nouveau bonus",
-    "bonusEdit": "Modification du bonus",
-    "bonuses": "Référentiel bonus",
-    "brandAdd": "Nouvelle marque",
-    "brandEdit": "Modification de la marque",
-    "brands": "Liste des marques",
-    "certificateRequestAdd": "Nouvelle demande",
-    "certificateRequestEdit": "Modification de demande",
-    "certificateRequests": "Mes demandes",
-    "certificateRequestsForAdmin": "Liste des demandes",
-    "certificateRequestsForManagement": "Liste des demandes",
-    "criteriaAdd": "Nouveau critère",
-    "criteriaEdit": "Modification du critère",
-    "criterias": "Référentiel critères",
-    "panelReferenceAdd": "Nouvelle référence de panneau",
-    "panelReferences": "Références de panneaux photovoltaïques",
-    "scaleVersionAdd": "Version {{versionName}}",
-    "scaleVersionEdit": "Version {{versionName}}",
-    "scaleVersions": "Liste des versions de barème d'éco modulation",
+    "pollingStations": "Les bureaux de vote",
+    "pollingStationCreate": "Nouveau bureau de vote",
+    "pollingStationEdit": "Modifier un bureau de vote",
+    "constituencies": "Les circonscriptions",
+    "constituencyCreate": "Nouvelle circonscription",
+    "registrationRequestAdd": "Nouvelle demande d'inscription",
+    "registrationRequestEdit": "Modifier la demande d'inscription",
+    "registrationRequestsForAdmin": "Liste des demandes",
+    "registrationRequestsForManagement": "Liste des demandes",
     "stakeholderAdd": "Nouvelle société",
     "stakeholders": "Liste des sociétés",
     "userCreate": "Création d'un utilisateur",
@@ -74,6 +68,22 @@
     "externalLoginFailed": "Une erreur est survenue lors de la connexion, veuillez réessayer.",
     "continueWithEmail": "Ou continuez avec votre adresse e-mail"
   },
+  "forgotPassword": {
+    "email": "Adresse mail",
+    "forgotActionButton": "Recevoir le mail de réinitialisation",
+    "forgotPassword": "Mot de passe oublié",
+    "mailAlreadySendButton": "Mail envoyé !",
+    "returnToLogin": "Retour à la page de connexion",
+    "success": "Mail de réinitialisation envoyé si un compte existe avec cet email."
+  },
+  "resetPassword": {
+    "invalidLink": "Le lien de réinitialisation du mot de passe est invalide. Veuillez à nouveau réinitialiser votre mot de passe.",
+    "missingParams": "L'url de réinitialisation du mot de passe est erronée",
+    "password": "Mot de passe",
+    "resetActionButton": "Valider mon mot de passe",
+    "resetPassword": "Réinitialiser mot de passe",
+    "resetSuccess": "Mot de passe enregistré"
+  },
   "footer": {
     "text": "© 2026 Commission Électorale Indépendante (CEI) - Côte d'Ivoire.",
     "rights": "Tous droits réservés."
@@ -85,18 +95,18 @@
     "logout": "Se déconnecter",
     "registrationRequest": "Demande d'inscription",
     "myRequests": "Mes demandes",
-    "myRequestsForOrganism": "Demandes",
-    "myRequestsForAdmin": "Demandes",
-    "faq": "FAQ",
+    "myRequestsForOrganism": "Les demandes",
+    "myRequestsForAdmin": "Les demandes",
+    "faq": "Faq",
     "Administration": "Administration",
-    "pollingStation": "Bureau de vote",
+    "pollingStation": "Bureaux de vote",
     "constituency": "Circonscription",
     "users": "Utilisateurs"
   },
   "roles": {
     "OrganismAgentRole": "Agent d'organisme",
-    "DefaultRole": "Electeur",
-    "SuperAdmin": "Administrateur CEI"
+    "ElectorRole": "Electeur",
+    "SuperAdminRole": "Administrateur CEI"
   },
   "errors": {
     "backendCodes": {
@@ -127,6 +137,8 @@
     "title": "Liste des circonscriptions",
     "createConstituency": "Créer une circonscription",
     "editConstituency": "Modifier la circonscription",
+    "titleNewConstituency": "Nouvelle circonscription",
+    "titleEditConstituency": "Modifier la circonscription",
     "name": "Nom de la circonscription",
     "level": "Niveau de la circonscription",
     "parentConstituency": "Circonscription parente",
@@ -191,6 +203,8 @@
     "title": "Les Bureaux de vote",
     "createPollingStation": "Créer un bureau de vote",
     "editPollingStation": "Modifier le bureau de vote",
+    "titleNewPollingStation": "Nouveau bureau de vote",
+    "titleEditPollingStation": "Modifier le bureau de vote",
     "votingLocationName": "Lieu de vote",
     "stationNumber": "Bureau",
     "municipalityName": "Commune / Village",
@@ -212,6 +226,8 @@
   "users": {
     "title": "Liste des utilisateurs",
     "createUser": "Créer un utilisateur",
+    "titleNewUser": "Nouvel utilisateur",
+    "titleEditUser": "Modifier l'utilisateur",
     "firstName": "Prénom",
     "lastName": "Nom",
     "email": "Email",
@@ -282,5 +298,74 @@
     "register": "S'inscrire",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "login": "Connectez-vous"
+  },
+  "registrationRequests": {
+    "title": "Demande d'inscription",
+    "myRequests": "Mes demandes",
+    "myRequestsForOrganism": "Les demandes",
+    "myRequestsForAdmin": "Les demandes",
+    "titleForManagement": "Liste des demandes",
+    "titleForAdmin": "Liste des demandes",
+    "titleNewRegistrationRequest": "Nouvelle demande",
+    "titleEditRegistrationRequest": "Modifier la demande",
+    "gender": {
+      "m": "Masculin",
+      "f": "Féminin"
+    },
+    "status": {
+      "pending": "En attente",
+      "toBeProcessed": "À traiter",
+      "approved": "Approuvée",
+      "rejected": "Rejetée"
+    },
+    "maritalStatus": {
+      "single": "Célibataire",
+      "married": "Marié(e)",
+      "divorced": "Divorcé(e)",
+      "widowed": "Veuf(ve)"
+    },
+    "fields": {
+      "reference": "Référence",
+      "submissionDate": "Date de soumission",
+      "status": "Statut",
+      "citizenName": "Impétrant",
+      "citizenBirthDate": "Date de naissance",
+      "citizenBirthPlace": "Lieu de naissance",
+      "nationality": "Nationalité",
+      "occupation": "Profession",
+      "marriedName": "Nom de jeune fille",
+      "physicalAddress": "Adresse physique",
+      "postalAddress": "Adresse postale",
+      "maritalStatus": "Situation matrimoniale",
+      "father": "Père",
+      "mother": "Mère",
+      "remark": "Remarque",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "author": "Auteur",
+      "employeeNumber": "Numéro matricule",
+      "phone": "Téléphone",
+      "constituency": "Circonscription",
+      "civility": "Civilité",
+      "registrationRequestType": "Type de demande d'inscription",
+      "requestDocuments": "Documents justificatifs",
+      "reasonForRejection": "Commentaire"
+    },
+    "registrationRequestTypes": {
+      "registrationRequest": "Demande d'inscription",
+      "registrationDataUpdate": "Demande de mise à jour des données d'inscription"
+    }
+  },
+  "registrationRequest": {
+    "requestDetails": "Détails de la demande d'inscription",
+    "newRegistrationRequestTitle": "Nouvelle demande d'inscription",
+    "errorCreating": "Erreur lors de la création de la demande d'inscription.",
+    "successCreating": "Demande d'inscription créée avec succès",
+    "errorUpdating": "Erreur lors de la mise à jour de la demande d'inscription.",
+    "successUpdating": "Demande d'inscription mise à jour avec succès",
+    "supportingDocuments": "Documents justificatifs",
+    "citizenInformation": "Informations du citoyen",
+    "requestInformation": "Informations de la demande"
   }
 }

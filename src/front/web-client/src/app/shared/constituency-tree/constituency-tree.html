@@ -38,6 +38,7 @@
             <!-- Menu Contextuel pour les feuilles -->
             @if (isLeaf(node)) {
               <button
+                *appHasPermission="'updateConstituency'"
                 class="btn-menu"
                 [cdkMenuTriggerFor]="leafMenu"
                 (click)="$event.stopPropagation()"
@@ -52,10 +53,20 @@
         <!-- Définition du Menu (Template) -->
         <ng-template #leafMenu>
           <div class="context-menu" cdkMenu>
-            <button class="menu-item" cdkMenuItem (cdkMenuItemTriggered)="onEdit(node)">
+            <button
+              *appHasPermission="'updateConstituency'"
+              class="menu-item"
+              cdkMenuItem
+              (cdkMenuItemTriggered)="onEdit(node)"
+            >
               <span class="icon">✎</span>{{ 'constituencies.actions.edit' | translate }}
             </button>
-            <button class="menu-item" cdkMenuItem (cdkMenuItemTriggered)="onToggleStatus(node)">
+            <button
+              *appHasPermission="'updateConstituency'"
+              class="menu-item"
+              cdkMenuItem
+              (cdkMenuItemTriggered)="onToggleStatus(node)"
+            >
               <span class="icon">{{ node.active ? '⊘' : '✓' }}</span>
               {{
                 (node.active
@@ -65,7 +76,12 @@
               }}
             </button>
             <div class="menu-separator"></div>
-            <button class="menu-item delete" cdkMenuItem (cdkMenuItemTriggered)="onDelete(node)">
+            <button
+              *appHasPermission="'deleteConstituency'"
+              class="menu-item delete"
+              cdkMenuItem
+              (cdkMenuItemTriggered)="onDelete(node)"
+            >
               <span class="icon">🗑</span>{{ 'constituencies.actions.delete' | translate }}
             </button>
           </div>

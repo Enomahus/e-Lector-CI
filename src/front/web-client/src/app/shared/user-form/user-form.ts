@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ConstituencyNode } from '@app/models/constituency.model';
-import { allActivities } from '@app/pages/types/enumerations';
 import { UsersApiService } from '@app/services/api/users.api.service';
 import { AuthService } from '@app/services/auth/auth.service';
 import { ConstituencyTreeHelperService } from '@app/services/constituency-tree-helper.service';
-import { UserModel, UserType } from '@app/services/nswag/api-nswag-client';
+import { RoleModel, UserModel } from '@app/services/nswag/api-nswag-client';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { tap } from 'rxjs';
 import { ConstituencyTree } from '../constituency-tree/constituency-tree';
 import { Loader } from '../loader/loader';
 import { PhoneInput } from '../phone-input/phone-input';
@@ -28,10 +28,10 @@ import { UserFormFactory } from './user-form-factory';
   templateUrl: './user-form.html',
   styleUrls: ['./user-form.scss'],
 })
-export class UserForm {
+export class UserForm implements OnInit {
   form = input.required<UserFormFactory>();
   isSaving = input<boolean>(false);
-  isUpdate = input<boolean>(false);
+  isEditMode = input<boolean>(false);
   constituencyId = input<number | undefined>(undefined);
 
   formSubmitted = output<UserModel>();
@@ -42,7 +42,8 @@ export class UserForm {
   private readonly translateService = inject(TranslateService);
   private readonly store = inject(ConstituencyTreeHelperService);
 
-  activityOptions: UserType[] = allActivities;
+  availableRoles = ['requester', 'agent', 'admin'];
+  roles!: RoleModel[];
 
   // Signal pour gérer la visibilité du mot de passe
   hidePassword = signal(true);
@@ -50,13 +51,18 @@ export class UserForm {
 
   nodes = this.store.nodesData;
   selectedNode = this.store.selectedNode;
-  initialTreeSelectedId = computed(() => (!this.isUpdate() ? this.constituencyId() : undefined));
+  initialTreeSelectedId = computed(() => (!this.isEditMode() ? this.constituencyId() : undefined));
 
   // On ajoute un helper pour simplifier le template
   isRequester = computed(() => {
     const roles = this.form().controls.roles.value;
     return Array.isArray(roles) && roles.length === 1 && roles[0] === 'requester';
   });
+
+  requiredEmployeeNumber(): boolean {
+    const roles = this.form().controls.roles.value;
+    return roles.some((r) => r === 'admin' || r === 'agent');
+  }
 
   constructor() {
     effect(() => {
@@ -70,12 +76,33 @@ export class UserForm {
     });
   }
 
+  ngOnInit(): void {
+    this.userService
+      .getUserRoles()
+      .pipe(tap((roles) => (this.roles = roles.data ?? [])))
+      .subscribe();
+  }
+
   onNodeSelected(node: ConstituencyNode): void {
     this.store.setSelectedNode(node);
 
     // Mise à jour du formulaire avec la nouvelle circonscription sélectionnée
     this.form().patchValue({ constituencyId: node.id });
     this.form().controls.constituencyId.markAsDirty();
+  }
+
+  toggleRole(role: string): void {
+    const currentRoles = this.form().controls.roles?.value ?? [];
+    const newRoles = currentRoles.includes(role)
+      ? currentRoles.filter((r) => r !== role)
+      : [...currentRoles, role];
+    this.form().controls.roles.setValue(newRoles);
+    this.form().updateValueAndValidity();
+  }
+
+  hasRole(role: string): boolean {
+    const roles = this.form().controls.roles.value || [];
+    return roles.includes(role);
   }
 
   onSubmit(): void {

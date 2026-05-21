@@ -34,7 +34,7 @@ export class CreateAccount implements OnInit {
     this.email.set(this.route.snapshot.queryParamMap.get('email') ?? undefined);
     const constituencyId = this.route.snapshot.queryParamMap.get('constituencyId');
     this.constituencyId.set(constituencyId ? Number(constituencyId) : undefined);
-    this.form = createUserForm();
+    this.form = createUserForm(false);
   }
 
   async onSubmit(user: UserModel): Promise<void> {

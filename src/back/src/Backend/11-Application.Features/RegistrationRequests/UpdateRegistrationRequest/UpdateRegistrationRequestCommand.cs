@@ -27,7 +27,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequest
         public Guid? Id { get; set; }
     }
 
-    public class UpdateRegistrationRequestCommandValidator 
+    public class UpdateRegistrationRequestCommandValidator
         : RegistrationRequestValidationBase<UpdateRegistrationRequestCommand>
     {
         public UpdateRegistrationRequestCommandValidator(ReadOnlyDbContext context, TimeProvider timeProvider)
@@ -41,21 +41,27 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequest
         ICurrentUserPermissionsProvider currentUserPermissions
     ) : IRequestHandler<UpdateRegistrationRequestCommand, Result<Guid>>
     {
-        public async Task<Result<Guid>> Handle(UpdateRegistrationRequestCommand command, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(
+            UpdateRegistrationRequestCommand command,
+            CancellationToken cancellationToken
+        )
         {
             using var activity = ActivitySourceLog.CQRS.Start().AddParameter(command, c => c.Id);
-            
+
             var currentUserId = currentUserService.UserId;
             var currentUser =
-            await context
-                .Users.AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == currentUserId, cancellationToken)
-            ?? throw new UserAccessException();
+                await context
+                    .Users.AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.Id == currentUserId, cancellationToken)
+                ?? throw new UserAccessException();
 
             var permissions = await currentUserPermissions.GetCurrentUserPermissionsAsync(cancellationToken);
             var userIsSuperAdmin = permissions.Contains(AppPermission.SuperAdmin.ToString());
 
-            var registrationRequestDao = await registrationRequestService.PrepareDaoForUpdate(command, cancellationToken);
+            var registrationRequestDao = await registrationRequestService.PrepareDaoForUpdate(
+                command,
+                cancellationToken
+            );
 
             context.RegistrationRequests.Update(registrationRequestDao);
             await context.SaveChangesAsync(cancellationToken);

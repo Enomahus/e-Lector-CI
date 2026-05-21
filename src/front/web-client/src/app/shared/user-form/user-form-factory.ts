@@ -1,5 +1,13 @@
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AuthProvider, PersonTitle, UserType } from '@app/services/nswag/api-nswag-client';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { patternPassword } from '@app/pages/constants';
+import { AuthProvider, PersonTitle } from '@app/services/nswag/api-nswag-client';
 import { passwordMatchValidator } from '../helpers/form.helper';
 import { phoneNumberValidator } from '../phone-input/phone-input-intl.validator';
 
@@ -12,13 +20,12 @@ export type UserFormFactory = FormGroup<{
   password: FormControl<string | undefined>;
   confirmPassword: FormControl<string | undefined>;
   employeeNumber: FormControl<string | undefined>;
-  userType: FormControl<UserType[]>;
   roles: FormControl<string[]>;
   authProvider: FormControl<AuthProvider | undefined>;
   constituencyId: FormControl<number | undefined>;
 }>;
 
-export function createUserForm(): UserFormFactory {
+export function createUserForm(isEditMode: boolean): UserFormFactory {
   const form = new FormGroup(
     {
       civility: new FormControl<PersonTitle>('mr', { nonNullable: true }),
@@ -33,15 +40,29 @@ export function createUserForm(): UserFormFactory {
         Validators.required,
         Validators.email,
       ]),
-      password: new FormControl<string | undefined>(undefined, [Validators.required]),
+      password: new FormControl<string | undefined>(undefined, [
+        Validators.required,
+        Validators.pattern(patternPassword),
+      ]),
       confirmPassword: new FormControl<string | undefined>(undefined, [Validators.required]),
-      userType: new FormControl<UserType[]>(['none'], { nonNullable: true }),
-      roles: new FormControl<string[]>([''], { nonNullable: true }),
+      roles: new FormControl<string[]>([]),
       authProvider: new FormControl<AuthProvider | undefined>({ value: undefined, disabled: true }),
       constituencyId: new FormControl<number | undefined>({ value: undefined, disabled: true }),
     },
-    { validators: passwordMatchValidator('password', 'confirmPassword') },
+    {
+      validators: [
+        passwordMatchValidator('password', 'confirmPassword'),
+        employeeNumberRequiredValidator,
+      ],
+    },
   ) as UserFormFactory;
+
+  if (isEditMode) {
+    form.controls.password.clearValidators();
+    form.controls.password.updateValueAndValidity({ emitEvent: false });
+    form.controls.confirmPassword.clearValidators();
+    form.controls.confirmPassword.updateValueAndValidity({ emitEvent: false });
+  }
 
   form.controls.roles.valueChanges.subscribe((roles) => updateEmployeeValidators(form));
 
@@ -64,3 +85,18 @@ export function updateEmployeeValidators(form: UserFormFactory) {
   }
   employeeControl.updateValueAndValidity({ emitEvent: false });
 }
+
+export const employeeNumberRequiredValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  const roles = control.get('roles')?.value as string[];
+  const employeeNumber = control.get('employeeNumber')?.value;
+
+  const isProfessional = roles?.some((r) => r === 'agent' || r === 'admin');
+
+  if (isProfessional && !employeeNumber) {
+    control.get('employeeNumber')?.setErrors({ employeeNumberRequired: true });
+    return { employeeNumberRequired: true };
+  }
+  return null;
+};

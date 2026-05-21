@@ -6,6 +6,7 @@ import {
   GetUsersQuery,
   RegisterUserCommand,
   Result,
+  ResultOfListOfRoleModel,
   ResultOfPagedListOfGetUsersResponse,
   UpdateCurrentUserCommand,
   UpdateUserCommand,
@@ -54,5 +55,9 @@ export class UsersApiService extends ApiBaseService {
 
   registerUser(command: RegisterUserCommand, options: ApiToastOptions = {}): Observable<string> {
     return this.apiClient.registerUser(command).pipe(this.handleDataResult(options));
+  }
+
+  getUserRoles(options: ApiToastOptions = {}): Observable<ResultOfListOfRoleModel> {
+    return this.apiClient.getRoles().pipe(this.handleResult(options));
   }
 }

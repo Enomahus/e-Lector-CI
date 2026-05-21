@@ -1,25 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
-import {
-  FormControl,
-  NonNullableFormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Breadcrumbs } from '@app/models/breadcrumb.model';
 import { ConstituencyNode } from '@app/models/constituency.model';
-import { ConstituencyApiService } from '@app/services/api/constituency.api.service';
+import { allLocationLevel } from '@app/pages/types/enumerations';
 import { BreadcrumbService } from '@app/services/breadcrumb.service';
+import { ConstituencyTreeHelperService } from '@app/services/constituency-tree-helper.service';
 import {
   ConstituencyModel,
-  GetConstituenciesResponse,
   GetConstituencyResponse,
   LocationLevel,
 } from '@app/services/nswag/api-nswag-client';
 import { ConstituencyTree } from '@app/shared/constituency-tree/constituency-tree';
 import { StickyButtonsContainer } from '@app/shared/sticky-buttons-container/sticky-buttons-container';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ConstituencyForm, createConstituencyForm } from './constituency-form';
 
 @Component({
   selector: 'app-constituency',
@@ -34,71 +29,63 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styleUrl: './constituency.scss',
 })
 export class Constituency implements OnInit {
-  private readonly constituecyService = inject(ConstituencyApiService);
   private readonly translateService = inject(TranslateService);
   private readonly breadcrumbService = inject(BreadcrumbService);
-  private readonly route = inject(ActivatedRoute);
+  private readonly store = inject(ConstituencyTreeHelperService);
 
   constituency = input<GetConstituencyResponse | undefined>(undefined);
   constituencyId = input<number | undefined>(undefined);
   saveConstituency = output<ConstituencyModel>();
   goBack = output<void>();
-  isSaving = input.required<boolean>();
   isToCreate = input.required<boolean>();
+  isSaving = input.required<boolean>();
+  form = signal<ConstituencyForm>(createConstituencyForm());
 
-  nodes = signal<ConstituencyNode[]>([]);
-  selectedNode = signal<ConstituencyNode | null>(null);
+  nodes = this.store.nodesData;
+  selectedNode = this.store.selectedNode;
   initialTreeSelectedId = computed(() => (!this.isToCreate() ? this.constituencyId() : undefined));
 
-  private fg = inject(NonNullableFormBuilder);
   parentConstituencies = signal<ConstituencyNode[]>([]);
 
   // Liste des niveaux pour le select
-  levels: LocationLevel[] = [
-    'region',
-    'department',
-    'subPrefecture',
-    'municipality',
-    'votingLocation',
-  ];
-
-  constituencyForm = this.fg.group({
-    code: new FormControl<string>('', [Validators.required]),
-    wording: new FormControl<string>('', [Validators.required]),
-    level: new FormControl<LocationLevel>('votingLocation', { nonNullable: true }),
-    parentId: new FormControl<number | undefined>(undefined, [Validators.required]),
-    isActive: new FormControl<boolean>(true, [Validators.required]),
-  });
+  levels: LocationLevel[] = allLocationLevel;
 
   formData = signal<ConstituencyModel | null>(null);
 
-  ngOnInit(): void {
-    this.setBreadcrumbs(this.constituency());
+  constructor() {
+    effect(() => {
+      const nodes = this.nodes();
+      const id = this.constituencyId();
+      const constituency = this.constituency();
 
-    if (!this.isToCreate() && this.constituency()) {
-      this.constituencyForm.patchValue(this.constituency()!);
-    }
-    this.constituecyService.getConstituencyTree({}).subscribe((res) => {
-      const parent = res.data ?? [];
-      const nodes = parent.map((c) => this.mapToNode(c));
-
-      if (!this.isToCreate() && this.constituencyId()) {
-        this.expandPathToNode(nodes, this.constituencyId()!);
+      if (nodes.length > 0 && id) {
+        this.store.expandNodePath(id);
+        this.store.setSelectedNode(id);
       }
 
-      this.nodes.set(nodes);
-
-      if (!this.isToCreate() && this.constituency()?.parentId) {
-        const parentNode = this.findNodeInTree(nodes, this.constituency()!.parentId!);
+      if (nodes.length > 0 && constituency?.parentId) {
+        const parentNode = this.store.findNode(constituency.parentId);
         if (parentNode) {
           this.parentConstituencies.set([parentNode]);
-          this.selectedNode.set(parentNode);
         }
       }
     });
   }
 
-  setBreadcrumbs(constituency: ConstituencyModel | undefined): void {
+  ngOnInit(): void {
+    if (this.constituency()) {
+      this.form().patchValue({
+        code: this.constituency()?.code,
+        wording: this.constituency()?.wording,
+        level: this.constituency()?.level,
+        parentId: this.constituency()?.parentId,
+        isActive: this.constituency()?.isActive,
+      });
+      this.setBreadcrumbs(this.constituency());
+    }
+  }
+
+  private setBreadcrumbs(constituency: ConstituencyModel | undefined): void {
     let breadcrumbs: Breadcrumbs[] = [];
     breadcrumbs = [
       {
@@ -115,58 +102,20 @@ export class Constituency implements OnInit {
   }
 
   save(): void {
-    if (this.constituencyForm.invalid) {
-      this.constituencyForm.markAsTouched();
+    if (this.form().invalid) {
+      this.form().markAsTouched();
       return;
     }
-    const rawValue = this.constituencyForm.getRawValue();
+    const rawValue = this.form().getRawValue();
     this.formData.set(rawValue as ConstituencyModel);
     this.saveConstituency.emit(this.formData()!);
-    this.setBreadcrumbs(this.formData()!);
   }
 
   onNodeSelected(info: ConstituencyNode): void {
-    this.selectedNode.set(info);
+    this.store.setSelectedNode(info);
     this.parentConstituencies.set([info]);
-    this.constituencyForm.patchValue({ parentId: info.id, level: info.level, isActive: true });
-    this.constituencyForm.get('parentId')?.markAsDirty();
-    this.constituencyForm.get('isActive')?.markAsDirty();
-  }
-
-  private findNodeInTree(
-    nodes: ConstituencyNode[],
-    targetId: number,
-  ): ConstituencyNode | undefined {
-    for (const node of nodes) {
-      if (node.id === targetId) return node;
-      if (node.children?.length) {
-        const found = this.findNodeInTree(node.children, targetId);
-        if (found) return found;
-      }
-    }
-    return undefined;
-  }
-
-  private expandPathToNode(nodes: ConstituencyNode[], targetId: number): boolean {
-    for (const node of nodes) {
-      if (node.id === targetId) return true;
-      if (node.children?.length && this.expandPathToNode(node.children, targetId)) {
-        node.expanded = true;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private mapToNode(constituency: GetConstituenciesResponse): ConstituencyNode {
-    return {
-      id: constituency.id!,
-      code: constituency.code!,
-      wording: constituency.wording!,
-      level: constituency.level!,
-      parentId: constituency.parentId ?? undefined,
-      children: constituency.children?.map((c) => this.mapToNode(c)),
-      expanded: false,
-    };
+    this.form().patchValue({ parentId: info.id, level: info.level, isActive: true });
+    this.form().get('parentId')?.markAsDirty();
+    this.form().get('isActive')?.markAsDirty();
   }
 }

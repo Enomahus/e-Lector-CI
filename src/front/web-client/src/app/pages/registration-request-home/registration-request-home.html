@@ -1,1 +1,17 @@
-<p>registration-request-home works!</p>
+<ng-container *appHideIfAdmin>
+  @if (showElectorRequestsText()) {
+    <app-registration-requests-ui
+      *appHasPermission="'accessRegistrationRequestsPage'"
+    ></app-registration-requests-ui>
+  } @else if (showOrganismRequestsText()) {
+    <app-registration-requests-for-management-ui
+      *appHasPermission="'accessRegistrationRequestsForManagementPage'"
+    ></app-registration-requests-for-management-ui>
+  }
+</ng-container>
+
+@if (showAdminRequestsText()) {
+  <app-registration-requests-for-admin-ui
+    *appHasPermission="'accessRegistrationRequestsForAdminPage'"
+  ></app-registration-requests-for-admin-ui>
+}
