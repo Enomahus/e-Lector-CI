@@ -42,7 +42,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
 
             RuleFor(r => r.PollingStationId)
                 .NotEmpty()
-                .When(r => r.NewStatus == RegistrationStatus.Approuved)
+                .When(r => r.NewStatus == RegistrationStatus.Approved)
                 .WithMessage(ValidationErrorCode.Required.ToString())
                 .MustAsync(
                     async (id, token) =>
@@ -97,7 +97,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
                     )
                 ?? throw new NotFoundException(nameof(RegistrationRequestDao), command.RegistrationRequestId);
 
-            if (command.NewStatus == RegistrationStatus.Approuved)
+            if (command.NewStatus == RegistrationStatus.Approved)
             {
                 await ProcessApprovalAsync(
                     registrationDao,
@@ -155,7 +155,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
                 ModifiedAt = now,
             };
 
-            dao.Status = RegistrationStatus.Approuved;
+            dao.Status = RegistrationStatus.Approved;
             context.Electors.Add(elector);
         }
     }

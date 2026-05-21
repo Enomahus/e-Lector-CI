@@ -17,35 +17,45 @@ namespace Application.Features.RegistrationRequests.Common
         IFileService fileService
     )
     {
-
         public async Task<RegistrationRequestDao> PrepareDaoForUpdate(
-            RegistrationRequestCommandBase command, CancellationToken cancellationToken
+            RegistrationRequestCommandBase command,
+            CancellationToken cancellationToken
         )
         {
-            var registrationRequest = await context.RegistrationRequests
-                .Include(r => r.RegistrationRequestDocuments)
-                .ThenInclude(r => r.Document)
-                .Include(r => r.Citizen).ThenInclude(c => c.Father)
-                .Include(r => r.Citizen).ThenInclude(c => c.Mother)
-                .Include(r => r.Constituency)
-                .FirstOrDefaultAsync(r => r.Id == command.RegistrationRequest!.Id, cancellationToken)
-                ?? throw new NotFoundException(nameof(RegistrationRequestDao), command.RegistrationRequest!.Id);
+            var registrationRequest =
+                await context
+                    .RegistrationRequests.Include(r => r.RegistrationRequestDocuments)
+                        .ThenInclude(r => r.Document)
+                    .Include(r => r.Citizen)
+                        .ThenInclude(c => c.Father)
+                    .Include(r => r.Citizen)
+                        .ThenInclude(c => c.Mother)
+                    .Include(r => r.Constituency)
+                    .FirstOrDefaultAsync(r => r.Id == command.RegistrationRequest!.Id, cancellationToken)
+                ?? throw new NotFoundException(
+                    nameof(RegistrationRequestDao),
+                    command.RegistrationRequest!.Id
+                );
 
             var currentUserId = currentUserService.UserId;
             var currentUser =
-               await context
-                   .Users
-                   .Include(u => u.UserConstituencies)
-                   .ThenInclude(c => c.Constituency)
-                   .FirstOrDefaultAsync(u => u.Id == currentUserId, cancellationToken)
-               ?? throw new NotFoundException(nameof(UserDao), currentUserId);
+                await context
+                    .Users.Include(u => u.UserConstituencies)
+                        .ThenInclude(c => c.Constituency)
+                    .FirstOrDefaultAsync(u => u.Id == currentUserId, cancellationToken)
+                ?? throw new NotFoundException(nameof(UserDao), currentUserId);
 
             var permissions = await currentUserPermissions.GetCurrentUserPermissionsAsync(cancellationToken);
             var userIsSuperAdmin = permissions.Contains(AppPermission.SuperAdmin.ToString());
             long constituencyId = command.RegistrationRequest!.ConstituencyId!.Value;
 
-            if(!userIsSuperAdmin && currentUser.UserConstituencies.Any(u => u.ConstituencyId != registrationRequest.ConstituencyId)
-                || currentUser.Id != registrationRequest.AuthorId)
+            if (
+                !userIsSuperAdmin
+                    && currentUser.UserConstituencies.Any(u =>
+                        u.ConstituencyId != registrationRequest.ConstituencyId
+                    )
+                || currentUser.Id != registrationRequest.AuthorId
+            )
             {
                 throw new UserAccessException();
             }
@@ -63,43 +73,49 @@ namespace Application.Features.RegistrationRequests.Common
             RegistrationRequestCommandBase command,
             RegistrationRequestDao registrationRequestDao,
             CancellationToken cancellationToken
-        ) 
+        )
         {
             //Remove old document
             await RemoveObsoleteDocuments(
                 [.. command.RegistrationRequest?.CertificateOfNationalityDocumentIds ?? []],
                 RegistrationRequestDocumentType.CertificateOfNationality,
-                registrationRequestDao, cancellationToken
+                registrationRequestDao,
+                cancellationToken
             );
 
             await RemoveObsoleteDocuments(
                 [.. command.RegistrationRequest?.IdentityDocumentIds ?? []],
                 RegistrationRequestDocumentType.IdentityDocument,
-                registrationRequestDao, cancellationToken
+                registrationRequestDao,
+                cancellationToken
             );
             await RemoveObsoleteDocuments(
                 [.. command.RegistrationRequest?.PhotoIds ?? []],
                 RegistrationRequestDocumentType.Photo,
-                registrationRequestDao, cancellationToken
+                registrationRequestDao,
+                cancellationToken
             );
 
             //Upload documents
             await UploadRegistrationRequestDocumentsByType(
                 [.. command.RegistrationRequestCertificateAttachments],
                 RegistrationRequestDocumentType.CertificateOfNationality,
-                registrationRequestDao, cancellationToken
+                registrationRequestDao,
+                cancellationToken
             );
 
             await UploadRegistrationRequestDocumentsByType(
                 [.. command.RegistrationRequestCniAttachments],
                 RegistrationRequestDocumentType.IdentityDocument,
-                registrationRequestDao, cancellationToken
+                registrationRequestDao,
+                cancellationToken
             );
 
             await UploadRegistrationRequestDocumentsByType(
                 [.. command.Photo],
                 RegistrationRequestDocumentType.Photo,
-                registrationRequestDao, cancellationToken
+                registrationRequestDao,
+                cancellationToken
             );
         }
 
@@ -110,17 +126,20 @@ namespace Application.Features.RegistrationRequests.Common
             CancellationToken cancellationToken
         )
         {
-            var existingDocumentsForType = existingRegistrationRequest
-                .RegistrationRequestDocuments
-                ?.Where(doc => doc.RegistrationRequestDocumentType == documentType)
-                .ToList() ?? [];
+            var existingDocumentsForType =
+                existingRegistrationRequest
+                    .RegistrationRequestDocuments?.Where(doc =>
+                        doc.RegistrationRequestDocumentType == documentType
+                    )
+                    .ToList()
+                ?? [];
 
             var newDocuments = new List<RegistrationRequestDocumentDao>();
 
             foreach (var file in attachements)
             {
                 var existingDocument = existingDocumentsForType.FirstOrDefault(doc =>
-                    string.Equals(doc.Document.FileName, file.FileName)                    
+                    string.Equals(doc.Document.FileName, file.FileName)
                 );
 
                 Guid? existingDocumentId = existingDocument?.DocumentId;
@@ -128,10 +147,15 @@ namespace Application.Features.RegistrationRequests.Common
                 using var stream = file.OpenReadStream();
 
                 var documentId = await fileService.UploadFileNoTransactionAsync(
-                    stream, file.FileName, file.ContentType, context, cancellationToken, existingDocumentId
+                    stream,
+                    file.FileName,
+                    file.ContentType,
+                    context,
+                    cancellationToken,
+                    existingDocumentId
                 );
 
-                if(existingDocument is null)
+                if (existingDocument is null)
                 {
                     var newDocument = new RegistrationRequestDocumentDao
                     {
@@ -155,12 +179,12 @@ namespace Application.Features.RegistrationRequests.Common
             CancellationToken cancellationToken = default
         )
         {
-            if (existingRegistrationRequest == null) return;
+            if (existingRegistrationRequest == null)
+                return;
 
-            var obsoleteDocuments = existingRegistrationRequest.
-                RegistrationRequestDocuments.Where(doc =>
-                    doc.RegistrationRequestDocumentType == documentType
-                    && !newAttachmentsIds.Contains(doc.Id)
+            var obsoleteDocuments = existingRegistrationRequest
+                .RegistrationRequestDocuments.Where(doc =>
+                    doc.RegistrationRequestDocumentType == documentType && !newAttachmentsIds.Contains(doc.Id)
                 )
                 .ToList();
 

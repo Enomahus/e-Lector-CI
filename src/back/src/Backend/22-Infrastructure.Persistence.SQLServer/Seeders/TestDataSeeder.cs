@@ -110,7 +110,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
 
                 requestsToInsert.Add(item);
 
-                if (item.Status == RegistrationStatus.Approuved)
+                if (item.Status == RegistrationStatus.Approved)
                 {
                     sequence++;
                     string sequenceStr = sequence.ToString().PadLeft(6, '0');
@@ -581,7 +581,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                     null
                 ),
                 (
-                    RegistrationStatus.Approuved,
+                    RegistrationStatus.Approved,
                     RegistrationRequestType.RegistrationRequest,
                     new(2026, 1, 12, 10, 30, 0, TimeSpan.Zero),
                     null
@@ -599,7 +599,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                     null
                 ),
                 (
-                    RegistrationStatus.Approuved,
+                    RegistrationStatus.Approved,
                     RegistrationRequestType.RegistrationDataUpdate,
                     new(2026, 2, 3, 11, 0, 0, TimeSpan.Zero),
                     null
@@ -617,7 +617,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                     "Défaut de CNI valide"
                 ),
                 (
-                    RegistrationStatus.Approuved,
+                    RegistrationStatus.Approved,
                     RegistrationRequestType.RegistrationRequest,
                     new(2026, 2, 18, 10, 0, 0, TimeSpan.Zero),
                     null
@@ -635,7 +635,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                     null
                 ),
                 (
-                    RegistrationStatus.Approuved,
+                    RegistrationStatus.Approved,
                     RegistrationRequestType.RegistrationRequest,
                     new(2026, 3, 10, 14, 30, 0, TimeSpan.Zero),
                     null
@@ -653,7 +653,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                     "Photo non conforme"
                 ),
                 (
-                    RegistrationStatus.Approuved,
+                    RegistrationStatus.Approved,
                     RegistrationRequestType.RegistrationDataUpdate,
                     new(2026, 4, 2, 9, 0, 0, TimeSpan.Zero),
                     null
@@ -671,7 +671,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                     null
                 ),
                 (
-                    RegistrationStatus.Approuved,
+                    RegistrationStatus.Approved,
                     RegistrationRequestType.RegistrationRequest,
                     new(2026, 4, 20, 9, 30, 0, TimeSpan.Zero),
                     null
@@ -689,7 +689,7 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                     null
                 ),
                 (
-                    RegistrationStatus.Approuved,
+                    RegistrationStatus.Approved,
                     RegistrationRequestType.RegistrationRequest,
                     new(2026, 5, 12, 10, 0, 0, TimeSpan.Zero),
                     null
