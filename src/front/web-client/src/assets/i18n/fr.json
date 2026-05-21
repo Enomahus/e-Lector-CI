@@ -36,9 +36,10 @@
     "pollingStationEdit": "Modifier un bureau de vote",
     "constituencies": "Les circonscriptions",
     "constituencyCreate": "Nouvelle circonscription",
-    "scaleVersionAdd": "Version {{versionName}}",
-    "scaleVersionEdit": "Version {{versionName}}",
-    "scaleVersions": "Liste des versions de barème d'éco modulation",
+    "registrationRequestAdd": "Nouvelle demande d'inscription",
+    "registrationRequestEdit": "Modifier la demande d'inscription",
+    "registrationRequestsForAdmin": "Liste des demandes",
+    "registrationRequestsForManagement": "Liste des demandes",
     "stakeholderAdd": "Nouvelle société",
     "stakeholders": "Liste des sociétés",
     "userCreate": "Création d'un utilisateur",
@@ -309,7 +310,7 @@
     "status": {
       "pending": "En attente",
       "toBeProcessed": "À traiter",
-      "approuved": "Approuvée",
+      "approved": "Approuvée",
       "rejected": "Rejetée"
     },
     "fields": {
@@ -319,6 +320,12 @@
       "citizenName": "Impétrant",
       "citizenBirthDate": "Date de naissance",
       "citizenBirthPlace": "Lieu de naissance",
+      "nationality": "Nationalité",
+      "occupation": "Profession",
+      "marriedName": "Nom de jeune fille",
+      "physicalAddress": "Adresse physique",
+      "postalAddress": "Adresse postale",
+      "maritalStatus": "Situation matrimoniale",
       "remark": "Remarque",
       "firstName": "Prénom",
       "lastName": "Nom",
@@ -329,5 +336,12 @@
       "constituency": "Circonscription",
       "civility": "Civilité"
     }
+  },
+  "registrationRequest": {
+    "newRegistrationRequestTitle": "Nouvelle demande d'inscription",
+    "errorCreating": "Erreur lors de la création de la demande d'inscription.",
+    "successCreating": "Demande d'inscription créée avec succès",
+    "errorUpdating": "Erreur lors de la mise à jour de la demande d'inscription.",
+    "successUpdating": "Demande d'inscription mise à jour avec succès"
   }
 }

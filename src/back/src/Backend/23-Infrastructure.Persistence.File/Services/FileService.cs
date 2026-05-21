@@ -1,4 +1,5 @@
-﻿using Application.Exceptions;
+﻿using System.IO;
+using Application.Exceptions;
 using Application.Interfaces.Services;
 using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.File.Configurations;
@@ -7,17 +8,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.IO;
-
 
 namespace Infrastructure.Persistence.File.Services
 {
-    public class FileService(
-        IOptions<StorageConfiguration> storageConfig,
-        ILogger<FileService> logger
-    ) : IFileService
+    public class FileService(IOptions<StorageConfiguration> storageConfig, ILogger<FileService> logger)
+        : IFileService
     {
-
         //private readonly string _storagePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
 
         //public FileService(string storagePath)
@@ -28,7 +24,6 @@ namespace Infrastructure.Persistence.File.Services
         //        Directory.CreateDirectory(_storagePath);
         //}
 
-
         //#region Local file service
         //public async Task<(byte[] content, string contentType, string fileName)> DownloadFileAsync(Guid fileId, WritableDbContext context, CancellationToken token)
         //{
@@ -37,7 +32,6 @@ namespace Infrastructure.Persistence.File.Services
 
         //    var path = Path.Combine(_storagePath, record.StoredName);
         //    var bytes = await System.IO.File.ReadAllBytesAsync(path,token);
-
 
         //    return (bytes, record.ContentType, record.FileName);
         //}
@@ -71,9 +65,6 @@ namespace Infrastructure.Persistence.File.Services
 
         private readonly string _basePath = storageConfig.Value.RootPath;
 
-        
-        
-
         public Task<Stream> GetFileDownloadStreamAsync(Guid documentId, CancellationToken cancellationToken)
         {
             string path = GetPhysicalPath(documentId);
@@ -85,8 +76,14 @@ namespace Infrastructure.Persistence.File.Services
 
             try
             {
-                // On ouvre le stream sans tout charger en RAM (crucial pour le lead dev)
-                Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
+                Stream stream = new FileStream(
+                    path,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read,
+                    4096,
+                    useAsync: true
+                );
                 return Task.FromResult(stream);
             }
             catch (Exception ex)
@@ -96,36 +93,40 @@ namespace Infrastructure.Persistence.File.Services
         }
 
         public async Task<Guid> UploadFileAsync(
-            Stream stream, 
-            string fileName, 
-            string contentType, 
-            WritableDbContext context, 
-            CancellationToken cancellationToken, 
+            Stream stream,
+            string fileName,
+            string contentType,
+            WritableDbContext context,
+            CancellationToken cancellationToken,
             Guid? existingDocumentId = null
         )
         {
-
             var documentId = Guid.Empty;
             var strategy = context.Database.CreateExecutionStrategy();
             await strategy.ExecuteInTransactionAsync(
                 async () =>
                 {
                     documentId = await UploadFileNoTransactionAsync(
-                        stream, fileName, contentType, context, cancellationToken, existingDocumentId
+                        stream,
+                        fileName,
+                        contentType,
+                        context,
+                        cancellationToken,
+                        existingDocumentId
                     );
                 },
                 () => Task.FromResult(true)
             );
 
             return documentId;
-        }              
+        }
 
         public async Task<Guid> UploadFileNoTransactionAsync(
-            Stream stream, 
-            string fileName, 
-            string contentType, 
-            WritableDbContext context, 
-            CancellationToken cancellationToken, 
+            Stream stream,
+            string fileName,
+            string contentType,
+            WritableDbContext context,
+            CancellationToken cancellationToken,
             Guid? existingDocumentId = null
         )
         {
@@ -136,14 +137,17 @@ namespace Infrastructure.Persistence.File.Services
                 {
                     FileName = fileName,
                     ContentType = contentType,
-                    FileSize = stream.Length
+                    FileSize = stream.Length,
                 };
                 context.Add(document);
             }
             else
             {
-                document = await context.Documents.FirstOrDefaultAsync(d => d.Id == existingDocumentId, cancellationToken)
-                           ?? throw new NotFoundException(nameof(DocumentDao), existingDocumentId);
+                document =
+                    await context.Documents.FirstOrDefaultAsync(
+                        d => d.Id == existingDocumentId,
+                        cancellationToken
+                    ) ?? throw new NotFoundException(nameof(DocumentDao), existingDocumentId);
 
                 document.FileName = fileName;
                 document.ContentType = contentType;
@@ -162,7 +166,14 @@ namespace Infrastructure.Persistence.File.Services
                     Directory.CreateDirectory(directory);
 
                 // On utilise FileStream avec Bufferisation pour la performance
-                await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true);
+                await using var fileStream = new FileStream(
+                    filePath,
+                    FileMode.Create,
+                    FileAccess.Write,
+                    FileShare.None,
+                    4096,
+                    useAsync: true
+                );
                 stream.Position = 0; // Reset si le stream a été lu
                 await stream.CopyToAsync(fileStream, cancellationToken);
             }
@@ -175,7 +186,11 @@ namespace Infrastructure.Persistence.File.Services
             return document.Id;
         }
 
-        public async Task DeleteFileAsync(Guid documentId, WritableDbContext context, CancellationToken cancellationToken)
+        public async Task DeleteFileAsync(
+            Guid documentId,
+            WritableDbContext context,
+            CancellationToken cancellationToken
+        )
         {
             var document =
                 await context.Documents.FirstOrDefaultAsync(d => d.Id == documentId, cancellationToken)

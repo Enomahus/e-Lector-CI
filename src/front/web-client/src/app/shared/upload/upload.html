@@ -1,0 +1,28 @@
+<div class="upload-file-container">
+  <!-- Champ pour le nom du fichier -->
+  <mat-form-field appearance="outline" class="flex-grow">
+    <mat-label>Nom du fichier</mat-label>
+    <input
+      matInput
+      [ngModel]="fileInfo?.[0]?.name"
+      (ngModelChange)="updateFileName($event)"
+      [disabled]="disabled()"
+      (click)="onClick($event)"
+      placeholder="Ex: rapport_activite"
+    />
+  </mat-form-field>
+
+  <!-- Sélecteur pour l'extension -->
+  <mat-form-field appearance="outline" class="extension-select">
+    <mat-label>Ext.</mat-label>
+    <mat-select
+      [ngModel]="fileExtension()"
+      (ngModelChange)="updateExtension($event)"
+      [disabled]="disabled()"
+    >
+      @for (ext of allowedExtensions(); track ext) {
+        <mat-option [value]="ext">{{ ext }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>

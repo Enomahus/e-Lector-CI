@@ -1,1 +1,336 @@
-<p>registration-request-ui works!</p>
+<div class="registration-layout">
+  <aside class="grid-item constituency-tree">
+    <h2>{{ 'registrationRequest.constituencyTreeTitle' | translate }}</h2>
+    <app-constituency-tree
+      [nodes]="nodes()"
+      [initialSelectedId]="initialTreeSelectedId()"
+      (nodeSelected)="onNodeSelected($event)"
+    ></app-constituency-tree>
+  </aside>
+  <main class="form-container-group">
+    <h2>{{ 'registrationRequest.requestFormTitle' | translate }}</h2>
+    <section class="grid-item request-form">
+      <h4>Type de Demande</h4>
+      <form [formGroup]="requestForm()">
+        <div class="inputs-container">
+          <div class="input-block required">
+            <label for="constituencyId">{{
+              'registrationRequests.fields.constituencyId' | translate
+            }}</label>
+            <select id="constituencyId" formControlName="constituencyId">
+              @for (constituency of constituencySelected(); track constituency) {
+                <option [value]="constituency.id" [ariaReadOnly]="true" disabled>
+                  {{ constituency.code }} {{ constituency.wording }}
+                </option>
+              }
+            </select>
+            @if (
+              requestForm().controls.constituencyId.touched &&
+              requestForm().controls.constituencyId.errors
+            ) {
+              <ul class="form-error">
+                @if (requestForm().controls.constituencyId.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="registrationType">{{
+              'registrationRequests.fields.registrationType' | translate
+            }}</label>
+            <select id="registrationType" formControlName="registrationType">
+              <option value="" selected>{{ 'global.select' | translate }}</option>
+              @for (requestType of allRegistrationRequestType; track requestType) {
+                <option [value]="requestType">
+                  {{ 'registrationRequests.registrationType.' + requestType | translate }}
+                </option>
+              }
+            </select>
+            @if (
+              requestForm().controls.registrationType.touched &&
+              requestForm().controls.registrationType.errors
+            ) {
+              <ul class="form-error">
+                @if (requestForm().controls.registrationType.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="reasonForRejection">{{
+              'registrationRequests.fields.reasonForRejection' | translate
+            }}</label>
+            <textarea id="reasonForRejection" formControlName="reasonForRejection"></textarea>
+            @if (
+              requestForm().controls.reasonForRejection.touched &&
+              requestForm().controls.reasonForRejection.errors
+            ) {
+              <ul class="form-error">
+                @if (requestForm().controls.reasonForRejection.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+                @if (requestForm().controls.reasonForRejection.errors?.['maxLength']) {
+                  <li>{{ 'formError.maxLength' | translate: { max: 500 } }}</li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <section class="grid-item citizen-form">
+      <h4>Informations du Citoyen</h4>
+      <form [formGroup]="citizenForm()">
+        <div class="inputs-container">
+          <div class="input-block required">
+            <label for="gender">{{ 'registrationRequests.fields.civility' | translate }}</label>
+            <select id="gender" formControlName="gender">
+              <option value="" selected>{{ 'global.select' | translate }}</option>
+              @for (gender of allGenders; track gender) {
+                <option [value]="gender">
+                  {{ 'registrationRequests.gender.' + gender | translate }}
+                </option>
+              }
+            </select>
+            @if (citizenForm().controls.gender.touched && citizenForm().controls.gender.errors) {
+              <ul class="form-error">
+                @if (citizenForm().controls.gender.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="firstName">{{ 'registrationRequests.fields.firstName' | translate }}</label>
+            <input id="firstName" formControlName="firstName" />
+            @if (
+              citizenForm().controls.firstName.touched && citizenForm().controls.firstName.errors
+            ) {
+              <ul class="form-error">
+                @if (citizenForm().controls.firstName.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="lastName">{{ 'registrationRequests.fields.lastName' | translate }}</label>
+            <input id="lastName" formControlName="lastName" />
+            @if (
+              citizenForm().controls.lastName.touched && citizenForm().controls.lastName.errors
+            ) {
+              <ul class="form-error">
+                @if (citizenForm().controls.lastName.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+        <div class="inputs-container">
+          <div class="input-block required">
+            <label for="birthDate">{{
+              'registrationRequests.fields.citizenBirthDate' | translate
+            }}</label>
+            <input id="birthDate" formControlName="birthDate" />
+            @if (
+              citizenForm().controls.birthDate.touched && citizenForm().controls.birthDate.errors
+            ) {
+              <ul class="form-error">
+                @if (citizenForm().controls.birthDate.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="birthPlace">{{
+              'registrationRequests.fields.citizenBirthPlace' | translate
+            }}</label>
+            <input id="birthPlace" formControlName="birthPlace" />
+            @if (
+              citizenForm().controls.birthPlace.touched && citizenForm().controls.birthPlace.errors
+            ) {
+              <ul class="form-error">
+                @if (citizenForm().controls.birthPlace.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="nationality">{{
+              'registrationRequests.fields.nationality' | translate
+            }}</label>
+            <input id="nationality" formControlName="nationality" />
+            @if (
+              citizenForm().controls.nationality.touched &&
+              citizenForm().controls.nationality.errors
+            ) {
+              <ul class="form-error">
+                @if (citizenForm().controls.nationality.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+        <div class="inputs-container">
+          <div class="input-block required">
+            <label for="profession">{{
+              'registrationRequests.fields.occupation' | translate
+            }}</label>
+            <input id="profession" formControlName="profession" />
+            @if (
+              citizenForm().controls.profession.touched && citizenForm().controls.profession.errors
+            ) {
+              <ul class="form-error">
+                @if (citizenForm().controls.profession.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="physicalAddress">{{
+              'registrationRequests.fields.physicalAddress' | translate
+            }}</label>
+            <input id="physicalAddress" formControlName="physicalAddress" />
+            @if (
+              citizenForm().controls.physicalAddress.touched &&
+              citizenForm().controls.physicalAddress.errors
+            ) {
+              <ul class="form-error">
+                @if (citizenForm().controls.physicalAddress.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="postalAddress">{{
+              'registrationRequests.fields.postalAddress' | translate
+            }}</label>
+            <input id="postalAddress" formControlName="postalAddress" />
+            @if (
+              citizenForm().controls.postalAddress.touched &&
+              citizenForm().controls.postalAddress.errors
+            ) {
+              <ul class="form-error">
+                @if (citizenForm().controls.postalAddress.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+        <div class="inputs-container">
+          <div class="input-block required">
+            <label for="maritalStatus">{{
+              'registrationRequests.fields.maritalStatus' | translate
+            }}</label>
+            <select id="maritalStatus" formControlName="maritalStatus">
+              <option value="" selected>{{ 'global.select' | translate }}</option>
+              @for (maritalStatus of allMaritalStatus; track maritalStatus) {
+                <option [value]="maritalStatus">
+                  {{ 'registrationRequests.maritalStatus.' + maritalStatus | translate }}
+                </option>
+              }
+            </select>
+            @if (
+              citizenForm().controls.maritalStatus.touched &&
+              citizenForm().controls.maritalStatus.errors
+            ) {
+              <ul class="form-error">
+                @if (citizenForm().controls.maritalStatus.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block">
+            <label for="marriedName">{{
+              'registrationRequests.fields.marriedName' | translate
+            }}</label>
+            <input id="marriedName" formControlName="marriedName" />
+            @if (
+              citizenForm().controls.marriedName.touched &&
+              citizenForm().controls.marriedName.errors
+            ) {
+              <ul class="form-error">
+                @if (citizenForm().controls.marriedName.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <section class="grid-item request-documents-form">
+      <h4>Pièces Justificatives</h4>
+      <form [formGroup]="requestDocumentsForm()">
+        <div class="inputs-container">
+          <div class="input-block required"><app-upload></app-upload></div>
+          <div class="input-block required"><app-upload></app-upload></div>
+          <div class="input-block required"><app-upload></app-upload></div>
+        </div>
+      </form>
+    </section>
+  </main>
+</div>
+
+<app-sticky-buttons-container>
+  @if (isCreateMode()) {
+    <button
+      mat-flat-button
+      id="save-registration-request"
+      type="submit"
+      class="btn primary"
+      [disabled]="form().invalid || !isCreateMode()"
+      (click)="onSave()"
+    >
+      {{ 'global.save' | translate }}
+      @if (isSaving()) {
+        <app-loader></app-loader>
+      }
+    </button>
+    <button type="button" class="btn outline outline-primary" (click)="cancel()">
+      {{ 'global.back' | translate }}
+    </button>
+  } @else {
+    @if (selectedStatus() === 'toBeProcessed') {
+      <ng-container *appHasPermission="'updateRegistrationRequest'">
+        <div class="tab-action-left">
+          <button type="submit" [disabled]="isSaving()" class="btn primary" (click)="onSave()">
+            {{ 'global.save' | translate }}
+            @if (isSaving()) {
+              <app-loader></app-loader>
+            }
+          </button>
+          <button type="button" class="btn outline outline-primary" (click)="cancel()">
+            {{ 'global.back' | translate }}
+          </button>
+        </div>
+        <div class="tab-action-center">
+          <button
+            [disabled]="form().invalid || isSaving()"
+            type="button"
+            class="btn secondary center"
+          >
+            {{ 'certificateRequest.submitRequest' | translate }}
+          </button>
+          @if (selectedStatus() !== 'rejected') {
+            <button type="button" class="btn warning left">
+              {{ 'certificateRequest.cancelRequest' | translate }}
+            </button>
+          }
+        </div>
+      </ng-container>
+    }
+  }
+</app-sticky-buttons-container>

@@ -1,0 +1,69 @@
+:host {
+  height: 100%; /* Prend toute la hauteur du parent */
+  max-height: 100vh; /* Ou limite à la hauteur de l'écran */
+  display: flex;
+  flex-direction: column;
+}
+
+.registration-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 8px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 8px;
+  box-sizing: border-box;
+  align-items: start;
+
+  .constituency-tree {
+    min-width: 300px;
+    border-right: 1px solid #eee; // Optionnel : une petite séparation visuelle
+    padding-right: 1rem;
+    height: 100%;
+    min-height: 600px;
+  }
+
+  .form-container-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+
+    .grid-item {
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      box-sizing: border-box;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+      h3,
+      h4 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #333333;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 8px;
+      }
+    }
+
+    .request-form {
+      min-height: 120px;
+    }
+    .citizen-form {
+      min-height: 280px;
+    }
+    .request-documents-form {
+      min-height: 150px;
+    }
+  }
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+
+    .constituency-tree {
+      height: auto;
+      min-height: 200px;
+    }
+  }
+}
