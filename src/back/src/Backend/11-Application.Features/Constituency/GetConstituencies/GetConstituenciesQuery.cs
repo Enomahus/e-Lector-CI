@@ -1,4 +1,5 @@
 ﻿using Application.Common.Enums;
+using Application.Features.Common.PollingStation;
 using Application.Models;
 using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;
@@ -30,12 +31,14 @@ namespace Application.Features.Constituency.GetConstituencies
 
             var rootConstituencies = await context
                 .Constituencies.Include(r => r.Subconstituency)
-                .ThenInclude(d => d.Subconstituency)
-                .ThenInclude(sp => sp.Subconstituency)
-                .ThenInclude(m => m.Subconstituency)
-                .ThenInclude(vl => vl.Subconstituency)
+                    .ThenInclude(d => d.Subconstituency)
+                        .ThenInclude(sp => sp.Subconstituency)
+                            .ThenInclude(m => m.Subconstituency)
+                                .ThenInclude(vl => vl.Subconstituency)
                 .Include(c => c.PollingStations)
                 .Where(r => r.ParentId == null)
+                .AsSplitQuery()
+                .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
             var response = rootConstituencies.Select(c => GetConstituenciesResponse.From(c, dateNow));

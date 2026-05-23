@@ -20,15 +20,11 @@ public class GetPollingStationQueryValidator : AbstractValidator<GetPollingStati
 {
     public GetPollingStationQueryValidator()
     {
-        RuleFor(v => v.Id).NotEmpty()
-            .WithMessage(ValidationErrorCode.Required.ToString());
+        RuleFor(v => v.Id).NotEmpty().WithMessage(ValidationErrorCode.Required.ToString());
     }
 }
 
-public class GetPollingStationByIdQueryHandler(
-    ReadOnlyDbContext context,
-    TimeProvider timeProvider
- )
+public class GetPollingStationByIdQueryHandler(ReadOnlyDbContext context, TimeProvider timeProvider)
     : IRequestHandler<GetPollingStationQuery, Result<GetPollingStationResponse>>
 {
     public async Task<Result<GetPollingStationResponse>> Handle(
@@ -40,11 +36,14 @@ public class GetPollingStationByIdQueryHandler(
 
         var dateNow = timeProvider.GetUtcNow();
 
-        var dao = await context.PollingStations
-            .FirstOrDefaultAsync(x => x.Id == query.Id, cancellationToken)
+        var dao =
+            await context
+                .PollingStations.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == query.Id, cancellationToken)
             ?? throw new NotFoundException(nameof(PollingStationDao), query.Id);
 
         var model = GetPollingStationResponse.Fromdao(dao, dateNow);
+
         return Result<GetPollingStationResponse>.From(model);
     }
 }

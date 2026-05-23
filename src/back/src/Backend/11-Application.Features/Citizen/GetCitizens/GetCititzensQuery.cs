@@ -28,10 +28,10 @@ namespace Application.Features.Citizen.GetCitizens
         {
             using var activity = ActivitySourceLog.CQRS.Start();
 
-            var citizendao = await context.Citizens.AsNoTracking().ToListAsync(cancellationToken);
+            var citizenDaos = await context.Citizens.AsNoTracking().ToListAsync(cancellationToken);
 
             return Result<List<GetCitizensResponse>>.From([
-                .. citizendao.Select(GetCitizensResponse.FromDao),
+                .. citizenDaos.Select(GetCitizensResponse.FromDao),
             ]);
         }
     }

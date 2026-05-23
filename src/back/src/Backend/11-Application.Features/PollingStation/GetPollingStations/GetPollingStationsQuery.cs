@@ -121,7 +121,10 @@ namespace Application.Features.PollingStation.GetPollingStations
                     .Cast<Microsoft.Data.SqlClient.SqlParameter>()
                     .ToList();
                 finalParams.Add(
-                    new Microsoft.Data.SqlClient.SqlParameter("@Skip", (query.PageIndex ?? 0) * query.PageSize)
+                    new Microsoft.Data.SqlClient.SqlParameter(
+                        "@Skip",
+                        (query.PageIndex ?? 0) * query.PageSize
+                    )
                 );
                 finalParams.Add(new Microsoft.Data.SqlClient.SqlParameter("@Take", query.PageSize));
 
