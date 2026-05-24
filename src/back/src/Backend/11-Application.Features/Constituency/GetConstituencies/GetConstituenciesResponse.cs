@@ -1,7 +1,7 @@
-﻿using Application.Common.Enums;
+﻿using System.Data;
+using Application.Common.Enums;
 using Application.Features.Common.PollingStation;
 using Infrastructure.Persistence.Entities;
-using System.Data;
 
 namespace Application.Features.Constituency.GetConstituencies
 {
@@ -15,7 +15,6 @@ namespace Application.Features.Constituency.GetConstituencies
         public ICollection<GetConstituenciesResponse> Children { get; set; } = [];
         public ICollection<PollingStationModel> PollingStations { get; set; } = [];
 
-
         public static GetConstituenciesResponse From(ConstituencyDao dao, DateTimeOffset now)
         {
             return new GetConstituenciesResponse()
@@ -26,9 +25,9 @@ namespace Application.Features.Constituency.GetConstituencies
                 Wording = dao.Wording,
                 ParentId = dao.ParentId,
                 Children = dao.Subconstituency?.Select(x => From(x, now)).ToList() ?? [],
-                PollingStations = dao.PollingStations?.Select(ps => PollingStationModel.FromDao(ps, now)).ToList() ?? [],
+                PollingStations =
+                    dao.PollingStations?.Select(ps => PollingStationModel.FromDao(ps, now)).ToList() ?? [],
             };
         }
     }
-    
 }

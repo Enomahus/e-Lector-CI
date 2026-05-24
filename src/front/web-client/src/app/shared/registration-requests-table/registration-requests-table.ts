@@ -101,7 +101,7 @@ export class RegistrationRequestsTableComponent implements AfterViewInit, OnDest
   // ─── ViewChildren ───────────────────────────────────────────────────────────
 
   @ViewChild(MatSort) private readonly sort!: MatSort;
-  @ViewChild(MatPaginator) private readonly paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   // ─── Internal state ─────────────────────────────────────────────────────────
 

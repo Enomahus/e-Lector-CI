@@ -9,8 +9,10 @@
     "cancel": "Cancel",
     "refresh": "Refresh",
     "login": "Log in",
+    "selectFile": "Select a file",
     "no": "No",
     "yes": "Yes",
+    "noData": "No data",
     "noTitleTemplate": "E-Lector-CI",
     "titleTemplate": "{{title}} | E-Lector-CI",
     "language": "Language",
@@ -267,13 +269,38 @@
       "rejected": "Rejected"
     },
     "fields": {
+      "reference": "Reference",
+      "subPrefecture": "Sub-prefecture",
+      "status": "Status",
+      "citizenName": "Applicant name",
+      "citizenBirthDate": "Date of birth",
+      "citizenBirthPlace": "Place of birth",
+      "nationality": "Nationality",
+      "occupation": "Occupation",
+      "marriedName": "Married name",
+      "physicalAddress": "Physical address",
+      "postalAddress": "Postal address",
+      "maritalStatus": "Marital status",
+      "father": "Father",
+      "mother": "Mother",
+      "cni": "National Identity Card",
+      "registrationCertificate": "Nationality certificate",
+      "photo": "Picture",
+      "remark": "Remark",
       "firstName": "First name",
       "lastName": "Last name",
       "email": "Email",
       "employeeNumber": "Employee number",
       "phone": "Phone",
       "constituency": "Constituency",
-      "civility": "Civility"
+      "civility": "Civility",
+      "registrationRequestType": "Registration request type",
+      "requestDocuments": "Supporting documents",
+      "reasonForRejection": "Reason for rejection"
+    },
+    "registrationRequestTypes": {
+      "registrationRequest": "Registration request",
+      "registrationDataUpdate": "Registration data update"
     }
   }
 }

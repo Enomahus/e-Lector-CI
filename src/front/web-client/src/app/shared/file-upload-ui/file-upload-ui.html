@@ -1,0 +1,13 @@
+<div class="file-upload-pill" [class.disabled]="isDisabled()" (click)="fileInput.click()">
+  <input
+    #fileInput
+    class="hidden-input"
+    type="file"
+    [ngModel]="fileInfo?.[0]?.name"
+    [accept]="accepts()"
+    [disabled]="isDisabled()"
+    (ngModelChange)="onFileSelected($event)"
+    hidden
+  />
+  <span class="file-label">{{ fileName() ? fileName() : ('global.selectFile' | translate) }}</span>
+</div>
