@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, JsonPipe } from '@angular/common';
 import {
   Component,
   computed,
@@ -64,6 +64,7 @@ interface ParentModel {
     StickyButtonsContainer,
     Loader,
     DatePipe,
+    JsonPipe,
   ],
   providers: [DatePipe],
   templateUrl: './registration-request-ui.html',

@@ -1,9 +1,12 @@
-import { Component, computed, forwardRef, input, signal } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, computed, forwardRef, inject, input, output, signal } from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { DocumentApiService } from '@app/services/api/document.api.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { UploadFormValue } from '../upload/upload-form-value';
 
 @Component({
   selector: 'app-file-upload-ui',
-  imports: [],
+  imports: [FormsModule, TranslateModule],
   templateUrl: './file-upload-ui.html',
   styleUrls: ['./file-upload-ui.scss'],
   providers: [
@@ -16,39 +19,58 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 export class FileUploadUi implements ControlValueAccessor {
   accepts = input<string>('.pdf');
+  fileDropped = output<File>();
 
-  //fileName = signal<string>('');
+  private readonly documentService = inject(DocumentApiService);
+
   isDisabled = signal<boolean>(false);
-  file = signal<File | null>(null);
+  file = signal<UploadFormValue | null>(null);
+  fileInfo?: File[];
 
   fileName = computed(() => {
     const currentFile = this.file();
-    return currentFile ? currentFile.name : '';
+    return currentFile ? currentFile.localFile : '';
   });
 
   // Callbacks pour le ControlValueAssessor
-  onChange: (value: File | null) => void = () => {};
-  onTouch: () => void = () => {};
+  onChange: (value: UploadFormValue | null) => void = () => {};
+  onTouched: () => void = () => {};
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const selectedFile = input.files[0];
-      this.file.set(selectedFile);
+  onFileSelected(event: File[]): void {
+    this.file.set(event.length > 0 ? { ...this.file(), localFile: event[0] } : null);
 
-      this.onChange(this.file());
-      this.onTouch();
+    if (this.onChange) this.onChange(this.file());
+    if (this.onTouched) this.onTouched();
+
+    this.fileDropped.emit(this.file()?.localFile!);
+  }
+
+  writeValue(value: UploadFormValue | null): void {
+    this.file.set(value || null);
+    if (value?.remoteFileId) {
+      this.documentService.getDocumentInfo(value.remoteFileId).subscribe({
+        next: (doc) => {
+          this.fileInfo = [
+            {
+              name: doc.data?.documentInfo?.fileName,
+              size: doc.data?.documentInfo?.size,
+              type: doc.data?.documentInfo?.contentType,
+            } as File,
+          ];
+        },
+      });
+    }
+
+    if (value?.localFile) {
+      this.fileInfo = [value.localFile];
     }
   }
 
-  writeValue(value: File | null): void {
-    this.file.set(value || null);
-  }
-  registerOnChange(fn: (value: File | null) => void): void {
+  registerOnChange(fn: (formValue: UploadFormValue | null) => void): void {
     this.onChange = fn;
   }
   registerOnTouched(fn: () => void): void {
-    this.onTouch = fn;
+    this.onTouched = fn;
   }
   setDisabledState(isDisabled: boolean): void {
     this.isDisabled.set(isDisabled);
