@@ -1,0 +1,12 @@
+<div class="file-upload-pill" [class.disabled]="isDisabled()" (click)="fileInput.click()">
+  <input
+    #fileInput
+    class="hidden-input"
+    type="file"
+    [accept]="accepts()"
+    [disabled]="isDisabled()"
+    (change)="onFileSelected($event)"
+    hidden
+  />
+  <span class="file-label">{{ fileName() ? fileName() : 'No file selected' }}</span>
+</div>

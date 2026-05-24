@@ -31,9 +31,9 @@ import {
   RegistrationStatus,
 } from '@app/services/nswag/api-nswag-client';
 import { ConstituencyTree } from '@app/shared/constituency-tree/constituency-tree';
+import { FileUploadUi } from '@app/shared/file-upload-ui/file-upload-ui';
 import { Loader } from '@app/shared/loader/loader';
 import { StickyButtonsContainer } from '@app/shared/sticky-buttons-container/sticky-buttons-container';
-import { Upload } from '@app/shared/upload/upload';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   CitizenForm,
@@ -60,7 +60,7 @@ interface ParentModel {
     ReactiveFormsModule,
     PermissionDirective,
     ConstituencyTree,
-    Upload,
+    FileUploadUi,
     StickyButtonsContainer,
     Loader,
     DatePipe,
@@ -283,10 +283,9 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     });
   }
 
-  // À l'intérieur de ton composant :
   protected fatherSearchQuery = signal<string>('');
+  protected motherSearchQuery = signal<string>('');
 
-  // Signal calculé : filtre automatiquement la liste selon la saisie de l'utilisateur
   protected filteredParents = computed(() => {
     const query = this.fatherSearchQuery().toLowerCase().trim();
     const allParents = this.parents(); // Ton signal parent initial
@@ -301,7 +300,6 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     );
   });
 
-  // Signal calculé : Garde le nom affiché synchrone si le formulaire est pré-rempli (mode édition)
   protected selectedFatherName = computed(() => {
     const currentId = this.citizenForm().controls.fatherId.value;
     if (!currentId) return '';
@@ -310,7 +308,14 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     return found ? `${found.firstName} ${found.lastName}` : '';
   });
 
-  // Gère la saisie et répercute l'ID exact dans le FormControl sous-jacent
+  protected selectedMotherName = computed(() => {
+    const currentId = this.citizenForm().controls.motherId.value;
+    if (!currentId) return '';
+
+    const found = this.parents().find((p) => p.id === currentId);
+    return found ? `${found.firstName} ${found.lastName}` : '';
+  });
+
   protected onFatherSearchChange(event: Event): void {
     const inputVal = (event.target as HTMLInputElement).value;
     this.fatherSearchQuery.set(inputVal);
@@ -328,6 +333,34 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     } else {
       // Si l'utilisateur efface ou tape un texte incomplet, l'ID redevient nul
       this.citizenForm().controls.fatherId.setValue('');
+    }
+  }
+
+  protected onParentSearchChange(event: Event, parentType: 'father' | 'mother'): void {
+    const inputVal = (event.target as HTMLInputElement).value;
+    const lowerInputVal = inputVal.toLowerCase();
+
+    if (parentType === 'father') {
+      this.fatherSearchQuery.set(inputVal);
+    } else {
+      this.motherSearchQuery.set(inputVal);
+    }
+
+    const matchedParent = this.parents().find((p) => {
+      const fullNameString = `${p.firstName} ${p.lastName}`.toLowerCase();
+      return lowerInputVal.startsWith(fullNameString);
+    });
+
+    const controlName = `${parentType}Id`;
+    const parentControl = this.citizenForm().get(controlName);
+
+    if (parentControl) {
+      if (matchedParent) {
+        parentControl.setValue(matchedParent.id);
+        parentControl.markAsDirty();
+      } else {
+        parentControl.setValue('');
+      }
     }
   }
 }

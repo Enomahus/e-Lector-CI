@@ -9,6 +9,7 @@
   </aside>
   <main class="form-container-group">
     <h2>{{ 'registrationRequest.requestDetails' | translate }}</h2>
+    <!-- request information section -->
     <section class="grid-item request-form">
       <h2>{{ 'registrationRequest.requestInformation' | translate }}</h2>
       <form [formGroup]="requestForm()">
@@ -82,6 +83,7 @@
       </form>
     </section>
 
+    <!-- Citizen information section -->
     <section class="grid-item citizen-form">
       <h2>{{ 'registrationRequest.citizenInformation' | translate }}</h2>
       <form [formGroup]="citizenForm()">
@@ -288,50 +290,6 @@
 
         <div class="inputs-container">
           <div class="input-block required">
-            <label for="fatherId">{{ 'registrationRequests.fields.father' | translate }}</label>
-            <select id="fatherId" formControlName="fatherId">
-              <option value="" selected>{{ 'global.select' | translate }}</option>
-              @for (parent of parents(); track parent.id) {
-                <option [value]="parent.id">
-                  {{ parent.firstName }} {{ parent.lastName }}
-                  {{ parent.birthDate | date: 'dd/MM/yyyy' }}
-                  {{ parent.birthPlace }}
-                </option>
-              }
-            </select>
-            @if (
-              citizenForm().controls.fatherId.touched && citizenForm().controls.fatherId.errors
-            ) {
-              <ul class="form-error">
-                @if (citizenForm().controls.fatherId.errors?.['required']) {
-                  <li>{{ 'formError.required' | translate }}</li>
-                }
-              </ul>
-            }
-          </div>
-          <div class="input-block required">
-            <label for="motherId">{{ 'registrationRequests.fields.mother' | translate }}</label>
-            <select id="motherId" formControlName="motherId">
-              <option value="" selected>{{ 'global.select' | translate }}</option>
-              @for (parent of parents(); track parent.id) {
-                <option [value]="parent.id">
-                  {{ parent.firstName }} {{ parent.lastName }}
-                  {{ parent.birthDate | date: 'dd/MM/yyyy' }}
-                  {{ parent.birthPlace }}
-                </option>
-              }
-            </select>
-            @if (
-              citizenForm().controls.motherId.touched && citizenForm().controls.motherId.errors
-            ) {
-              <ul class="form-error">
-                @if (citizenForm().controls.motherId.errors?.['required']) {
-                  <li>{{ 'formError.required' | translate }}</li>
-                }
-              </ul>
-            }
-          </div>
-          <div class="input-block required">
             <label for="fatherSearch">{{ 'registrationRequests.fields.father' | translate }}</label>
 
             <input
@@ -339,18 +297,17 @@
               type="text"
               [placeholder]="'global.select' | translate"
               [value]="selectedFatherName()"
-              (input)="onFatherSearchChange($event)"
+              (input)="onParentSearchChange($event, 'father')"
               list="fatherOptions"
               autocomplete="off"
             />
-
             <datalist id="fatherOptions">
               @for (parent of filteredParents(); track parent.id) {
                 <option
                   [value]="
                     parent.firstName +
                     ' ' +
-                    parent.lastName +
+                    parent.lastName?.toUpperCase() +
                     ' (' +
                     (parent.birthDate | date: 'dd/MM/yyyy') +
                     ') ' +
@@ -372,17 +329,80 @@
               </ul>
             }
           </div>
+          <div class="input-block required">
+            <label for="fatherSearch">{{ 'registrationRequests.fields.mother' | translate }}</label>
+
+            <input
+              id="fatherSearch"
+              type="text"
+              [placeholder]="'global.select' | translate"
+              [value]="selectedMotherName()"
+              (input)="onParentSearchChange($event, 'mother')"
+              list="motherOptions"
+              autocomplete="off"
+            />
+            <datalist id="motherOptions">
+              @for (parent of filteredParents(); track parent.id) {
+                <option
+                  [value]="
+                    parent.firstName +
+                    ' ' +
+                    parent.lastName?.toUpperCase() +
+                    ' (' +
+                    (parent.birthDate | date: 'dd/MM/yyyy') +
+                    ') ' +
+                    parent.birthPlace
+                  "
+                ></option>
+              }
+            </datalist>
+
+            <input type="hidden" formControlName="motherId" />
+
+            @if (
+              citizenForm().controls.motherId.touched && citizenForm().controls.motherId.errors
+            ) {
+              <ul class="form-error">
+                @if (citizenForm().controls.motherId.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
         </div>
       </form>
     </section>
 
+    <!-- Supporting documents section -->
     <section class="grid-item request-documents-form">
       <h2>{{ 'registrationRequest.supportingDocuments' | translate }}</h2>
       <form [formGroup]="requestDocumentsForm()">
         <div class="inputs-container">
-          <div class="input-block required"><app-upload></app-upload></div>
-          <div class="input-block required"><app-upload></app-upload></div>
-          <div class="input-block required"><app-upload></app-upload></div>
+          <div class="input-block required">
+            <label for="registrationCertificateAttachments">{{
+              'registrationRequests.fields.registrationCertificate' | translate
+            }}</label>
+            <app-file-upload-ui
+              formControlName="registrationCertificateAttachments"
+              [accepts]="'.pdf'"
+            ></app-file-upload-ui>
+          </div>
+          <div class="input-block required">
+            <label for="cniAttachments">{{ 'registrationRequests.fields.cni' | translate }}</label>
+            <app-file-upload-ui
+              formControlName="cniAttachments"
+              [accepts]="'.pdf'"
+            ></app-file-upload-ui>
+          </div>
+          <div class="input-block required">
+            <label for="photoAttachments">{{
+              'registrationRequests.fields.photo' | translate
+            }}</label>
+            <app-file-upload-ui
+              formControlName="photoAttachments"
+              [accepts]="'.jpeg'"
+            ></app-file-upload-ui>
+          </div>
         </div>
       </form>
     </section>
