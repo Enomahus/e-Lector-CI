@@ -17,6 +17,7 @@ import { ConstituencyNode } from '@app/models/constituency.model';
 import {
   allGenders,
   allMaritalStatus,
+  allPersonTitle,
   allRegistrationRequestType,
 } from '@app/pages/types/enumerations';
 import { CitizenApiService } from '@app/services/api/citizen.api.service';
@@ -110,6 +111,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   allRegistrationRequestType = allRegistrationRequestType;
   allMaritalStatus = allMaritalStatus;
   allGenders = allGenders;
+  allPersonTitle = allPersonTitle;
 
   constructor() {
     effect(() => {
