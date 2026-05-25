@@ -294,6 +294,7 @@
       "phone": "Phone",
       "constituency": "Constituency",
       "civility": "Civility",
+      "gender": "Gender",
       "registrationRequestType": "Registration request type",
       "requestDocuments": "Supporting documents",
       "reasonForRejection": "Reason for rejection"

@@ -89,7 +89,7 @@
       <form [formGroup]="citizenForm()">
         <div class="inputs-container">
           <div class="input-block required">
-            <label for="gender">{{ 'registrationRequests.fields.civility' | translate }}</label>
+            <label for="gender">{{ 'registrationRequests.fields.gender' | translate }}</label>
             <select id="gender" formControlName="gender">
               <option value="" selected>{{ 'global.select' | translate }}</option>
               @for (gender of allGenders; track gender) {
@@ -388,9 +388,11 @@
             ></app-file-upload-ui>
           </div>
           <div class="input-block required">
-            <label for="cniAttachments">{{ 'registrationRequests.fields.cni' | translate }}</label>
+            <label for="registrationCniAttachments">{{
+              'registrationRequests.fields.cni' | translate
+            }}</label>
             <app-file-upload-ui
-              formControlName="cniAttachments"
+              formControlName="registrationCniAttachments"
               [accepts]="'.pdf'"
             ></app-file-upload-ui>
           </div>

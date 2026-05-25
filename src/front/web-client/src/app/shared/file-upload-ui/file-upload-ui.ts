@@ -1,12 +1,12 @@
 import { Component, computed, forwardRef, inject, input, output, signal } from '@angular/core';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DocumentApiService } from '@app/services/api/document.api.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { UploadFormValue } from '../upload/upload-form-value';
 
 @Component({
   selector: 'app-file-upload-ui',
-  imports: [FormsModule, TranslateModule],
+  imports: [TranslateModule],
   templateUrl: './file-upload-ui.html',
   styleUrls: ['./file-upload-ui.scss'],
   providers: [
@@ -29,20 +29,22 @@ export class FileUploadUi implements ControlValueAccessor {
 
   fileName = computed(() => {
     const currentFile = this.file();
-    return currentFile ? currentFile.localFile : '';
+    return currentFile?.localFile?.name ?? '';
   });
 
   // Callbacks pour le ControlValueAssessor
   onChange: (value: UploadFormValue | null) => void = () => {};
   onTouched: () => void = () => {};
 
-  onFileSelected(event: File[]): void {
-    this.file.set(event.length > 0 ? { ...this.file(), localFile: event[0] } : null);
+  onFileSelected(event: Event): void {
+    const files = (event.target as HTMLInputElement).files;
+    const selected = files && files.length > 0 ? files[0] : null;
+    this.file.set(selected ? { ...this.file(), localFile: selected } : null);
 
     if (this.onChange) this.onChange(this.file());
     if (this.onTouched) this.onTouched();
 
-    this.fileDropped.emit(this.file()?.localFile!);
+    if (this.file()?.localFile) this.fileDropped.emit(this.file()!.localFile!);
   }
 
   writeValue(value: UploadFormValue | null): void {

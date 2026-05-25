@@ -2,6 +2,7 @@ import {
   Gender,
   LocationLevel,
   MaritalStatus,
+  PersonTitle,
   RegistrationRequestType,
 } from '@app/services/nswag/api-nswag-client';
 
@@ -20,3 +21,4 @@ export const allRegistrationRequestType: RegistrationRequestType[] = [
 
 export const allGenders: Gender[] = ['m', 'f'];
 export const allMaritalStatus: MaritalStatus[] = ['single', 'married', 'divorced', 'widowed'];
+export const allPersonTitle: PersonTitle[] = ['mr', 'ms', 'mrs'];

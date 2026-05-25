@@ -3,10 +3,9 @@
     #fileInput
     class="hidden-input"
     type="file"
-    [ngModel]="fileInfo?.[0]?.name"
     [accept]="accepts()"
     [disabled]="isDisabled()"
-    (ngModelChange)="onFileSelected($event)"
+    (change)="onFileSelected($event)"
     hidden
   />
   <span class="file-label">{{ fileName() ? fileName() : ('global.selectFile' | translate) }}</span>

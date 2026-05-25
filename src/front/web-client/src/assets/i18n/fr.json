@@ -353,6 +353,7 @@
       "phone": "Téléphone",
       "constituency": "Circonscription",
       "civility": "Civilité",
+      "gender": "Genre",
       "registrationRequestType": "Type de demande d'inscription",
       "requestDocuments": "Documents justificatifs",
       "reasonForRejection": "Commentaire"
