@@ -24,7 +24,8 @@ namespace Application.Features.RegistrationRequests.Common
         {
             var registrationRequest =
                 await context
-                    .RegistrationRequests.Include(r => r.RegistrationRequestDocuments)
+                    .RegistrationRequests.AsSplitQuery()
+                    .Include(r => r.RegistrationRequestDocuments)
                         .ThenInclude(r => r.Document)
                     .Include(r => r.Citizen)
                         .ThenInclude(c => c.Father)
@@ -77,20 +78,20 @@ namespace Application.Features.RegistrationRequests.Common
         {
             //Remove old document
             await RemoveObsoleteDocuments(
-                [.. command.RegistrationRequest?.CertificateOfNationalityDocumentIds ?? []],
+                command.RegistrationRequest?.CertificateOfNationalityDocumentIds,
                 RegistrationRequestDocumentType.CertificateOfNationality,
                 registrationRequestDao,
                 cancellationToken
             );
 
             await RemoveObsoleteDocuments(
-                [.. command.RegistrationRequest?.IdentityDocumentIds ?? []],
+                command.RegistrationRequest?.IdentityDocumentIds,
                 RegistrationRequestDocumentType.IdentityDocument,
                 registrationRequestDao,
                 cancellationToken
             );
             await RemoveObsoleteDocuments(
-                [.. command.RegistrationRequest?.PhotoIds ?? []],
+                command.RegistrationRequest?.PhotoIds,
                 RegistrationRequestDocumentType.Photo,
                 registrationRequestDao,
                 cancellationToken
@@ -98,21 +99,21 @@ namespace Application.Features.RegistrationRequests.Common
 
             //Upload documents
             await UploadRegistrationRequestDocumentsByType(
-                [.. command.RegistrationRequestCertificateAttachments],
+                command.RegistrationRequestCertificateAttachments,
                 RegistrationRequestDocumentType.CertificateOfNationality,
                 registrationRequestDao,
                 cancellationToken
             );
 
             await UploadRegistrationRequestDocumentsByType(
-                [.. command.RegistrationRequestCniAttachments],
+                command.RegistrationRequestCniAttachments,
                 RegistrationRequestDocumentType.IdentityDocument,
                 registrationRequestDao,
                 cancellationToken
             );
 
             await UploadRegistrationRequestDocumentsByType(
-                [.. command.Photo],
+                command.Photo,
                 RegistrationRequestDocumentType.Photo,
                 registrationRequestDao,
                 cancellationToken
@@ -120,7 +121,7 @@ namespace Application.Features.RegistrationRequests.Common
         }
 
         private async Task UploadRegistrationRequestDocumentsByType(
-            List<IFormFile> attachements,
+            IFormFile? attachement,
             RegistrationRequestDocumentType documentType,
             RegistrationRequestDao existingRegistrationRequest,
             CancellationToken cancellationToken
@@ -136,20 +137,22 @@ namespace Application.Features.RegistrationRequests.Common
 
             var newDocuments = new List<RegistrationRequestDocumentDao>();
 
-            foreach (var file in attachements)
+            //foreach (var file in attachements)
+            //{
+            if (attachement is { Length: > 0 })
             {
                 var existingDocument = existingDocumentsForType.FirstOrDefault(doc =>
-                    string.Equals(doc.Document.FileName, file.FileName)
+                    string.Equals(doc.Document.FileName, attachement.FileName)
                 );
 
                 Guid? existingDocumentId = existingDocument?.DocumentId;
 
-                using var stream = file.OpenReadStream();
+                using var stream = attachement.OpenReadStream();
 
                 var documentId = await fileService.UploadFileNoTransactionAsync(
                     stream,
-                    file.FileName,
-                    file.ContentType,
+                    attachement.FileName,
+                    attachement.ContentType,
                     context,
                     cancellationToken,
                     existingDocumentId
@@ -167,24 +170,25 @@ namespace Application.Features.RegistrationRequests.Common
                     newDocuments.Add(newDocument);
                 }
             }
+            //}
 
             context.RegistrationRequestDocuments.AddRange(newDocuments);
             await context.SaveChangesAsync(cancellationToken);
         }
 
         protected async Task RemoveObsoleteDocuments(
-            List<Guid> newAttachmentsIds,
+            Guid? newAttachmentsIds,
             RegistrationRequestDocumentType documentType,
             RegistrationRequestDao? existingRegistrationRequest,
             CancellationToken cancellationToken = default
         )
         {
-            if (existingRegistrationRequest == null)
+            if (existingRegistrationRequest == null || newAttachmentsIds is null)
                 return;
 
             var obsoleteDocuments = existingRegistrationRequest
                 .RegistrationRequestDocuments.Where(doc =>
-                    doc.RegistrationRequestDocumentType == documentType && !newAttachmentsIds.Contains(doc.Id)
+                    doc.RegistrationRequestDocumentType == documentType && doc.Id == newAttachmentsIds
                 )
                 .ToList();
 

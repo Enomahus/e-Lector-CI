@@ -5,13 +5,15 @@ namespace Application.Features.RegistrationRequests.Common
 {
     public class RegistrationRequestCommandBase
     {
-        public RegistrationRequestModel? RegistrationRequest {  get; set; }
+        public RegistrationRequestModel? RegistrationRequest { get; set; }
+
         [JsonIgnore]
-        public ICollection<IFormFile> RegistrationRequestCertificateAttachments { get; set; } = [];
+        public IFormFile? RegistrationRequestCertificateAttachments { get; set; }
+
         [JsonIgnore]
-        public ICollection<IFormFile> RegistrationRequestCniAttachments { get; set; } = [];
+        public IFormFile? RegistrationRequestCniAttachments { get; set; }
+
         [JsonIgnore]
-        public ICollection<IFormFile> Photo {  get; set; } = [];
-         
+        public IFormFile? Photo { get; set; }
     }
 }

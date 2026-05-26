@@ -30,24 +30,22 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
                 Citizen = CitizenModel.FromDao(dao.Citizen),
                 Author = UserModel.FromDao(userDao, dateNow),
                 CertificateOfNationalityDocumentIds = dao
-                    .RegistrationRequestDocuments.Where(d =>
+                    .RegistrationRequestDocuments.FirstOrDefault(d =>
                         d.RegistrationRequestDocumentType
                         == RegistrationRequestDocumentType.CertificateOfNationality
                     )
-                    .Select(d => d.DocumentId)
-                    .ToList(),
+                    ?.DocumentId,
+
                 IdentityDocumentIds = dao
-                    .RegistrationRequestDocuments.Where(d =>
+                    .RegistrationRequestDocuments.FirstOrDefault(d =>
                         d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.IdentityDocument
                     )
-                    .Select(d => d.DocumentId)
-                    .ToList(),
+                    ?.DocumentId,
                 PhotoIds = dao
-                    .RegistrationRequestDocuments.Where(d =>
+                    .RegistrationRequestDocuments.FirstOrDefault(d =>
                         d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.Photo
                     )
-                    .Select(d => d.DocumentId)
-                    .ToList(),
+                    ?.DocumentId,
             };
         }
     }

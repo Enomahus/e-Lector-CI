@@ -18,47 +18,74 @@ namespace Application.Features.RegistrationRequests.Common
             _context = context;
             _timeProvider = timeProvider;
 
-            RuleFor(r => r.RegistrationRequest).NotNull();
+            RuleFor(r => r.RegistrationRequest)
+                .NotNull()
+                .WithMessage(ValidationErrorCode.Required.ToString());
 
-            RuleFor(r => r.RegistrationRequest!.ConstituencyId)
+            When(
+                r => r.RegistrationRequest != null,
+                () =>
+                {
+                    RuleFor(r => r.RegistrationRequest!.ConstituencyId)
+                        .NotNull()
+                        .WithMessage(ValidationErrorCode.Required.ToString())
+                        .DependentRules(() =>
+                        {
+                            RuleFor(r => r.RegistrationRequest!.ConstituencyId)
+                                .MustAsync(
+                                    (constituencyId, token) =>
+                                    {
+                                        return CheckConstituencyMustExistAsync(constituencyId!.Value, token);
+                                    }
+                                )
+                                .WithMessage(ValidationErrorCode.ConstituencyMustExist.ToString());
+                        });
+
+                    // Validation imbriquée du citoyen
+                    When(
+                        r => r.RegistrationRequest!.Citizen != null,
+                        () =>
+                            RuleFor(r => r.RegistrationRequest!.Citizen!)
+                                .SetValidator(new CitizenValidatorBase<CitizenModel>(_context, _timeProvider))
+                    );
+
+                    // Validation imbriquée de l'auteur
+                    //When(
+                    //    r => r.RegistrationRequest!.Author != null,
+                    //    () =>
+                    //        RuleFor(r => r.RegistrationRequest!.Author!)
+                    //            .SetValidator(new UserCommandValidatorBase<UserModel>(_context, true))
+                    //);
+                }
+            );
+
+            RuleFor(r => r.RegistrationRequestCertificateAttachments)
                 .NotNull()
                 .WithMessage(ValidationErrorCode.Required.ToString())
                 .DependentRules(() =>
                 {
-                    RuleFor(r => r.RegistrationRequest!.ConstituencyId)
-                        .MustAsync(
-                            (constituencyId, token) =>
-                            {
-                                return CheckConstituencyMustExistAsync(constituencyId!.Value, token);
-                            }
-                        )
-                        .WithMessage(ValidationErrorCode.ConstituencyMustExist.ToString());
+                    RuleFor(r => r.RegistrationRequestCertificateAttachments)
+                        .Must(file => file!.Length > 0)
+                        .WithMessage(ValidationErrorCode.Required.ToString());
                 });
 
-            When(
-                r => r.RegistrationRequest!.Citizen != null,
-                () => 
-                    RuleFor(r => r.RegistrationRequest!.Citizen!)
-                        .SetValidator(new CitizenValidatorBase<CitizenModel>(_context,_timeProvider))
-            );
-
-            When(
-                r => r.RegistrationRequest!.Author != null,
-                () => 
-                RuleFor(r => r.RegistrationRequest!.Author!)
-                    .SetValidator(new UserCommandValidatorBase<UserModel>(_context, true))
-            );
-
-            RuleFor(r => r.RegistrationRequestCertificateAttachments)
-                .Must(p => p.Count <= 10)
-                .WithMessage(ValidationErrorCode.TooManyAttachments.ToString());
-
             RuleFor(r => r.RegistrationRequestCniAttachments)
-                .Must(p => p.Count <= 10)
-                .WithMessage(ValidationErrorCode.TooManyAttachments.ToString());
+                .NotNull()
+                .WithMessage(ValidationErrorCode.Required.ToString())
+                .DependentRules(() =>
+                {
+                    RuleFor(r => r.RegistrationRequestCniAttachments)
+                        .Must(file => file!.Length > 0)
+                        .WithMessage(ValidationErrorCode.Required.ToString());
+                });
+
+            RuleFor(r => r.Photo).NotNull().WithMessage(ValidationErrorCode.Required.ToString());
         }
 
-        protected virtual Task<bool> CheckConstituencyMustExistAsync(long constituencyId, CancellationToken cancellationToken)
+        protected virtual Task<bool> CheckConstituencyMustExistAsync(
+            long constituencyId,
+            CancellationToken cancellationToken
+        )
         {
             return _context.Constituencies.AnyAsync(c => c.Id == constituencyId, cancellationToken);
         }

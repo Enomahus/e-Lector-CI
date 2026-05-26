@@ -68,9 +68,9 @@ export class UpdateRegistrationRequestUi implements OnInit {
       .updateRegistrationRequest(
         this.registrationRequest()?.id!,
         event.registrationRequest,
-        certificateOfNationalityAttachments ? [certificateOfNationalityAttachments] : undefined,
-        cniAttachments ? [cniAttachments] : undefined,
-        photoAttachments ? [photoAttachments] : undefined,
+        certificateOfNationalityAttachments ? certificateOfNationalityAttachments : undefined,
+        cniAttachments ? cniAttachments : undefined,
+        photoAttachments ? photoAttachments : undefined,
         {},
       )
       .subscribe({

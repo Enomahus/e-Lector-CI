@@ -89,24 +89,6 @@
       <form [formGroup]="citizenForm()">
         <div class="inputs-container">
           <div class="input-block required">
-            <label for="gender">{{ 'registrationRequests.fields.gender' | translate }}</label>
-            <select id="gender" formControlName="gender">
-              <option value="" selected>{{ 'global.select' | translate }}</option>
-              @for (gender of allGenders; track gender) {
-                <option [value]="gender">
-                  {{ 'registrationRequests.gender.' + gender | translate }}
-                </option>
-              }
-            </select>
-            @if (citizenForm().controls.gender.touched && citizenForm().controls.gender.errors) {
-              <ul class="form-error">
-                @if (citizenForm().controls.gender.errors?.['required']) {
-                  <li>{{ 'formError.required' | translate }}</li>
-                }
-              </ul>
-            }
-          </div>
-          <div class="input-block required">
             <label for="firstName">{{ 'registrationRequests.fields.firstName' | translate }}</label>
             <input id="firstName" formControlName="firstName" />
             @if (
@@ -127,6 +109,24 @@
             ) {
               <ul class="form-error">
                 @if (citizenForm().controls.lastName.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="gender">{{ 'registrationRequests.fields.gender' | translate }}</label>
+            <select id="gender" formControlName="gender">
+              <option value="" selected>{{ 'global.select' | translate }}</option>
+              @for (gender of allGenders; track gender) {
+                <option [value]="gender">
+                  {{ 'registrationRequests.gender.' + gender | translate }}
+                </option>
+              }
+            </select>
+            @if (citizenForm().controls.gender.touched && citizenForm().controls.gender.errors) {
+              <ul class="form-error">
+                @if (citizenForm().controls.gender.errors?.['required']) {
                   <li>{{ 'formError.required' | translate }}</li>
                 }
               </ul>
@@ -382,28 +382,40 @@
             <label for="registrationCertificateAttachments">{{
               'registrationRequests.fields.registrationCertificate' | translate
             }}</label>
-            <app-file-upload-ui
+            <input
+              id="certificate"
+              type="file"
+              (change)="onFileSelectedTest($event, 'certificate')"
+              class="form-control"
+              accept=".pdf,.jpg,.jpeg,.png"
               formControlName="registrationCertificateAttachments"
-              [accepts]="'.pdf'"
-            ></app-file-upload-ui>
+            />
           </div>
           <div class="input-block required">
             <label for="registrationCniAttachments">{{
               'registrationRequests.fields.cni' | translate
             }}</label>
-            <app-file-upload-ui
+            <input
+              id="cni"
+              type="file"
+              (change)="onFileSelectedTest($event, 'cni')"
+              class="form-control"
+              accept=".pdf"
               formControlName="registrationCniAttachments"
-              [accepts]="'.pdf'"
-            ></app-file-upload-ui>
+            />
           </div>
           <div class="input-block required">
             <label for="photoAttachments">{{
               'registrationRequests.fields.photo' | translate
             }}</label>
-            <app-file-upload-ui
+            <input
+              id="photo"
+              type="file"
+              (change)="onFileSelectedTest($event, 'photo')"
+              class="form-control"
+              accept=".jpeg"
               formControlName="photoAttachments"
-              [accepts]="'.jpeg'"
-            ></app-file-upload-ui>
+            />
           </div>
         </div>
       </form>
@@ -461,4 +473,3 @@
     }
   }
 </app-sticky-buttons-container>
-<pre>{{ form().value | json }}</pre>

@@ -20,9 +20,12 @@ export type RequestsForm = FormGroup<{
 }>;
 
 export type RequestDocumentsForm = FormGroup<{
-  registrationCertificateAttachments: FormControl<UploadFormValue | undefined>;
-  registrationCniAttachments: FormControl<UploadFormValue | undefined>;
-  photoAttachments: FormControl<UploadFormValue | undefined>;
+  // registrationCertificateAttachments: FormControl<UploadFormValue | undefined>;
+  // registrationCniAttachments: FormControl<UploadFormValue | undefined>;
+  // photoAttachments: FormControl<UploadFormValue | undefined>;
+  registrationCertificateAttachments: FormControl<File | undefined>;
+  registrationCniAttachments: FormControl<File | undefined>;
+  photoAttachments: FormControl<File | undefined>;
 }>;
 
 export type CitizenForm = FormGroup<{

@@ -14,9 +14,9 @@ namespace Application.Features.RegistrationRequests.Common
         public CitizenModel? Citizen { get; set; }
         public RegistrationRequestType RegistrationRequestType { get; set; }
 
-        public ICollection<Guid>? CertificateOfNationalityDocumentIds { get; set; }
-        public ICollection<Guid>? IdentityDocumentIds { get; set; }
-        public ICollection<Guid>? PhotoIds { get; set; }
+        public Guid? CertificateOfNationalityDocumentIds { get; set; }
+        public Guid? IdentityDocumentIds { get; set; }
+        public Guid? PhotoIds { get; set; }
 
         public static RegistrationRequestModel FromDao(RegistrationRequestDao dao, TimeProvider timeProvider)
         {
@@ -25,8 +25,6 @@ namespace Application.Features.RegistrationRequests.Common
             return new RegistrationRequestModel()
             {
                 Id = dao.Id,
-                //Status = dao.Status,
-                //SoumissionDate = dao.SoumissionDate,
                 ReasonForRejection = dao.ReasonForRejection,
                 RegistrationRequestType = dao.RequestType,
                 Author = UserModel.FromDao(dao.Author, dateNow),

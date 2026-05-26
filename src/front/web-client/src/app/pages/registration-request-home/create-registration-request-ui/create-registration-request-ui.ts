@@ -37,9 +37,9 @@ export class CreateRegistrationRequestUi {
     this.registrationRequestService
       .createRegistrationRequest(
         event.registrationRequest,
-        certificateOfNationalityAttachments ? [certificateOfNationalityAttachments] : undefined,
-        cniAttachments ? [cniAttachments] : undefined,
-        photoAttachments ? [photoAttachments] : undefined,
+        certificateOfNationalityAttachments ? certificateOfNationalityAttachments : undefined,
+        cniAttachments ? cniAttachments : undefined,
+        photoAttachments ? photoAttachments : undefined,
         {
           errorMessage: this.translateService.instant('registrationRequest.errorCreating'),
           successMessage: this.translateService.instant('registrationRequest.successCreating'),
