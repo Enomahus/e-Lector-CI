@@ -68,8 +68,6 @@ export type RegistrationRequestRow = GetRegistrationRequestsResponseModel & {
   styleUrl: './registration-requests-table.scss',
 })
 export class RegistrationRequestsTableComponent implements AfterViewInit, OnDestroy {
-  // ─── Signal Inputs ──────────────────────────────────────────────────────────
-
   readonly data = input<RegistrationRequestRow[]>([]);
   readonly resultsLength = input(0);
   readonly isLoading = input(false);
@@ -93,8 +91,6 @@ export class RegistrationRequestsTableComponent implements AfterViewInit, OnDest
   /** Permission required to show the create button (undefined = always visible). */
   readonly createPermission = input<AppPermission | undefined>(undefined);
 
-  // ─── Outputs ────────────────────────────────────────────────────────────────
-
   readonly requestDelete = output<RegistrationRequestRow>();
   readonly paramsChange = output<RegistrationRequestTableParams>();
 
@@ -103,12 +99,8 @@ export class RegistrationRequestsTableComponent implements AfterViewInit, OnDest
   @ViewChild(MatSort) private readonly sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  // ─── Internal state ─────────────────────────────────────────────────────────
-
   readonly searchControl = new FormControl('', { nonNullable: true });
   private readonly destroy$ = new Subject<void>();
-
-  // ─── Lifecycle ──────────────────────────────────────────────────────────────
 
   ngAfterViewInit(): void {
     // Reset to first page whenever the user changes sort direction / column.
@@ -134,8 +126,6 @@ export class RegistrationRequestsTableComponent implements AfterViewInit, OnDest
     this.destroy$.next();
     this.destroy$.complete();
   }
-
-  // ─── Private helpers ────────────────────────────────────────────────────────
 
   private emitCurrentParams(): void {
     this.paramsChange.emit({
