@@ -1,9 +1,10 @@
-﻿using Application.Features.RegistrationRequests.Common;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Application.Features.RegistrationRequests.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NJsonSchema.Annotations;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
 
 namespace Application.Features.RegistrationRequests.CreateRegistrationRequest;
 
@@ -13,19 +14,24 @@ public class CreateRegistrationRequestFromData
     [FromForm]
     [JsonSchemaType(typeof(RegistrationRequestModel))]
     public string? RegistrationRequestJson { get; set; }
+
     [FromForm]
-    public ICollection<IFormFile> RegistrationRequestCertificateAttachments { get; set; } = [];
+    public IFormFile? RegistrationRequestCertificateAttachments { get; set; }
+
     [FromForm]
-    public ICollection<IFormFile> RegistrationRequestCniAttachments { get; set; } = [];
+    public IFormFile? RegistrationRequestCniAttachments { get; set; }
+
     [FromForm]
-    public ICollection<IFormFile> Photo { get; set; } = [];
+    public IFormFile? Photo { get; set; }
 
     public RegistrationRequestModel? GetRegistrationRequest()
     {
-        if (string.IsNullOrWhiteSpace(RegistrationRequestJson)) return null;
+        if (string.IsNullOrWhiteSpace(RegistrationRequestJson))
+            return null;
 
-        return JsonSerializer.Deserialize<RegistrationRequestModel>(
-            RegistrationRequestJson,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        options.Converters.Add(new JsonStringEnumConverter());
+
+        return JsonSerializer.Deserialize<RegistrationRequestModel>(RegistrationRequestJson, options);
     }
 }

@@ -1,4 +1,4 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   Component,
   computed,
@@ -65,7 +65,6 @@ interface ParentModel {
     StickyButtonsContainer,
     Loader,
     DatePipe,
-    JsonPipe,
   ],
   providers: [DatePipe],
   templateUrl: './registration-request-ui.html',
@@ -113,6 +112,12 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   allGenders = allGenders;
   allPersonTitle = allPersonTitle;
 
+  certificateFile = signal<File | null>(null);
+  cniFile = signal<File | null>(null);
+  photoFile = signal<File | null>(null);
+  isSubmitting = signal<boolean>(false);
+  errorMessage = signal<string | null>(null);
+
   constructor() {
     effect(() => {
       const nodes = this.nodes();
@@ -143,7 +148,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         this.isEditMode.set(true);
       }
     }
-    this.loadParents();
+    this.loadCitizens();
     this.setBreadcrumbs();
   }
 
@@ -157,7 +162,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     return this.form().controls.requestDocuments;
   }
 
-  private loadParents(): void {
+  private loadCitizens(): void {
     this.citizenService.getCitizens().subscribe((response) => {
       this.parents.set(response.data ?? []);
     });
@@ -210,21 +215,16 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
       this.form().markAllAsTouched();
       return;
     }
-    const registrationRequest = await this.getRegistrationRequestModel();
-    const certificateOfNationalityAttachments =
-      this.form().value.requestDocuments?.registrationCertificateAttachments?.localFile;
-    const cniAttachments =
-      this.form().value.requestDocuments?.registrationCniAttachments?.localFile;
-    const photoAttachments = this.form().value.requestDocuments?.photoAttachments?.localFile;
+    const registrationRequest = this.getRegistrationRequestModel();
     this.saveTriggered.emit({
       registrationRequest,
-      certificateOfNationalityAttachments,
-      cniAttachments,
-      photoAttachments,
+      certificateOfNationalityAttachments: this.certificateFile() ?? undefined,
+      cniAttachments: this.cniFile() ?? undefined,
+      photoAttachments: this.photoFile() ?? undefined,
     });
   }
 
-  async getRegistrationRequestModel(): Promise<RegistrationRequestModel> {
+  getRegistrationRequestModel(): RegistrationRequestModel {
     const registrationRequest: RegistrationRequestModel = {
       id: this.form().value.id,
       constituencyId: this.form().value.request?.constituencyId,
@@ -235,7 +235,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         firstName: this.form().value.citizen?.firstName,
         lastName: this.form().value.citizen?.lastName,
         birthDate: this.form().value.citizen?.birthDate
-          ? this.form().value.citizen?.birthDate?.toISOString()
+          ? new Date(this.form().value.citizen?.birthDate!).toISOString()
           : undefined,
         birthPlace: this.form().value.citizen?.birthPlace,
         maritalStatus: this.form().value.citizen?.maritalStatus,
@@ -364,6 +364,41 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
       } else {
         parentControl.setValue('');
       }
+    }
+  }
+
+  /**
+   * Gestionnaire d'événements pour la sélection de fichiers
+   */
+  onFileSelectedTest(event: Event, type: 'certificate' | 'cni' | 'photo'): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] || null;
+
+    if (file && file.size === 0) {
+      this.errorMessage.set(`Le fichier pour ${type} ne peut pas être vide.`);
+      return;
+    }
+
+    this.errorMessage.set(null);
+
+    switch (type) {
+      case 'certificate':
+        this.certificateFile.set(file);
+        this.requestDocumentsForm().controls.registrationCertificateAttachments.setValue(
+          file ?? undefined,
+        );
+        this.requestDocumentsForm().controls.registrationCertificateAttachments.markAsDirty();
+        break;
+      case 'cni':
+        this.cniFile.set(file);
+        this.requestDocumentsForm().controls.registrationCniAttachments.setValue(file ?? undefined);
+        this.requestDocumentsForm().controls.registrationCniAttachments.markAsDirty();
+        break;
+      case 'photo':
+        this.photoFile.set(file);
+        this.requestDocumentsForm().controls.photoAttachments.setValue(file ?? undefined);
+        this.requestDocumentsForm().controls.photoAttachments.markAsDirty();
+        break;
     }
   }
 }

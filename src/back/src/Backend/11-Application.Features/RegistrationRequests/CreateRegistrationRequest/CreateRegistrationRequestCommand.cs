@@ -34,7 +34,8 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
         ICurrentUserService currentUserService,
         WritableDbContext context,
         TimeProvider timeProvider,
-        IReferenceGeneratorService referenceGeneratorService
+        IReferenceGeneratorService referenceGeneratorService,
+        RegistrationRequestService registrationRequestService
     ) : IRequestHandler<CreateRegistrationRequestCommand, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(
@@ -85,8 +86,28 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
 
                     await context.RegistrationRequests.AddAsync(registrationRequest, cancellationToken);
                     await context.SaveChangesAsync(cancellationToken);
-
                     activity.AddParameter(registrationRequest, r => r.Id);
+
+                    //Upload document
+                    await registrationRequestService.UploadRegistrationRequestDocumentsByType(
+                        command.RegistrationRequestCertificateAttachments,
+                        RegistrationRequestDocumentType.CertificateOfNationality,
+                        registrationRequest,
+                        cancellationToken
+                    );
+
+                    await registrationRequestService.UploadRegistrationRequestDocumentsByType(
+                        command.RegistrationRequestCniAttachments,
+                        RegistrationRequestDocumentType.IdentityDocument,
+                        registrationRequest,
+                        cancellationToken
+                    );
+                    await registrationRequestService.UploadRegistrationRequestDocumentsByType(
+                        command.Photo,
+                        RegistrationRequestDocumentType.Photo,
+                        registrationRequest,
+                        cancellationToken
+                    );
                 },
                 () => Task.FromResult(true)
             );

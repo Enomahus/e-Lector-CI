@@ -1369,7 +1369,7 @@ export class ServerClient extends CustomApiClient {
      * @param registrationRequestCniAttachments (optional) 
      * @param photo (optional) 
      */
-    updateRegistrationRequest(id: string, registrationRequestJson: RegistrationRequestModel | null | undefined, registrationRequestCertificateAttachments: FileParameter[] | null | undefined, registrationRequestCniAttachments: FileParameter[] | null | undefined, photo: FileParameter[] | null | undefined): Observable<ResultOfGuid> {
+    updateRegistrationRequest(id: string, registrationRequestJson: RegistrationRequestModel | null | undefined, registrationRequestCertificateAttachments: FileParameter | null | undefined, registrationRequestCniAttachments: FileParameter | null | undefined, photo: FileParameter | null | undefined): Observable<ResultOfGuid> {
         let url_ = this.baseUrl + "/registration-requests/{Id}";
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
@@ -1380,11 +1380,11 @@ export class ServerClient extends CustomApiClient {
         if (registrationRequestJson !== null && registrationRequestJson !== undefined)
             content_.append("RegistrationRequestJson", JSON.stringify(registrationRequestJson));
         if (registrationRequestCertificateAttachments !== null && registrationRequestCertificateAttachments !== undefined)
-            registrationRequestCertificateAttachments.forEach(item_ => content_.append("RegistrationRequestCertificateAttachments", item_.data, item_.fileName ? item_.fileName : "RegistrationRequestCertificateAttachments") );
+            content_.append("RegistrationRequestCertificateAttachments", registrationRequestCertificateAttachments.data, registrationRequestCertificateAttachments.fileName ? registrationRequestCertificateAttachments.fileName : "RegistrationRequestCertificateAttachments");
         if (registrationRequestCniAttachments !== null && registrationRequestCniAttachments !== undefined)
-            registrationRequestCniAttachments.forEach(item_ => content_.append("RegistrationRequestCniAttachments", item_.data, item_.fileName ? item_.fileName : "RegistrationRequestCniAttachments") );
+            content_.append("RegistrationRequestCniAttachments", registrationRequestCniAttachments.data, registrationRequestCniAttachments.fileName ? registrationRequestCniAttachments.fileName : "RegistrationRequestCniAttachments");
         if (photo !== null && photo !== undefined)
-            photo.forEach(item_ => content_.append("Photo", item_.data, item_.fileName ? item_.fileName : "Photo") );
+            content_.append("Photo", photo.data, photo.fileName ? photo.fileName : "Photo");
 
         let options_ : any = {
             body: content_,
@@ -1835,7 +1835,7 @@ export class ServerClient extends CustomApiClient {
      * @param registrationRequestCniAttachments (optional) 
      * @param photo (optional) 
      */
-    createRegistrationRequest(registrationRequestJson: RegistrationRequestModel | null | undefined, registrationRequestCertificateAttachments: FileParameter[] | null | undefined, registrationRequestCniAttachments: FileParameter[] | null | undefined, photo: FileParameter[] | null | undefined): Observable<ResultOfGuid> {
+    createRegistrationRequest(registrationRequestJson: RegistrationRequestModel | null | undefined, registrationRequestCertificateAttachments: FileParameter | null | undefined, registrationRequestCniAttachments: FileParameter | null | undefined, photo: FileParameter | null | undefined): Observable<ResultOfGuid> {
         let url_ = this.baseUrl + "/registration-requests";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1843,11 +1843,11 @@ export class ServerClient extends CustomApiClient {
         if (registrationRequestJson !== null && registrationRequestJson !== undefined)
             content_.append("RegistrationRequestJson", JSON.stringify(registrationRequestJson));
         if (registrationRequestCertificateAttachments !== null && registrationRequestCertificateAttachments !== undefined)
-            registrationRequestCertificateAttachments.forEach(item_ => content_.append("RegistrationRequestCertificateAttachments", item_.data, item_.fileName ? item_.fileName : "RegistrationRequestCertificateAttachments") );
+            content_.append("RegistrationRequestCertificateAttachments", registrationRequestCertificateAttachments.data, registrationRequestCertificateAttachments.fileName ? registrationRequestCertificateAttachments.fileName : "RegistrationRequestCertificateAttachments");
         if (registrationRequestCniAttachments !== null && registrationRequestCniAttachments !== undefined)
-            registrationRequestCniAttachments.forEach(item_ => content_.append("RegistrationRequestCniAttachments", item_.data, item_.fileName ? item_.fileName : "RegistrationRequestCniAttachments") );
+            content_.append("RegistrationRequestCniAttachments", registrationRequestCniAttachments.data, registrationRequestCniAttachments.fileName ? registrationRequestCniAttachments.fileName : "RegistrationRequestCniAttachments");
         if (photo !== null && photo !== undefined)
-            photo.forEach(item_ => content_.append("Photo", item_.data, item_.fileName ? item_.fileName : "Photo") );
+            content_.append("Photo", photo.data, photo.fileName ? photo.fileName : "Photo");
 
         let options_ : any = {
             body: content_,
@@ -3150,9 +3150,9 @@ export interface RegistrationRequestModel {
     author?: UserModel | undefined;
     citizen?: CitizenModel | undefined;
     registrationRequestType?: RegistrationRequestType;
-    certificateOfNationalityDocumentIds?: string[] | undefined;
-    identityDocumentIds?: string[] | undefined;
-    photoIds?: string[] | undefined;
+    certificateOfNationalityDocumentIds?: string | undefined;
+    identityDocumentIds?: string | undefined;
+    photoIds?: string | undefined;
 }
 
 export interface CitizenModel {
