@@ -216,15 +216,11 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
       return;
     }
     const registrationRequest = this.getRegistrationRequestModel();
-    const certificateOfNationalityAttachments =
-      this.form().value.requestDocuments?.registrationCertificateAttachments;
-    const cniAttachments = this.form().value.requestDocuments?.registrationCniAttachments;
-    const photoAttachments = this.form().value.requestDocuments?.photoAttachments;
     this.saveTriggered.emit({
       registrationRequest,
-      certificateOfNationalityAttachments,
-      cniAttachments,
-      photoAttachments,
+      certificateOfNationalityAttachments: this.certificateFile() ?? undefined,
+      cniAttachments: this.cniFile() ?? undefined,
+      photoAttachments: this.photoFile() ?? undefined,
     });
   }
 
@@ -388,12 +384,20 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     switch (type) {
       case 'certificate':
         this.certificateFile.set(file);
+        this.requestDocumentsForm().controls.registrationCertificateAttachments.setValue(
+          file ?? undefined,
+        );
+        this.requestDocumentsForm().controls.registrationCertificateAttachments.markAsDirty();
         break;
       case 'cni':
         this.cniFile.set(file);
+        this.requestDocumentsForm().controls.registrationCniAttachments.setValue(file ?? undefined);
+        this.requestDocumentsForm().controls.registrationCniAttachments.markAsDirty();
         break;
       case 'photo':
         this.photoFile.set(file);
+        this.requestDocumentsForm().controls.photoAttachments.setValue(file ?? undefined);
+        this.requestDocumentsForm().controls.photoAttachments.markAsDirty();
         break;
     }
   }

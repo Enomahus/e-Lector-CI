@@ -26,9 +26,9 @@ export class RegistrationRequestsForAdminUi extends AbstractRegistrationRequests
   override readonly titleKey = 'registrationRequests.titleForAdmin';
   override readonly routePrefix = 'registration-requests-for-admin';
   /** Admins manage requests via a dedicated permission. */
-  override readonly editPermission: AppPermission = 'triggerActionOnRegistrationRequest';
+  override readonly editPermission: AppPermission = 'updateRegistrationRequest';
   /** No dedicated admin-delete permission exposed yet – directive shows the button unconditionally. */
-  override readonly deletePermission: AppPermission | undefined = undefined;
+  override readonly deletePermission: AppPermission = 'deleteRegistrationRequest';
   override readonly displayedColumns: string[] = [
     'reference',
     'submissionDate',

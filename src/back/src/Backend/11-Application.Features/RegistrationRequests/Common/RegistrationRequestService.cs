@@ -120,7 +120,7 @@ namespace Application.Features.RegistrationRequests.Common
             );
         }
 
-        private async Task UploadRegistrationRequestDocumentsByType(
+        public async Task UploadRegistrationRequestDocumentsByType(
             IFormFile? attachement,
             RegistrationRequestDocumentType documentType,
             RegistrationRequestDao existingRegistrationRequest,

@@ -21,7 +21,7 @@ import { AbstractRegistrationRequestsUI } from '../generic-registration-requests
 export class RegistrationRequestsUi extends AbstractRegistrationRequestsUI {
   override readonly titleKey = 'registrationRequests.title';
   override readonly routePrefix = 'registration-requests';
-  override readonly editPermission: AppPermission = 'accessUpdateRegistrationRequest';
+  override readonly editPermission: AppPermission = 'updateRegistrationRequest';
   override readonly deletePermission: AppPermission = 'deleteRegistrationRequest';
   override readonly displayedColumns: string[] = [
     'reference',

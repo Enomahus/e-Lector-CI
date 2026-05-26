@@ -4,8 +4,6 @@ import {
   MaritalStatus,
   RegistrationRequestType,
 } from '@app/services/nswag/api-nswag-client';
-import { UploadFormValue } from '@app/shared/upload/upload-form-value';
-
 export type RegistrationRequestForm = FormGroup<{
   id: FormControl<string | undefined>;
   request: RequestsForm;
@@ -20,9 +18,6 @@ export type RequestsForm = FormGroup<{
 }>;
 
 export type RequestDocumentsForm = FormGroup<{
-  // registrationCertificateAttachments: FormControl<UploadFormValue | undefined>;
-  // registrationCniAttachments: FormControl<UploadFormValue | undefined>;
-  // photoAttachments: FormControl<UploadFormValue | undefined>;
   registrationCertificateAttachments: FormControl<File | undefined>;
   registrationCniAttachments: FormControl<File | undefined>;
   photoAttachments: FormControl<File | undefined>;
@@ -123,15 +118,15 @@ export function createCitizenForm(): CitizenForm {
 
 export function createRequestDocumentsForm(): RequestDocumentsForm {
   const form = new FormGroup({
-    registrationCertificateAttachments: new FormControl<UploadFormValue | undefined>(undefined, {
+    registrationCertificateAttachments: new FormControl<File | undefined>(undefined, {
       validators: Validators.required,
       nonNullable: true,
     }),
-    registrationCniAttachments: new FormControl<UploadFormValue | undefined>(undefined, {
+    registrationCniAttachments: new FormControl<File | undefined>(undefined, {
       validators: Validators.required,
       nonNullable: true,
     }),
-    photoAttachments: new FormControl<UploadFormValue | undefined>(undefined, {
+    photoAttachments: new FormControl<File | undefined>(undefined, {
       validators: Validators.required,
       nonNullable: true,
     }),

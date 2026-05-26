@@ -20,7 +20,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequest
     )]
     [WithPermission(
         nameof(AppPermission.UpdateRegistrationRequest),
-        nameof(AppPermission.UpdateRegistrationRequestDraft)
+        nameof(AppPermission.UpdateRegistrationRequestsForManagement)
     )]
     public class UpdateRegistrationRequestCommand : RegistrationRequestCommandBase, IRequest<Result<Guid>>
     {
