@@ -25,11 +25,23 @@ namespace Application.Features.RegistrationRequests.Common
 
             // 2. Compter le nombre d'électeurs actuels pour cette zone/bureau
             // pour obtenir le numéro de séquence (ex: 6601)
-            int sequenceNumber =
-                await context.Electors.CountAsync(
-                    e => e.PollingStationId == pollingStaionId,
-                    cancellationToken
-                ) + 1;
+            //int sequenceNumber =
+            //    await context.Electors.CountAsync(
+            //        e => e.PollingStationId == pollingStaionId,
+            //        cancellationToken
+            //    ) + 1;
+            var lastElectorNumber = await context
+                .Electors.Where(e => e.PollingStationId == pollingStaionId)
+                .OrderByDescending(e => e.VoterRegistrationNumber)
+                .Select(e => e.VoterRegistrationNumber)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            int sequenceNumber = 0;
+            if (!string.IsNullOrEmpty(lastElectorNumber))
+            {
+                var seq = lastElectorNumber.Split(' ')[2];
+                _ = int.TryParse(seq, out sequenceNumber);
+            }
 
             string sequenceStr = sequenceNumber.ToString().PadLeft(6, '0');
 
@@ -51,16 +63,23 @@ namespace Application.Features.RegistrationRequests.Common
             // 1. Récupérer l'année courante
             int year = timeProvider.GetUtcNow().Year;
 
-            // 2. Compter le nombre de demandes actuels sur l'année en cours
-            // pour obtenir le numéro de séquence (ex: 0012547)
-            int countRequest =
-                await context.RegistrationRequests.CountAsync(
-                    r => r.SubmissionDate.Year == year,
-                    cancellationToken
-                ) + 1;
+            var lasRequestReference = await context
+                .RegistrationRequests.Where(rr => rr.SubmissionDate.Year == year)
+                .OrderByDescending(rr => rr.Reference)
+                .Select(rr => rr.Reference)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            long lastReference = 0;
+            if (!string.IsNullOrEmpty(lasRequestReference) && lasRequestReference.StartsWith("DE"))
+            {
+                var sequenceNumericPart = lasRequestReference[6..];
+                _ = long.TryParse(sequenceNumericPart, out lastReference);
+            }
+
+            var newReference = lastReference + 1;
 
             // Format final: DE20250012547
-            return $"DE{year}{countRequest.ToString().PadLeft(7, '0')}";
+            return $"DE{year}{newReference.ToString().PadLeft(7, '0')}";
         }
     }
 }

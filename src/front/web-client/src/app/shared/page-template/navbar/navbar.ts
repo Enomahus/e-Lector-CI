@@ -12,7 +12,7 @@ import { NavbarMobile } from './navbar-mobile/navbar-mobile';
   selector: 'app-navbar',
   imports: [TranslateModule, NavbarDesktop, NavbarMobile],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.scss',
+  styleUrls: ['./navbar.scss'],
 })
 export class Navbar {
   private readonly destroyRef = inject(DestroyRef);

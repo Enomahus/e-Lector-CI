@@ -29,7 +29,7 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.GetConstituency,
                     AppPermission.CreateConstituency,
                     AppPermission.UpdateConstituency,
-                    AppPermission.DeletePollingStation,
+                    AppPermission.DeleteConstituency,
                 ]
             },
             {
@@ -43,47 +43,50 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.DeletePollingStation,
                 ]
             },
-            { // C'est l'action de recevoir les demandes et les valider / refuser /
+            { // AGENT: Aaction de recevoir, consulter globalement et traiter (valider / refuser)
                 AppAction.RegistrationRequestManagement,
                 [
                     AppPermission.AccessRegistrationRequestsForManagementPage,
-                    AppPermission.AccessUpdateRegistrationRequest,
                     AppPermission.GetRegistrationRequestsForManagement,
                     AppPermission.UpdateRegistrationRequestsForManagement,
-                    AppPermission.DeleteRegistrationRequestsForManagement,
-                    AppPermission.TriggerActionOnRegistrationRequest,
+                    AppPermission.GetRegistrationRequests,
+                    //AppPermission.DeleteRegistrationRequestsForManagement,
+                    //AppPermission.AccessUpdateRegistrationRequest,
+                    AppPermission.TriggerActionOnRegistrationRequest, // Approuver / Refuser
                     AppPermission.CheckRegistrationReferenceBeUnique,
                 ]
             },
             {
-                // C'est l'action de faire une nouvelle demande
-                // et y apporter les modifications nécessaires
-                // si elle est incomplète
+                // ELECTEUR: Action de faire une nouvelle demande et la modifier
+                // si incomplète et pas encore Approuver ou Refuser
                 AppAction.RegistrationRequestCreation,
                 [
-                    AppPermission.AccessUpdateRegistrationRequest,
                     AppPermission.CreateRegistrationRequest,
+                    AppPermission.AccessUpdateRegistrationRequest,
                     AppPermission.UpdateRegistrationRequest,
                     AppPermission.UploadRegistrationRequestTempDocument,
-                    AppPermission.GetRegistrationRequestForCurrentUser,
+                    //AppPermission.GetRegistrationRequestForCurrentUser,
                 ]
             },
             {
+                // ELECTEUR: Consultation restreinte à SES propre données
                 AppAction.RegistrationRequestConsultation,
                 [
                     AppPermission.AccessRegistrationRequestsPage,
-                    AppPermission.DeleteRegistrationRequest,
-                    AppPermission.GetRegistrationRequests,
+                    //AppPermission.DeleteRegistrationRequest,
+                    //AppPermission.GetRegistrationRequests,
                     AppPermission.GetRegistrationRequestForCurrentUser,
                 ]
             },
             {
-                // C'est avoir tous les droits sur toutes les demandes
+                // ADMIN: Tous les droits spécifiques sur toutes les demandes
                 AppAction.RegistrationRequestAdministration,
                 [
                     AppPermission.AccessRegistrationRequestsForAdminPage,
                     AppPermission.AccessUpdateRegistrationRequest,
                     AppPermission.GetRegistrationRequest,
+                    AppPermission.DeleteRegistrationRequest,
+                    AppPermission.GetRegistrationRequests,
                 ]
             },
             {
@@ -104,7 +107,7 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                 AppConstants.OrganismAgentRole,
                 [
                     AppAction.CommonAccess,
-                    AppAction.RegistrationRequestConsultation,
+                    //AppAction.RegistrationRequestConsultation,
                     AppAction.RegistrationRequestManagement,
                     AppAction.PollingStationAdministration,
                 ]
@@ -113,8 +116,8 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                 AppConstants.ElectorRole,
                 [
                     AppAction.CommonAccess,
-                    AppAction.RegistrationRequestCreation,
-                    AppAction.RegistrationRequestConsultation,
+                    AppAction.RegistrationRequestCreation, // Creation et MAJ
+                    AppAction.RegistrationRequestConsultation, // Lecture personnelle uniquement
                 ]
             },
         };

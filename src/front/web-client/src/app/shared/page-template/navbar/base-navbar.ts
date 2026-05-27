@@ -21,10 +21,9 @@ import { LanguageService } from '../../../services/language.service';
   template: '',
 })
 export abstract class BaseNavbar {
-  //@Input({ required: true }) userName$!: Observable<string>;
+  userName$ = input.required<Observable<string>>();
   isRegister = input.required<boolean>();
   logout = output<void>();
-  userName$ = input.required<Observable<string>>();
 
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);

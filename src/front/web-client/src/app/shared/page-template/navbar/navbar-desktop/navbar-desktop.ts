@@ -20,6 +20,6 @@ import { BaseNavbar } from '../base-navbar';
     HideIfAdminDirective,
   ],
   templateUrl: './navbar-desktop.html',
-  styleUrl: './navbar-desktop.scss',
+  styleUrls: ['./navbar-desktop.scss'],
 })
 export class NavbarDesktop extends BaseNavbar {}

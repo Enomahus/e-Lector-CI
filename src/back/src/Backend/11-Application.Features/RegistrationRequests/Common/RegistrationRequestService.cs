@@ -2,6 +2,7 @@
 using Application.Exceptions;
 using Application.Exceptions.Auth;
 using Application.Interfaces.Services;
+using Application.Models;
 using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Microsoft.AspNetCore.Http;
@@ -51,12 +52,14 @@ namespace Application.Features.RegistrationRequests.Common
             long constituencyId = command.RegistrationRequest!.ConstituencyId!.Value;
 
             if (
-                !userIsSuperAdmin
-                    && currentUser.UserConstituencies.Any(u =>
-                        u.ConstituencyId != registrationRequest.ConstituencyId
-                    )
-                || currentUser.Id != registrationRequest.AuthorId
+                registrationRequest.Status == RegistrationStatus.Approved
+                || registrationRequest.Status == RegistrationStatus.Rejected
             )
+            {
+                throw new Exception("This request has already been processed and cannot be changed");
+            }
+
+            if (!userIsSuperAdmin && registrationRequest.AuthorId != currentUser.Id)
             {
                 throw new UserAccessException();
             }

@@ -13,7 +13,7 @@
     </div>
 
     <ul class="menu">
-      <li class="menu-item" [routerLinkActive]="'active'">
+      <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
         <a routerLink="/login">{{ 'navbar.registrationRequest' | translate }}</a>
       </li>
       @if (showAdminRequestsText()) {
@@ -40,18 +40,41 @@
       <li class="menu-item" [routerLinkActive]="'active'">
         <a routerLink="/faq">{{ 'navbar.faq' | translate }}</a>
       </li>
-      <li class="menu-item" [class.active]="isRouteMatching('admin')">
+      <li
+        class="menu-item"
+        [class.active]="isRouteMatching('admin')"
+        *appHasPermission="[
+          'accessConstituenciesAdminPage',
+          'accessUsersAdminPage',
+          'accessPollingStationsAdminPage',
+        ]"
+      >
         <button class="btn btn-no-style dropbtn" (click)="dropdownOpen.set(!dropdownOpen())">
           <span>{{ 'navbar.Administration' | translate }}</span>
           <i class="ph ph-caret-down"></i>
         </button>
         @if (dropdownOpen()) {
           <div class="dropdown-content">
-            <a routerLink="admin/geographic-area" [routerLinkActive]="'active'">
-              <span>{{ 'navbar.geagraphicArea' | translate }}</span>
+            <a
+              *appHasPermission="['accessConstituenciesAdminPage']"
+              routerLink="admin/constituencies"
+              [routerLinkActive]="'active'"
+            >
+              <span>{{ 'navbar.constituency' | translate }}</span>
             </a>
-            <a routerLink="admin/polling-station" [routerLinkActive]="'active'">
+            <a
+              *appHasPermission="['accessPollingStationsAdminPage']"
+              routerLink="admin/polling-stations"
+              [routerLinkActive]="'active'"
+            >
               <span>{{ 'navbar.pollingStation' | translate }}</span>
+            </a>
+            <a
+              *appHasPermission="['accessUsersAdminPage']"
+              routerLink="admin/users"
+              [routerLinkActive]="'active'"
+            >
+              <span>{{ 'navbar.users' | translate }}</span>
             </a>
           </div>
         }
