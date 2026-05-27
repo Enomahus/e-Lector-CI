@@ -40,7 +40,7 @@ export class Navbar {
   }
 
   toggleMobileMenu(): void {
-    this.isToggleMobileMenu.set(!this.isToggleMobileMenu);
+    this.isToggleMobileMenu.set(!this.isToggleMobileMenu());
   }
 
   handleLogout(): void {

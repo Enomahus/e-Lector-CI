@@ -8,6 +8,7 @@ import { PollingStations } from './pages/administration/polling-stations/polling
 import { UserCreate } from './pages/administration/users/user-create/user-create';
 import { UserUpdate } from './pages/administration/users/user-update/user-update';
 import { Users } from './pages/administration/users/users';
+import { FaqUi } from './pages/faq-ui/faq-ui';
 import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { Home } from './pages/home/home';
 import { CreateAccount } from './pages/login/create-account/create-account';
@@ -42,6 +43,11 @@ export const routes: Routes = [
     path: 'login/:provider',
     component: Login,
     title: 'login.title',
+  },
+  {
+    path: 'faq',
+    component: FaqUi,
+    title: 'faq.title',
   },
   {
     path: 'reset-password',
