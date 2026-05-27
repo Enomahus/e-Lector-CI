@@ -48,15 +48,15 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequest
         {
             using var activity = ActivitySourceLog.CQRS.Start().AddParameter(command, c => c.Id);
 
-            var currentUserId = currentUserService.UserId;
-            var currentUser =
-                await context
-                    .Users.AsNoTracking()
-                    .FirstOrDefaultAsync(u => u.Id == currentUserId, cancellationToken)
-                ?? throw new UserAccessException();
+            //var currentUserId = currentUserService.UserId;
+            //var currentUser =
+            //    await context
+            //        .Users.AsNoTracking()
+            //        .FirstOrDefaultAsync(u => u.Id == currentUserId, cancellationToken)
+            //    ?? throw new UserAccessException();
 
-            var permissions = await currentUserPermissions.GetCurrentUserPermissionsAsync(cancellationToken);
-            var userIsSuperAdmin = permissions.Contains(AppPermission.SuperAdmin.ToString());
+            //var permissions = await currentUserPermissions.GetCurrentUserPermissionsAsync(cancellationToken);
+            //var userIsSuperAdmin = permissions.Contains(AppPermission.SuperAdmin.ToString());
 
             var registrationRequestDao = await registrationRequestService.PrepareDaoForUpdate(
                 command,

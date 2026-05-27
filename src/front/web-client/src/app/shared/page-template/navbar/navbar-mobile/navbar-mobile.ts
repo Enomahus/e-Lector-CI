@@ -1,14 +1,25 @@
-import { Component } from '@angular/core';
-import { BaseNavbar } from '../base-navbar';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { HideIfAdminDirective } from '@app/services/auth/hide-if-admin.directive';
+import { PermissionDirective } from '@app/services/auth/permission.directive';
+import { TranslateModule } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../../language-switcher/language-switcher';
+import { BaseNavbar } from '../base-navbar';
 
 @Component({
   selector: 'app-navbar-mobile',
-  imports: [CommonModule, AsyncPipe, TranslateModule, RouterLink, RouterLinkActive, LanguageSwitcher],
+  imports: [
+    CommonModule,
+    AsyncPipe,
+    TranslateModule,
+    RouterLink,
+    RouterLinkActive,
+    LanguageSwitcher,
+    PermissionDirective,
+    HideIfAdminDirective,
+  ],
   templateUrl: './navbar-mobile.html',
-  styleUrl: './navbar-mobile.scss',
+  styleUrls: ['./navbar-mobile.scss'],
 })
 export class NavbarMobile extends BaseNavbar {}

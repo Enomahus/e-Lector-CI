@@ -31,6 +31,22 @@
       "email": "Email"
     }
   },
+  "breadcrumb": {
+    "pollingStations": "Polling stations",
+    "pollingStationCreate": "New polling station",
+    "pollingStationEdit": "Edit polling station",
+    "constituencies": "Constituencies",
+    "constituencyCreate": "New constituency",
+    "registrationRequestAdd": "New registration request",
+    "registrationRequestEdit": "Edit registration request",
+    "registrationRequestsForAdmin": "Request list",
+    "registrationRequestsForManagement": "Request list",
+    "stakeholderAdd": "New stakeholder",
+    "stakeholders": "Stakeholder list",
+    "userCreate": "Create user",
+    "userEdit": "Edit user",
+    "users": "User list"
+  },
   "formError": {
     "required": "Required field",
     "emailInvalid": "The email is not in the correct format.",
@@ -49,6 +65,24 @@
     "signUp": "Sign up",
     "externalLoginFailed": "An error occurred during login, please try again.",
     "continueWithEmail": "Or continue with your email address"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to your most common questions",
+    "questions": [
+      {
+        "question": "How do I reset my password?",
+        "answer": "To reset your password, click on the 'Forgot password' link on the login page and follow the instructions to receive a reset email."
+      },
+      {
+        "question": "How do I contact support?",
+        "answer": "You can contact our support by sending an email to support@example.com."
+      },
+      {
+        "question": "How do I create an account?",
+        "answer": "To create an account, click on the 'Sign up' link on the login page and fill out the registration form."
+      }
+    ]
   },
   "forgotPassword": {
     "email": "Email address",
@@ -303,5 +337,16 @@
       "registrationRequest": "Registration request",
       "registrationDataUpdate": "Registration data update"
     }
+  },
+  "registrationRequest": {
+    "requestDetails": "Registration Request Details",
+    "newRegistrationRequestTitle": "New Registration Request",
+    "errorCreating": "Error creating the registration request.",
+    "successCreating": "Registration request created successfully",
+    "errorUpdating": "Error updating the registration request.",
+    "successUpdating": "Registration request updated successfully",
+    "supportingDocuments": "Supporting Documents",
+    "citizenInformation": "Citizen Information",
+    "requestInformation": "Request Information"
   }
 }

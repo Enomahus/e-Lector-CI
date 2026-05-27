@@ -70,6 +70,24 @@
     "externalLoginFailed": "Une erreur est survenue lors de la connexion, veuillez réessayer.",
     "continueWithEmail": "Ou continuez avec votre adresse e-mail"
   },
+  "faq": {
+    "title": "Foire aux questions",
+    "subtitle": "Trouvez les réponses à vos questions les plus fréquentes",
+    "questions": [
+      {
+        "question": "Comment réinitialiser mon mot de passe ?",
+        "answer": "Pour réinitialiser votre mot de passe, cliquez sur le lien 'Mot de passe oublié' sur la page de connexion et suivez les instructions pour recevoir un e-mail de réinitialisation."
+      },
+      {
+        "question": "Comment contacter le support ?",
+        "answer": "Vous pouvez contacter notre support en envoyant un e-mail à support@example.com."
+      },
+      {
+        "question": "Comment créer un compte ?",
+        "answer": "Pour créer un compte, cliquez sur le lien 'S'inscrire' sur la page de connexion et remplissez le formulaire d'inscription."
+      }
+    ]
+  },
   "forgotPassword": {
     "email": "Adresse mail",
     "forgotActionButton": "Recevoir le mail de réinitialisation",
