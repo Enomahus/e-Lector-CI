@@ -1,15 +1,11 @@
 ﻿using Application.Common.Enums;
 using Application.Common.Pagination;
 using Application.Features.Common;
-using Application.Features.Common.Citizen;
 using Application.Features.RegistrationRequests.Common;
-using Application.Features.RegistrationRequests.GetRegistrationRequests;
-using Application.Features.RegistrationRequests.GetRegistrationRequestsForManagement;
 using Application.Models;
 using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pcea.Core.Net.Authorization.Application.Attributes;
 using Tools.Logging;
@@ -39,7 +35,7 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
         ReadOnlyDbContext context,
         TimeProvider timeProvider
     )
-        : BaseRegistrationRequestsHandler<GetRegistrationRequestsQuery>(context, timeProvider),
+        : BaseRegistrationRequestsHandler<GetRegistrationRequestsForAdminQuery>(context, timeProvider),
             IRequestHandler<
                 GetRegistrationRequestsForAdminQuery,
                 Result<PagedList<GetRegistrationRequestsForAdminResponse>>
@@ -54,19 +50,21 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
 
             try
             {
-                var query = context
+                var query = _context
                     .RegistrationRequests.Include(r => r.Citizen)
                     .ApplySearch(request.Search)
                     .ApplySort(request.Sort, request.Order);
 
-                var data = await GetDataAsync(query, cancellationToken);
-
                 int pageIndex = request.PageIndex ?? 0;
 
-                var result = await data.ToPagedListAsync(
+                var (data, totalCount) = await GetDataAsync(
+                    query,
                     pageIndex,
                     request.PageSize,
-                    r => new GetRegistrationRequestsForAdminResponse
+                    cancellationToken
+                );
+
+                var items = data.Select(r => new GetRegistrationRequestsForAdminResponse
                     {
                         Id = r.Id,
                         Reference = r.Reference,
@@ -84,30 +82,12 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
                         PhotoId = r.PhotoId,
                         PhotoName = r.PhotoName,
                         AuthorName = r.AuthorName,
-                    },
-                    cancellationToken
-                );
+                    })
+                    .ToList();
+
+                var result = new PagedList<GetRegistrationRequestsForAdminResponse>(items, totalCount);
 
                 await AddFileNameAsync(result.Items, cancellationToken);
-
-                //var result = await query.ToPagedListAsync(
-                //    pageIndex,
-                //    request.PageSize,
-                //    r => new GetRegistrationRequestsForAdminResponse
-                //    {
-                //        Id = r.Id,
-                //        Reference = r.Reference,
-                //        SubmissionDate = r.SubmissionDate,
-                //        Status = r.Status,
-                //        ConstituencyId = r.ConstituencyId,
-                //        ConstituencyName = r.Constituency.Wording,
-                //        Comment = r.ReasonForRejection,
-                //        Citizen = CitizenModel.FromDao(r.Citizen),
-                //        CanBeDeleted = false,
-                //        AuthorName = ((r.Author.FirstName ?? "") + " " + (r.Author.LastName ?? "")).Trim(),
-                //    },
-                //    cancellationToken
-                //);
 
                 return Result<PagedList<GetRegistrationRequestsForAdminResponse>>.From(result);
             }

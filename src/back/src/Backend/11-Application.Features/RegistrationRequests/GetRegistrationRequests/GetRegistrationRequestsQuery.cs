@@ -52,20 +52,22 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
 
             try
             {
-                var query = context
+                var query = _context
                     .RegistrationRequests.Include(r => r.Citizen)
-                    //.Where(r => r.AuthorId == currentUserId)
                     .ApplySearch(request.Search)
                     .ApplySort(request.Sort, request.Order);
 
-                var data = await GetDataAsync(query, cancellationToken, currentUserId);
-
                 int pageIndex = request.PageIndex ?? 0;
 
-                var result = await data.ToPagedListAsync(
+                var (data, totalCount) = await GetDataAsync(
+                    query,
                     pageIndex,
                     request.PageSize,
-                    r => new GetRegistrationRequestsResponse
+                    cancellationToken,
+                    currentUserId
+                );
+
+                var items = data.Select(r => new GetRegistrationRequestsResponse
                     {
                         Id = r.Id,
                         Reference = r.Reference,
@@ -83,38 +85,12 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
                         PhotoId = r.PhotoId,
                         PhotoName = r.PhotoName,
                         AuthorName = r.AuthorName,
-                    },
-                    cancellationToken
-                );
+                    })
+                    .ToList();
+
+                var result = new PagedList<GetRegistrationRequestsResponse>(items, totalCount);
 
                 await AddFileNameAsync(result.Items, cancellationToken);
-
-                //var query = context
-                //    .RegistrationRequests.Include(r => r.Citizen)
-                //    .Where(r => r.AuthorId == currentUserId)
-                //    .ApplySearch(request.Search)
-                //    .ApplySort(request.Sort, request.Order);
-
-                //int pageIndex = request.PageIndex ?? 0;
-
-                //var result = await query.ToPagedListAsync(
-                //    pageIndex,
-                //    request.PageSize,
-                //    r => new GetRegistrationRequestsResponse
-                //    {
-                //        Id = r.Id,
-                //        Reference = r.Reference,
-                //        SubmissionDate = r.SubmissionDate,
-                //        Status = r.Status,
-                //        ConstituencyId = r.ConstituencyId,
-                //        ConstituencyName = r.Constituency.Wording,
-                //        Comment = r.ReasonForRejection,
-                //        Citizen = CitizenModel.FromDao(r.Citizen),
-                //        CanBeDeleted =
-                //            currentUserId == r.AuthorId && r.Status == RegistrationStatus.ToBeProcessed,
-                //    },
-                //    cancellationToken
-                //);
 
                 return Result<PagedList<GetRegistrationRequestsResponse>>.From(result);
             }

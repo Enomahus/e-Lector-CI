@@ -15,20 +15,31 @@ namespace Application.Features.RegistrationRequests.Common
         protected readonly ReadOnlyDbContext _context = context;
         protected readonly TimeProvider _timeProvider = timeProvider;
 
-        protected async Task<IQueryable<GetRegistrationRequestsResponseModel>> GetDataAsync(
+        protected async Task<(List<GetRegistrationRequestsResponseModel> Items, int TotalCount)> GetDataAsync(
             IQueryable<RegistrationRequestDao> query,
+            int pageIndex,
+            int pageSize,
             CancellationToken cancellationToken,
-            Guid? UserId = null
+            Guid? userId = null
         )
         {
-            var now = _timeProvider.GetUtcNow();
-
-            if (UserId.HasValue)
+            if (userId.HasValue)
             {
-                query = query.Where(x => x.AuthorId == UserId);
+                query = query.Where(x => x.AuthorId == userId);
             }
 
+            // Count exécuté côté SQL avant projection pour des performances optimales.
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            if (totalCount == 0 || pageIndex * pageSize >= totalCount)
+            {
+                return ([], totalCount);
+            }
+
+            // Pagination côté SQL avant matérialisation pour éviter de charger toutes les lignes.
             var rawData = await query
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
                 .Select(x => new
                 {
                     x.Id,
@@ -41,7 +52,7 @@ namespace Application.Features.RegistrationRequests.Common
                     x.Citizen, // On récupère l'entité Citizen brute pour le mapping C# ensuite
                     x.AuthorId,
                     x.Author,
-                    // On groupe ou filtre les documents en une seule fois pour éviter les FirstOrDefault multiples
+                    // On filtre les documents en une seule fois pour éviter les FirstOrDefault multiples
                     Documents = x
                         .RegistrationRequestDocuments.Where(d =>
                             d.RegistrationRequestDocumentType
@@ -55,43 +66,46 @@ namespace Application.Features.RegistrationRequests.Common
                 })
                 .ToListAsync(cancellationToken);
 
-            var result = rawData.Select(x => new GetRegistrationRequestsResponseModel
-            {
-                Id = x.Id,
-                Reference = x.Reference,
-                SubmissionDate = x.SubmissionDate,
-                Status = x.Status,
-                ConstituencyId = x.ConstituencyId,
-                ConstituencyName = x.ConstituencyName,
-                Comment = x.Comment,
-                AuthorName = $"{x.Author?.FirstName} {x.Author?.LastName}",
-                Citizen = CitizenModel.FromDao(x.Citizen),
-                CanBeDeleted =
-                    UserId.HasValue
-                    && x.AuthorId == UserId.Value
-                    && x.Status == RegistrationStatus.ToBeProcessed,
-                CertificateOfNationalityDocumentId = x
-                    .Documents.FirstOrDefault(d =>
-                        d.RegistrationRequestDocumentType
-                        == RegistrationRequestDocumentType.CertificateOfNationality
-                    )
-                    ?.DocumentId.ToString(),
-                CertificateOfNationalityDocumentName = null,
-                IdentityDocumentId = x
-                    .Documents.FirstOrDefault(d =>
-                        d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.IdentityDocument
-                    )
-                    ?.DocumentId.ToString(),
-                IdentityDocumentName = null,
-                PhotoId = x
-                    .Documents.FirstOrDefault(d =>
-                        d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.Photo
-                    )
-                    ?.DocumentId.ToString(),
-                PhotoName = null,
-            });
+            var items = rawData
+                .Select(x => new GetRegistrationRequestsResponseModel
+                {
+                    Id = x.Id,
+                    Reference = x.Reference,
+                    SubmissionDate = x.SubmissionDate,
+                    Status = x.Status,
+                    ConstituencyId = x.ConstituencyId,
+                    ConstituencyName = x.ConstituencyName,
+                    Comment = x.Comment,
+                    AuthorName = $"{x.Author?.FirstName} {x.Author?.LastName}",
+                    Citizen = CitizenModel.FromDao(x.Citizen),
+                    CanBeDeleted =
+                        userId.HasValue
+                        && x.AuthorId == userId.Value
+                        && x.Status == RegistrationStatus.ToBeProcessed,
+                    CertificateOfNationalityDocumentId = x
+                        .Documents.FirstOrDefault(d =>
+                            d.RegistrationRequestDocumentType
+                            == RegistrationRequestDocumentType.CertificateOfNationality
+                        )
+                        ?.DocumentId.ToString(),
+                    CertificateOfNationalityDocumentName = null,
+                    IdentityDocumentId = x
+                        .Documents.FirstOrDefault(d =>
+                            d.RegistrationRequestDocumentType
+                            == RegistrationRequestDocumentType.IdentityDocument
+                        )
+                        ?.DocumentId.ToString(),
+                    IdentityDocumentName = null,
+                    PhotoId = x
+                        .Documents.FirstOrDefault(d =>
+                            d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.Photo
+                        )
+                        ?.DocumentId.ToString(),
+                    PhotoName = null,
+                })
+                .ToList();
 
-            return result.AsQueryable();
+            return (items, totalCount);
         }
 
         protected async Task AddFileNameAsync(

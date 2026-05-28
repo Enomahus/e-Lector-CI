@@ -56,24 +56,26 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForMa
             try
             {
                 // Filtre par les circonscriptions assignées à l'agent courant
-                var query = context
+                var query = _context
                     .RegistrationRequests.Include(r => r.Citizen)
                     .Where(r =>
-                        context.UserConstituencies.Any(uc =>
+                        _context.UserConstituencies.Any(uc =>
                             uc.UserId == currentUserId && uc.ConstituencyId == r.ConstituencyId
                         )
                     )
                     .ApplySearch(request.Search)
                     .ApplySort(request.Sort, request.Order);
 
-                var data = await GetDataAsync(query, cancellationToken);
-
                 int pageIndex = request.PageIndex ?? 0;
 
-                var result = await data.ToPagedListAsync(
+                var (data, totalCount) = await GetDataAsync(
+                    query,
                     pageIndex,
                     request.PageSize,
-                    r => new GetRegistrationRequestsForManagementResponse
+                    cancellationToken
+                );
+
+                var items = data.Select(r => new GetRegistrationRequestsForManagementResponse
                     {
                         Id = r.Id,
                         Reference = r.Reference,
@@ -91,30 +93,12 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForMa
                         PhotoId = r.PhotoId,
                         PhotoName = r.PhotoName,
                         AuthorName = r.AuthorName,
-                    },
-                    cancellationToken
-                );
+                    })
+                    .ToList();
+
+                var result = new PagedList<GetRegistrationRequestsForManagementResponse>(items, totalCount);
 
                 await AddFileNameAsync(result.Items, cancellationToken);
-
-                //var result = await query.ToPagedListAsync(
-                //    pageIndex,
-                //    request.PageSize,
-                //    r => new GetRegistrationRequestsForManagementResponse
-                //    {
-                //        Id = r.Id,
-                //        Reference = r.Reference,
-                //        SubmissionDate = r.SubmissionDate,
-                //        Status = r.Status,
-                //        ConstituencyId = r.ConstituencyId,
-                //        ConstituencyName = r.Constituency.Wording,
-                //        Comment = r.ReasonForRejection,
-                //        Citizen = CitizenModel.FromDao(r.Citizen),
-                //        CanBeDeleted = r.Status == RegistrationStatus.ToBeProcessed,
-                //        AuthorName = ((r.Author.FirstName ?? "") + " " + (r.Author.LastName ?? "")).Trim(),
-                //    },
-                //    cancellationToken
-                //);
 
                 return Result<PagedList<GetRegistrationRequestsForManagementResponse>>.From(result);
             }
