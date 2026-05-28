@@ -20,21 +20,30 @@
       </li>
       @if (showAdminRequestsText()) {
         <li class="menu-item" [routerLinkActive]="'active'">
-          <a class="menu-item-interaction" routerLink="registration-requests-for-admin">
+          <a
+            class="menu-item-interaction"
+            routerLink="registration-requests-for-admin"
+          >
             {{ 'navbar.myRequestsForAdmin' | translate }}
           </a>
         </li>
       }
       @if (showOrganismRequestsText()) {
         <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
-          <a class="menu-item-interaction" routerLink="registration-requests-for-management">
+          <a
+            class="menu-item-interaction"
+            routerLink="registration-requests-for-management"
+          >
             {{ 'navbar.myRequestsForOrganism' | translate }}
           </a>
         </li>
       }
       @if (showElectorRequestsText()) {
         <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
-          <a class="menu-item-interaction" routerLink="/registration-requests">
+          <a
+            class="menu-item-interaction"
+            routerLink="/registration-requests"
+          >
             {{ 'navbar.myRequests' | translate }}
           </a>
         </li>

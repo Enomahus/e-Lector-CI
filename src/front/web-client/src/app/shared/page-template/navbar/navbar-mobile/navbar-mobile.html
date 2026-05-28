@@ -29,7 +29,7 @@
       <li class="menu-item" [routerLinkActive]="'active'">
         <a
           class="menu-item-interaction"
-          [classList]="isRouteMatching('registration-requests')"
+          [class.active]="isRouteMatching('registration-requests')"
           routerLink="/registration-requests"
         >
           {{ 'navbar.myRequests' | translate }}

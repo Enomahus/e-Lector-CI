@@ -3,10 +3,13 @@ using Application.Common.Pagination;
 using Application.Features.Common;
 using Application.Features.Common.Citizen;
 using Application.Features.RegistrationRequests.Common;
+using Application.Features.RegistrationRequests.GetRegistrationRequests;
+using Application.Features.RegistrationRequests.GetRegistrationRequestsForManagement;
 using Application.Models;
 using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pcea.Core.Net.Authorization.Application.Attributes;
 using Tools.Logging;
@@ -16,7 +19,8 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
     [WithPermission([nameof(AppPermission.GetRegistrationRequestsFormAdmin)])]
     public class GetRegistrationRequestsForAdminQuery
         : IRequest<Result<PagedList<GetRegistrationRequestsForAdminResponse>>>,
-            IPagedQuery
+            IPagedQuery,
+            IRegistrationRequestQuery
     {
         public string? Sort { get; set; }
         public string? Order { get; set; }
@@ -31,11 +35,15 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
         public GetRegistrationRequestsForAdminQueryValidator() { }
     }
 
-    public class GetRegistrationRequestsForAdminQueryHandler(ReadOnlyDbContext context)
-        : IRequestHandler<
-            GetRegistrationRequestsForAdminQuery,
-            Result<PagedList<GetRegistrationRequestsForAdminResponse>>
-        >
+    public class GetRegistrationRequestsForAdminQueryHandler(
+        ReadOnlyDbContext context,
+        TimeProvider timeProvider
+    )
+        : BaseRegistrationRequestsHandler<GetRegistrationRequestsQuery>(context, timeProvider),
+            IRequestHandler<
+                GetRegistrationRequestsForAdminQuery,
+                Result<PagedList<GetRegistrationRequestsForAdminResponse>>
+            >
     {
         public async Task<Result<PagedList<GetRegistrationRequestsForAdminResponse>>> Handle(
             GetRegistrationRequestsForAdminQuery request,
@@ -51,9 +59,11 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
                     .ApplySearch(request.Search)
                     .ApplySort(request.Sort, request.Order);
 
+                var data = await GetDataAsync(query, cancellationToken);
+
                 int pageIndex = request.PageIndex ?? 0;
 
-                var result = await query.ToPagedListAsync(
+                var result = await data.ToPagedListAsync(
                     pageIndex,
                     request.PageSize,
                     r => new GetRegistrationRequestsForAdminResponse
@@ -63,14 +73,41 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
                         SubmissionDate = r.SubmissionDate,
                         Status = r.Status,
                         ConstituencyId = r.ConstituencyId,
-                        ConstituencyName = r.Constituency.Wording,
-                        Comment = r.ReasonForRejection,
-                        Citizen = CitizenModel.FromDao(r.Citizen),
-                        CanBeDeleted = false,
-                        AuthorName = ((r.Author.FirstName ?? "") + " " + (r.Author.LastName ?? "")).Trim(),
+                        ConstituencyName = r.ConstituencyName,
+                        Comment = r.Comment,
+                        Citizen = r.Citizen,
+                        CanBeDeleted = r.CanBeDeleted,
+                        CertificateOfNationalityDocumentId = r.CertificateOfNationalityDocumentId,
+                        CertificateOfNationalityDocumentName = r.CertificateOfNationalityDocumentName,
+                        IdentityDocumentId = r.IdentityDocumentId,
+                        IdentityDocumentName = r.IdentityDocumentName,
+                        PhotoId = r.PhotoId,
+                        PhotoName = r.PhotoName,
+                        AuthorName = r.AuthorName,
                     },
                     cancellationToken
                 );
+
+                await AddFileNameAsync(result.Items, cancellationToken);
+
+                //var result = await query.ToPagedListAsync(
+                //    pageIndex,
+                //    request.PageSize,
+                //    r => new GetRegistrationRequestsForAdminResponse
+                //    {
+                //        Id = r.Id,
+                //        Reference = r.Reference,
+                //        SubmissionDate = r.SubmissionDate,
+                //        Status = r.Status,
+                //        ConstituencyId = r.ConstituencyId,
+                //        ConstituencyName = r.Constituency.Wording,
+                //        Comment = r.ReasonForRejection,
+                //        Citizen = CitizenModel.FromDao(r.Citizen),
+                //        CanBeDeleted = false,
+                //        AuthorName = ((r.Author.FirstName ?? "") + " " + (r.Author.LastName ?? "")).Trim(),
+                //    },
+                //    cancellationToken
+                //);
 
                 return Result<PagedList<GetRegistrationRequestsForAdminResponse>>.From(result);
             }
