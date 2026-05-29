@@ -1,5 +1,7 @@
 ﻿using Application.Common.Enums;
+using Application.Common.Pagination;
 using Application.Features.Common;
+using Application.Features.Users.Common;
 using Application.Interfaces.Services;
 using Application.Models;
 using FluentValidation;
@@ -12,7 +14,7 @@ using Tools.Logging;
 namespace Application.Features.Users.GetUsers
 {
     [WithPermission([nameof(AppPermission.GetUsers)])]
-    public class GetUsersQuery : IRequest<Result<PagedList<GetUsersResponse>>>
+    public class GetUsersQuery : IRequest<Result<PagedList<GetUsersResponse>>>, IPagedQuery
     {
         public long? ConstituencyId { get; set; }
         public string? Sort { get; set; }
@@ -44,7 +46,10 @@ namespace Application.Features.Users.GetUsers
 
             try
             {
-                var query = context.Users.AsQueryable();
+                var query = context
+                    .Users.AsNoTracking()
+                    .ApplySearch(request.Search)
+                    .ApplySort(request.Sort, request.Order);
 
                 // Filtre par circonscription
                 if (request.ConstituencyId.HasValue)
@@ -52,52 +57,9 @@ namespace Application.Features.Users.GetUsers
                         u.UserConstituencies.Any(uc => uc.ConstituencyId == request.ConstituencyId)
                     );
 
-                // Recherche globale
-                if (!string.IsNullOrWhiteSpace(request.Search))
-                {
-                    var search = request.Search.ToLower();
-                    query = query.Where(u =>
-                        (u.LastName != null && u.LastName.ToLower().Contains(search))
-                        || (u.FirstName != null && u.FirstName.ToLower().Contains(search))
-                        || (u.Email != null && u.Email.ToLower().Contains(search))
-                        || (u.PhoneNumber != null && u.PhoneNumber.ToLower().Contains(search))
-                    );
-                }
-
-                var totalCount = await query.CountAsync(cancellationToken);
-
-                // Tri (whitelist des colonnes autorisées)
-                var allowedSortColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    "lastName",
-                    "firstName",
-                    "email",
-                    "createdAt",
-                    "isActive",
-                };
-
-                string sortColumn = allowedSortColumns.Contains(request.Sort ?? "")
-                    ? request.Sort!.ToLower()
-                    : "lastname";
-                bool descending = string.Equals(request.Order, "desc", StringComparison.OrdinalIgnoreCase);
-
-                query = (sortColumn, descending) switch
-                {
-                    ("firstname", false) => query.OrderBy(u => u.FirstName),
-                    ("firstname", true) => query.OrderByDescending(u => u.FirstName),
-                    ("email", false) => query.OrderBy(u => u.Email),
-                    ("email", true) => query.OrderByDescending(u => u.Email),
-                    ("createdat", false) => query.OrderBy(u => u.CreatedAt),
-                    ("createdat", true) => query.OrderByDescending(u => u.CreatedAt),
-                    ("isactive", false) => query.OrderBy(u => u.DisabledDate),
-                    ("isactive", true) => query.OrderByDescending(u => u.DisabledDate),
-                    (_, false) => query.OrderBy(u => u.LastName),
-                    (_, true) => query.OrderByDescending(u => u.LastName),
-                };
-
-                // Pagination
                 int pageIndex = request.PageIndex ?? 0;
-                var users = await query
+
+                var (data, totalCount) = await query
                     .Skip(pageIndex * request.PageSize)
                     .Take(request.PageSize)
                     .Select(x => new GetUsersResponse()
@@ -119,10 +81,11 @@ namespace Application.Features.Users.GetUsers
                         Roles = x.UserRoles.Select(r => r.Role.Name ?? ""),
                         AuthProvider = x.AuthProvider,
                     })
-                    .ToListAsync(cancellationToken);
+                    .ToListAsync(cancellationToken)
+                    .ContinueWith(t => (Data: t.Result, TotalCount: query.Count()), cancellationToken);
 
                 return Result<PagedList<GetUsersResponse>>.From(
-                    new PagedList<GetUsersResponse>(users, totalCount)
+                    new PagedList<GetUsersResponse>(data, totalCount)
                 );
             }
             catch (OperationCanceledException ex)

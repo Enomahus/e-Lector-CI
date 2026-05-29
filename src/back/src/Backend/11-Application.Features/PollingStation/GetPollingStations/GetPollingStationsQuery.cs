@@ -1,4 +1,5 @@
-﻿using Application.Common.Enums;
+﻿using System.Diagnostics;
+using Application.Common.Enums;
 using Application.Common.Pagination;
 using Application.Features.Common;
 using Application.Features.PollingStation.Common;
@@ -6,6 +7,7 @@ using Application.Models;
 using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Pcea.Core.Net.Authorization.Application.Attributes;
 using Tools.Logging;
 
@@ -42,15 +44,22 @@ namespace Application.Features.PollingStation.GetPollingStations
             try
             {
                 var query = context
-                    .PollingStations.ApplySearch(request.Search)
+                    .PollingStations.AsNoTracking()
+                    .AsSplitQuery()
+                    .Include(ps => ps.Constituency)
+                        .ThenInclude(c => c.Parent)
+                            .ThenInclude(c => c.Parent)
+                                .ThenInclude(c => c.Parent)
+                                    .ThenInclude(c => c.Parent)
+                    .ApplySearch(request.Search)
                     .ApplySort(request.Sort, request.Order);
 
                 int pageIndex = request.PageIndex ?? 0;
 
-                var result = await query.ToPagedListAsync(
-                    pageIndex,
-                    request.PageSize,
-                    ps => new GetPollingStationsResponse(
+                var (data, totalCount) = await query
+                    .Skip(pageIndex * request.PageSize)
+                    .Take(request.PageSize)
+                    .Select(ps => new GetPollingStationsResponse(
                         (long?)ps.Constituency.Parent.Parent.Parent.Parent.Id,
                         ps.Constituency.Parent.Parent.Parent.Parent.Code,
                         ps.Constituency.Parent.Parent.Parent.Parent.Wording,
@@ -70,11 +79,13 @@ namespace Application.Features.PollingStation.GetPollingStations
                         ps.StationNumber,
                         ps.DisabledDate == null || ps.DisabledDate > now,
                         ps.DisabledDate
-                    ),
-                    cancellationToken
-                );
+                    ))
+                    .ToListAsync(cancellationToken)
+                    .ContinueWith(t => (Data: t.Result, TotalCount: query.Count()), cancellationToken);
 
-                return Result<PagedList<GetPollingStationsResponse>>.From(result);
+                return Result<PagedList<GetPollingStationsResponse>>.From(
+                    new PagedList<GetPollingStationsResponse>(data, totalCount)
+                );
             }
             catch (OperationCanceledException ex)
             {

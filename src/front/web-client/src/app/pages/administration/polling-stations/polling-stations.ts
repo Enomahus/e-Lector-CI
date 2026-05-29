@@ -103,10 +103,7 @@ export class PollingStations extends BaseTable<GetPollingStationsResponse> {
         data: response.data?.items ?? [],
         total: response.data?.totalCount ?? 0,
       })),
-      catchError((err) => {
-        if (err.name === 'CanceledError' || err.status === 0) {
-          this.translateService.get('pollingStations.loadError').subscribe((msg) => alert(msg));
-        }
+      catchError(() => {
         return of({ data: [], total: 0 });
       }),
     );

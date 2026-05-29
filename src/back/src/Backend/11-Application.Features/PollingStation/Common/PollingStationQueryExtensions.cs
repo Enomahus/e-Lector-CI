@@ -31,23 +31,20 @@ public static class PollingStationQueryExtensions
         if (string.IsNullOrWhiteSpace(search))
             return query;
 
-        var term = search.ToLower();
+        var term = search.Trim();
 
         return query.Where(ps =>
-            ps.StationNumber.ToLower().Contains(term)
-            || (ps.Constituency.Wording != null && ps.Constituency.Wording.ToLower().Contains(term))
-            || (ps.Constituency.Parent != null && ps.Constituency.Parent.Wording.ToLower().Contains(term))
-            || (
-                ps.Constituency.Parent.Parent != null
-                && ps.Constituency.Parent.Parent.Wording.ToLower().Contains(term)
-            )
+            ps.StationNumber.Contains(term)
+            || (ps.Constituency.Wording != null && ps.Constituency.Wording.Contains(term))
+            || (ps.Constituency.Parent != null && ps.Constituency.Parent.Wording.Contains(term))
+            || (ps.Constituency.Parent.Parent != null && ps.Constituency.Parent.Parent.Wording.Contains(term))
             || (
                 ps.Constituency.Parent.Parent.Parent != null
-                && ps.Constituency.Parent.Parent.Parent.Wording.ToLower().Contains(term)
+                && ps.Constituency.Parent.Parent.Parent.Wording.Contains(term)
             )
             || (
                 ps.Constituency.Parent.Parent.Parent.Parent != null
-                && ps.Constituency.Parent.Parent.Parent.Parent.Wording.ToLower().Contains(term)
+                && ps.Constituency.Parent.Parent.Parent.Parent.Wording.Contains(term)
             )
         );
     }

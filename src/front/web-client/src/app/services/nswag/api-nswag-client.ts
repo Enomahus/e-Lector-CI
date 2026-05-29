@@ -3236,8 +3236,15 @@ export interface GetRegistrationRequestsResponseModel {
     constituencyId?: number;
     constituencyName?: string;
     comment?: string;
+    authorName?: string;
     citizen?: CitizenModel;
     canBeDeleted?: boolean;
+    certificateOfNationalityDocumentId?: string | undefined;
+    certificateOfNationalityDocumentName?: string | undefined;
+    identityDocumentId?: string | undefined;
+    identityDocumentName?: string | undefined;
+    photoId?: string | undefined;
+    photoName?: string | undefined;
 }
 
 export interface GetRegistrationRequestsResponse extends GetRegistrationRequestsResponseModel {
@@ -3261,7 +3268,6 @@ export interface PagedListOfGetRegistrationRequestsForManagementResponse {
 }
 
 export interface GetRegistrationRequestsForManagementResponse extends GetRegistrationRequestsResponseModel {
-    authorName?: string;
 }
 
 export interface GetRegistrationRequestsForManagementQuery {
@@ -3282,7 +3288,6 @@ export interface PagedListOfGetRegistrationRequestsForAdminResponse {
 }
 
 export interface GetRegistrationRequestsForAdminResponse extends GetRegistrationRequestsResponseModel {
-    authorName?: string;
 }
 
 export interface GetRegistrationRequestsForAdminQuery {
