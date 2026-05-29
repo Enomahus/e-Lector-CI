@@ -1,124 +1,122 @@
 ﻿using Application.Common.Enums;
 using Tools.Constants;
 
-namespace Infrastructure.Persistence.SQLServer.Contexts.Data
+namespace Infrastructure.Persistence.SQLServer.Contexts.Data;
+
+/// <summary>
+/// Static, role-based seed of the authorization matrix.
+/// Three application roles drive the front-end navigation menus:
+///   - Elector : creates and consults his own registration requests.
+///   - Agent   : manages (validates / rejects) registration requests for his organism.
+///   - Admin   : full access plus administration menus.
+/// </summary>
+public static class RolesData
 {
-    public static class RolesData
-    {
-        public static readonly Dictionary<AppAction, List<AppPermission>> ActionsSeed = new()
+    public static readonly IReadOnlyDictionary<AppAction, IReadOnlyList<AppPermission>> ActionsSeed =
+        new Dictionary<AppAction, IReadOnlyList<AppPermission>>
         {
-            { AppAction.SuperAdmin, Enum.GetValues<AppPermission>().ToList() },
-            {
-                AppAction.UsersAdministration,
-                [
-                    AppPermission.AccessUsersAdminPage,
-                    AppPermission.GetUser,
-                    AppPermission.GetUsers,
-                    AppPermission.CreateUser,
-                    AppPermission.UpdateUser,
-                    AppPermission.DeleteUser,
-                    AppPermission.GetRoles,
-                    AppPermission.CheckEmailBeUnique,
-                ]
-            },
-            {
-                AppAction.ConstituencyAdministration,
-                [
-                    AppPermission.AccessConstituenciesAdminPage,
-                    AppPermission.GetConstituencies,
-                    AppPermission.GetConstituency,
-                    AppPermission.CreateConstituency,
-                    AppPermission.UpdateConstituency,
-                    AppPermission.DeleteConstituency,
-                ]
-            },
-            {
-                AppAction.PollingStationAdministration,
-                [
-                    AppPermission.AccessPollingStationsAdminPage,
-                    AppPermission.GetPollingStation,
-                    AppPermission.GetPollingStations,
-                    AppPermission.CreatePollingStation,
-                    AppPermission.UpdatePollingStation,
-                    AppPermission.DeletePollingStation,
-                ]
-            },
-            { // AGENT: Aaction de recevoir, consulter globalement et traiter (valider / refuser)
-                AppAction.RegistrationRequestManagement,
-                [
-                    AppPermission.AccessRegistrationRequestsForManagementPage,
-                    AppPermission.GetRegistrationRequestsForManagement,
-                    AppPermission.UpdateRegistrationRequestsForManagement,
-                    AppPermission.GetRegistrationRequests,
-                    AppPermission.TriggerActionOnRegistrationRequest, // Approuver / Refuser
-                    AppPermission.CheckRegistrationReferenceBeUnique,
-                    AppPermission.AccessRegistrationRequestsPage,
-                ]
-            },
-            {
-                // ELECTEUR: Action de faire une nouvelle demande et la modifier
-                // si incomplète et pas encore Approuver ou Refuser
-                AppAction.RegistrationRequestCreation,
-                [
-                    AppPermission.CreateRegistrationRequest,
-                    AppPermission.AccessUpdateRegistrationRequest,
-                    AppPermission.UpdateRegistrationRequest,
-                    AppPermission.UploadRegistrationRequestTempDocument,
-                ]
-            },
-            {
-                // ELECTEUR: Consultation restreinte à SES propre données
-                AppAction.RegistrationRequestConsultation,
-                [
-                    AppPermission.AccessRegistrationRequestsPage,
-                    AppPermission.GetRegistrationRequests,
-                    AppPermission.GetRegistrationRequestForCurrentUser,
-                ]
-            },
-            {
-                // ADMIN: Tous les droits spécifiques sur toutes les demandes
-                AppAction.RegistrationRequestAdministration,
-                [
-                    AppPermission.AccessRegistrationRequestsForAdminPage,
-                    AppPermission.AccessUpdateRegistrationRequest,
-                    AppPermission.GetRegistrationRequest,
-                    AppPermission.DeleteRegistrationRequest,
-                    AppPermission.GetRegistrationRequests,
-                    AppPermission.UpdateRegistrationRequest,
-                    AppPermission.TriggerActionOnRegistrationRequest, // Approuver / Refuser
-                ]
-            },
-            {
-                AppAction.CommonAccess,
-                [
-                    AppPermission.GetRoles,
-                    AppPermission.GetProfile,
-                    AppPermission.GetConstituencies,
-                    AppPermission.GetPollingStations,
-                ]
-            },
+            [AppAction.SuperAdmin] = Enum.GetValues<AppPermission>(),
+
+            [AppAction.UsersAdministration] =
+            [
+                AppPermission.AccessUsersAdminPage,
+                AppPermission.GetUser,
+                AppPermission.GetUsers,
+                AppPermission.CreateUser,
+                AppPermission.UpdateUser,
+                AppPermission.DeleteUser,
+                AppPermission.GetRoles,
+                AppPermission.CheckEmailBeUnique,
+            ],
+
+            [AppAction.ConstituencyAdministration] =
+            [
+                AppPermission.AccessConstituenciesAdminPage,
+                AppPermission.GetConstituencies,
+                AppPermission.GetConstituency,
+                AppPermission.CreateConstituency,
+                AppPermission.UpdateConstituency,
+                AppPermission.DeleteConstituency,
+            ],
+
+            [AppAction.PollingStationAdministration] =
+            [
+                AppPermission.AccessPollingStationsAdminPage,
+                AppPermission.GetPollingStation,
+                AppPermission.GetPollingStations,
+                AppPermission.CreatePollingStation,
+                AppPermission.UpdatePollingStation,
+                AppPermission.DeletePollingStation,
+            ],
+
+            // AGENT : receive, list globally and process (approve / refuse) requests.
+            [AppAction.RegistrationRequestManagement] =
+            [
+                AppPermission.AccessRegistrationRequestsForManagementPage,
+                AppPermission.GetRegistrationRequestsForManagement,
+                AppPermission.UpdateRegistrationRequestsForManagement,
+                AppPermission.GetRegistrationRequests,
+                AppPermission.TriggerActionOnRegistrationRequest,
+                AppPermission.CheckRegistrationReferenceBeUnique,
+            ],
+
+            // ELECTOR : create and update a request as long as it is not approved / refused.
+            [AppAction.RegistrationRequestCreation] =
+            [
+                AppPermission.CreateRegistrationRequest,
+                AppPermission.AccessUpdateRegistrationRequest,
+                AppPermission.UpdateRegistrationRequest,
+                AppPermission.UploadRegistrationRequestTempDocument,
+            ],
+
+            // ELECTOR : read-only access restricted to his own data.
+            [AppAction.RegistrationRequestConsultation] =
+            [
+                AppPermission.AccessRegistrationRequestsPage,
+                AppPermission.GetRegistrationRequests,
+                AppPermission.GetRegistrationRequestForCurrentUser,
+            ],
+
+            // ADMIN : full set of specific rights on every request.
+            [AppAction.RegistrationRequestAdministration] =
+            [
+                AppPermission.AccessRegistrationRequestsForAdminPage,
+                AppPermission.AccessUpdateRegistrationRequest,
+                AppPermission.GetRegistrationRequest,
+                AppPermission.DeleteRegistrationRequest,
+                AppPermission.GetRegistrationRequests,
+                AppPermission.UpdateRegistrationRequest,
+                AppPermission.TriggerActionOnRegistrationRequest,
+            ],
+
+            [AppAction.CommonAccess] =
+            [
+                AppPermission.GetRoles,
+                AppPermission.GetProfile,
+                AppPermission.GetConstituencies,
+                AppPermission.GetPollingStations,
+            ],
         };
 
-        public static readonly Dictionary<string, List<AppAction>> RolesSeed = new()
-        {
-            { AppConstants.SuperAdminRole, [AppAction.SuperAdmin] },
-            {
-                AppConstants.OrganismAgentRole,
-                [
-                    AppAction.CommonAccess,
-                    //AppAction.RegistrationRequestConsultation,
-                    AppAction.RegistrationRequestManagement,
-                    AppAction.PollingStationAdministration,
-                ]
-            },
-            {
-                AppConstants.ElectorRole,
-                [
-                    AppAction.CommonAccess,
-                    AppAction.RegistrationRequestCreation, // Creation et MAJ
-                    AppAction.RegistrationRequestConsultation, // Lecture personnelle uniquement
-                ]
-            },
-        };
-    }
+    public static readonly IReadOnlyDictionary<string, IReadOnlyList<AppAction>> RolesSeed = new Dictionary<
+        string,
+        IReadOnlyList<AppAction>
+    >
+    {
+        [AppConstants.SuperAdminRole] = [AppAction.SuperAdmin],
+
+        [AppConstants.OrganismAgentRole] =
+        [
+            AppAction.CommonAccess,
+            AppAction.RegistrationRequestManagement,
+            AppAction.PollingStationAdministration,
+        ],
+
+        [AppConstants.ElectorRole] =
+        [
+            AppAction.CommonAccess,
+            AppAction.RegistrationRequestCreation,
+            AppAction.RegistrationRequestConsultation,
+        ],
+    };
 }
