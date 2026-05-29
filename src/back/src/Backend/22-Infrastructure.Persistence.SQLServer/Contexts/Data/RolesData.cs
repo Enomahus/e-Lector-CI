@@ -50,10 +50,9 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.GetRegistrationRequestsForManagement,
                     AppPermission.UpdateRegistrationRequestsForManagement,
                     AppPermission.GetRegistrationRequests,
-                    //AppPermission.DeleteRegistrationRequestsForManagement,
-                    //AppPermission.AccessUpdateRegistrationRequest,
                     AppPermission.TriggerActionOnRegistrationRequest, // Approuver / Refuser
                     AppPermission.CheckRegistrationReferenceBeUnique,
+                    AppPermission.AccessRegistrationRequestsPage,
                 ]
             },
             {
@@ -65,7 +64,6 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.AccessUpdateRegistrationRequest,
                     AppPermission.UpdateRegistrationRequest,
                     AppPermission.UploadRegistrationRequestTempDocument,
-                    //AppPermission.GetRegistrationRequestForCurrentUser,
                 ]
             },
             {
@@ -73,8 +71,7 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                 AppAction.RegistrationRequestConsultation,
                 [
                     AppPermission.AccessRegistrationRequestsPage,
-                    //AppPermission.DeleteRegistrationRequest,
-                    //AppPermission.GetRegistrationRequests,
+                    AppPermission.GetRegistrationRequests,
                     AppPermission.GetRegistrationRequestForCurrentUser,
                 ]
             },
@@ -87,6 +84,8 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.GetRegistrationRequest,
                     AppPermission.DeleteRegistrationRequest,
                     AppPermission.GetRegistrationRequests,
+                    AppPermission.UpdateRegistrationRequest,
+                    AppPermission.TriggerActionOnRegistrationRequest, // Approuver / Refuser
                 ]
             },
             {

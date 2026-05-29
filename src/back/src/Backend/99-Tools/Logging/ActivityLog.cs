@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using OpenTelemetry.Trace;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using Newtonsoft.Json;
+using OpenTelemetry.Trace;
 using Tools.Serialization;
 
 namespace Tools.Logging;
@@ -14,13 +14,8 @@ public class ActivityLog(Activity? activity) : IDisposable
     {
         if (parameters?.Length > 0)
         {
-            var settings = new JsonSerializerSettings()
-            {
-                ContractResolver = new SensitiveDataResolver(),
-            };
-            var parametersJson = parameters
-                .Select(p => JsonConvert.SerializeObject(p, settings))
-                .ToList();
+            var settings = new JsonSerializerSettings() { ContractResolver = new SensitiveDataResolver() };
+            var parametersJson = parameters.Select(p => JsonConvert.SerializeObject(p, settings)).ToList();
             activity = activity?.AddTag("parameters", string.Join(", ", parametersJson));
         }
 
@@ -33,10 +28,7 @@ public class ActivityLog(Activity? activity) : IDisposable
         return this;
     }
 
-    public ActivityLog AddParameter<T, T_Property>(
-        T obj,
-        Expression<Func<T, T_Property>> propertySelector
-    )
+    public ActivityLog AddParameter<T, T_Property>(T obj, Expression<Func<T, T_Property>> propertySelector)
     {
         if (propertySelector.Body is MemberExpression memberExpression)
         {
@@ -54,7 +46,9 @@ public class ActivityLog(Activity? activity) : IDisposable
     }
 
     public ActivityLog AddParameters<T, T_Property>(
-        T obj, Expression<Func<T, IEnumerable<T_Property>>> propertySelector)
+        T obj,
+        Expression<Func<T, IEnumerable<T_Property>>> propertySelector
+    )
     {
         if (propertySelector.Body is MemberExpression memberExpression)
         {
@@ -75,7 +69,6 @@ public class ActivityLog(Activity? activity) : IDisposable
         return this;
     }
 
-   
     public void AddEvent(string message)
     {
         activity?.AddEvent(new ActivityEvent(message));
@@ -91,6 +84,7 @@ public class ActivityLog(Activity? activity) : IDisposable
     {
         activity?.AddTag(key, value);
     }
+
     public void Dispose()
     {
         Dispose(true);

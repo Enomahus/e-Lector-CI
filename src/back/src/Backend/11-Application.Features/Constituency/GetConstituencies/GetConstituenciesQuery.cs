@@ -30,15 +30,15 @@ namespace Application.Features.Constituency.GetConstituencies
             var dateNow = timeProvider.GetUtcNow();
 
             var rootConstituencies = await context
-                .Constituencies.Include(r => r.Subconstituency)
+                .Constituencies.AsNoTracking()
+                .AsSplitQuery()
+                .Include(r => r.Subconstituency)
                     .ThenInclude(d => d.Subconstituency)
                         .ThenInclude(sp => sp.Subconstituency)
                             .ThenInclude(m => m.Subconstituency)
                                 .ThenInclude(vl => vl.Subconstituency)
                 .Include(c => c.PollingStations)
                 .Where(r => r.ParentId == null)
-                .AsSplitQuery()
-                .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
             var response = rootConstituencies.Select(c => GetConstituenciesResponse.From(c, dateNow));

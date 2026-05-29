@@ -122,11 +122,13 @@
             @if (editRoutePrefix() && row.id) {
               <a
                 mat-icon-button
+                class="btn-grid btn-edit"
                 *appHasPermission="editPermission()"
                 [routerLink]="['/', editRoutePrefix(), row.id]"
-                [matTooltip]="'global.actions.edit' | translate"
+                [matTooltip]="'global.action.edit' | translate"
               >
-                <mat-icon>edit</mat-icon>
+                <i class="ph ph-pencil"></i>
+                <!-- <mat-icon>edit</mat-icon> -->
               </a>
             }
 
@@ -134,11 +136,12 @@
               <button
                 mat-icon-button
                 color="warn"
+                class="btn-grid btn-del"
                 *appHasPermission="deletePermission()"
-                [matTooltip]="'global.actions.delete' | translate"
+                [matTooltip]="'global.action.delete' | translate"
                 (click)="requestDelete.emit(row)"
               >
-                <mat-icon>delete</mat-icon>
+                <i class="ph ph-trash"></i>
               </button>
             }
           </div>

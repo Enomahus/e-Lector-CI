@@ -31,6 +31,12 @@
       "google": "Google",
       "microsoft": "Microsoft",
       "email": "Email"
+    },
+    "action": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "toggleEnable": "Activer",
+      "toggleDisable": "Désactiver"
     }
   },
   "breadcrumb": {
@@ -263,6 +269,10 @@
     "authProvider": "Authentification",
     "errorCreating": "Erreur lors de la création de l'utilisateur.",
     "successCreating": "Utilisateur créé avec succès",
+    "errorUpdating": "Erreur lors de la mise à jour de l'utilisateur.",
+    "successUpdating": "Utilisateur mis à jour avec succès",
+    "errorDeleting": "Erreur lors de la suppression de l'utilisateur.",
+    "successDeleting": "Utilisateur supprimé avec succès",
     "activateError": "Erreur lors de l'activation de l'utilisateur.",
     "deactivateError": "Erreur lors de la désactivation de l'utilisateur.",
     "activated": "Utilisateur activé avec succès",

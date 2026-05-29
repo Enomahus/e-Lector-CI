@@ -1,5 +1,6 @@
 ﻿using Application.Common.Enums;
 using Application.Common.Pagination;
+using Application.Exceptions.Auth;
 using Application.Features.Common;
 using Application.Features.Common.Citizen;
 using Application.Features.RegistrationRequests.Common;
@@ -10,6 +11,7 @@ using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Pcea.Core.Net.Authorization.Application.Attributes;
+using Pcea.Core.Net.Authorization.Application.Interfaces.Services;
 using Tools.Logging;
 
 namespace Application.Features.RegistrationRequests.GetRegistrationRequests
@@ -17,7 +19,8 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
     [WithPermission([nameof(AppPermission.GetRegistrationRequests)])]
     public class GetRegistrationRequestsQuery
         : IRequest<Result<PagedList<GetRegistrationRequestsResponse>>>,
-            IPagedQuery
+            IPagedQuery,
+            IRegistrationRequestQuery
     {
         public string? Sort { get; set; }
         public string? Order { get; set; }
@@ -33,8 +36,11 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
 
     public class GetRegistrationRequestsQueryHandler(
         ReadOnlyDbContext context,
+        TimeProvider timeProvider,
         ICurrentUserService currentUserService
-    ) : IRequestHandler<GetRegistrationRequestsQuery, Result<PagedList<GetRegistrationRequestsResponse>>>
+    )
+        : BaseRegistrationRequestsHandler<GetRegistrationRequestsQuery>(context, timeProvider),
+            IRequestHandler<GetRegistrationRequestsQuery, Result<PagedList<GetRegistrationRequestsResponse>>>
     {
         public async Task<Result<PagedList<GetRegistrationRequestsResponse>>> Handle(
             GetRegistrationRequestsQuery request,
@@ -46,32 +52,45 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
 
             try
             {
-                var query = context
+                var query = _context
                     .RegistrationRequests.Include(r => r.Citizen)
-                    .Where(r => r.AuthorId == currentUserId)
                     .ApplySearch(request.Search)
                     .ApplySort(request.Sort, request.Order);
 
                 int pageIndex = request.PageIndex ?? 0;
 
-                var result = await query.ToPagedListAsync(
+                var (data, totalCount) = await GetDataAsync(
+                    query,
                     pageIndex,
                     request.PageSize,
-                    r => new GetRegistrationRequestsResponse
+                    cancellationToken,
+                    currentUserId
+                );
+
+                var items = data.Select(r => new GetRegistrationRequestsResponse
                     {
                         Id = r.Id,
                         Reference = r.Reference,
                         SubmissionDate = r.SubmissionDate,
                         Status = r.Status,
                         ConstituencyId = r.ConstituencyId,
-                        ConstituencyName = r.Constituency.Wording,
-                        Comment = r.ReasonForRejection,
-                        Citizen = CitizenModel.FromDao(r.Citizen),
-                        CanBeDeleted =
-                            currentUserId == r.AuthorId && r.Status == RegistrationStatus.ToBeProcessed,
-                    },
-                    cancellationToken
-                );
+                        ConstituencyName = r.ConstituencyName,
+                        Comment = r.Comment,
+                        Citizen = r.Citizen,
+                        CanBeDeleted = r.CanBeDeleted,
+                        CertificateOfNationalityDocumentId = r.CertificateOfNationalityDocumentId,
+                        CertificateOfNationalityDocumentName = r.CertificateOfNationalityDocumentName,
+                        IdentityDocumentId = r.IdentityDocumentId,
+                        IdentityDocumentName = r.IdentityDocumentName,
+                        PhotoId = r.PhotoId,
+                        PhotoName = r.PhotoName,
+                        AuthorName = r.AuthorName,
+                    })
+                    .ToList();
+
+                var result = new PagedList<GetRegistrationRequestsResponse>(items, totalCount);
+
+                await AddFileNameAsync(result.Items, cancellationToken);
 
                 return Result<PagedList<GetRegistrationRequestsResponse>>.From(result);
             }

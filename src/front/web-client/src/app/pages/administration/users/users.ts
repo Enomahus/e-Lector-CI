@@ -13,6 +13,7 @@ import { UsersApiService } from '@app/services/api/users.api.service';
 import { PermissionDirective } from '@app/services/auth/permission.directive';
 import { GetUsersQuery, GetUsersResponse } from '@app/services/nswag/api-nswag-client';
 import { BaseTable } from '@app/shared/base-table/base-table';
+import { ConfirmDialog } from '@app/shared/confirm-dialog/confirm-dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
@@ -51,6 +52,7 @@ export class Users extends BaseTable<GetUsersResponse> {
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
 
+  isDeleting = signal(false);
   private currentSearch = signal('');
   private searchSubject = new BehaviorSubject<string>('');
 
@@ -115,7 +117,30 @@ export class Users extends BaseTable<GetUsersResponse> {
   }
 
   onDeleteUser(user: GetUsersResponse): void {
-    // Implement delete user logic here
+    this.isDeleting.set(true);
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      width: '400px',
+      data: { name: `${user.firstName} ${user.lastName}` },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.userService
+          .deleteUser(user.userId!, {
+            successMessage: this.translateService.instant('users.successDeleting'),
+            errorMessage: this.translateService.instant('users.errorDeleting'),
+          })
+          .subscribe({
+            next: () => {
+              this.isDeleting.set(false);
+              this.refreshData();
+            },
+            error: () => {
+              this.isDeleting.set(false);
+            },
+          });
+      }
+    });
   }
 
   onPageChange(event: PageEvent): void {

@@ -10,9 +10,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
+import { UsersApiService } from '@app/services/api/users.api.service';
 import { AuthService } from '@app/services/auth/auth.service';
-import { AppPermission } from '@app/services/nswag/api-nswag-client';
-import { filter, Observable, tap } from 'rxjs';
+import { AppPermission, GetCurrentUserResponse } from '@app/services/nswag/api-nswag-client';
+import { filter, map, Observable, tap } from 'rxjs';
 import { Language } from '../../../enums/language.enum';
 import { LanguageService } from '../../../services/language.service';
 
@@ -29,10 +30,19 @@ export abstract class BaseNavbar {
   private readonly destroyRef = inject(DestroyRef);
   private readonly languageService = inject(LanguageService);
   private readonly authService = inject(AuthService);
+  private readonly userService = inject(UsersApiService);
 
   private readonly permissions = toSignal(this.authService.getPermissions(), {
     initialValue: [] as AppPermission[],
   });
+  readonly currentUserRole = toSignal(
+    this.userService
+      .getCurrentUser()
+      .pipe(map((user: GetCurrentUserResponse) => user.userRoleName || '')),
+    {
+      initialValue: null,
+    },
+  );
 
   readonly showAdminRequestsText = computed(() =>
     this.permissions().includes('accessRegistrationRequestsForAdminPage'),
@@ -43,7 +53,7 @@ export abstract class BaseNavbar {
   readonly showElectorRequestsText = computed(() =>
     this.permissions().includes('accessRegistrationRequestsPage'),
   );
-  isAdmin = this.permissions().includes('superAdmin');
+  readonly isAdmin = computed(() => this.permissions().includes('superAdmin'));
 
   dropdownOpen = signal(false);
 

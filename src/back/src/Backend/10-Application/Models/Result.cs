@@ -6,6 +6,7 @@ namespace Application.Models;
 public class Result : IResult
 {
     public double Duration { protected set; get; }
+    public bool IsCanceled { get; protected set; }
 
     public void SetDuration(double duration) => Duration = duration;
 
@@ -22,5 +23,7 @@ public class Result<T> : Result
         Data = data;
     }
 
-    public static Result<T> From(T? data = default) => new Result<T>(data);
+    public static Result<T> From(T? data = default) => new(data);
+
+    public static Result<T> Canceled() => new(default) { IsCanceled = true };
 }

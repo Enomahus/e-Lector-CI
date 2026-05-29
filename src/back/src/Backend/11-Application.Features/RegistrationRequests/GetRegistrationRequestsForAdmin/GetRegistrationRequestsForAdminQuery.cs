@@ -1,7 +1,6 @@
 ﻿using Application.Common.Enums;
 using Application.Common.Pagination;
 using Application.Features.Common;
-using Application.Features.Common.Citizen;
 using Application.Features.RegistrationRequests.Common;
 using Application.Models;
 using FluentValidation;
@@ -16,7 +15,8 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
     [WithPermission([nameof(AppPermission.GetRegistrationRequestsFormAdmin)])]
     public class GetRegistrationRequestsForAdminQuery
         : IRequest<Result<PagedList<GetRegistrationRequestsForAdminResponse>>>,
-            IPagedQuery
+            IPagedQuery,
+            IRegistrationRequestQuery
     {
         public string? Sort { get; set; }
         public string? Order { get; set; }
@@ -31,11 +31,15 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
         public GetRegistrationRequestsForAdminQueryValidator() { }
     }
 
-    public class GetRegistrationRequestsForAdminQueryHandler(ReadOnlyDbContext context)
-        : IRequestHandler<
-            GetRegistrationRequestsForAdminQuery,
-            Result<PagedList<GetRegistrationRequestsForAdminResponse>>
-        >
+    public class GetRegistrationRequestsForAdminQueryHandler(
+        ReadOnlyDbContext context,
+        TimeProvider timeProvider
+    )
+        : BaseRegistrationRequestsHandler<GetRegistrationRequestsForAdminQuery>(context, timeProvider),
+            IRequestHandler<
+                GetRegistrationRequestsForAdminQuery,
+                Result<PagedList<GetRegistrationRequestsForAdminResponse>>
+            >
     {
         public async Task<Result<PagedList<GetRegistrationRequestsForAdminResponse>>> Handle(
             GetRegistrationRequestsForAdminQuery request,
@@ -46,31 +50,44 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
 
             try
             {
-                var query = context
+                var query = _context
                     .RegistrationRequests.Include(r => r.Citizen)
                     .ApplySearch(request.Search)
                     .ApplySort(request.Sort, request.Order);
 
                 int pageIndex = request.PageIndex ?? 0;
 
-                var result = await query.ToPagedListAsync(
+                var (data, totalCount) = await GetDataAsync(
+                    query,
                     pageIndex,
                     request.PageSize,
-                    r => new GetRegistrationRequestsForAdminResponse
+                    cancellationToken
+                );
+
+                var items = data.Select(r => new GetRegistrationRequestsForAdminResponse
                     {
                         Id = r.Id,
                         Reference = r.Reference,
                         SubmissionDate = r.SubmissionDate,
                         Status = r.Status,
                         ConstituencyId = r.ConstituencyId,
-                        ConstituencyName = r.Constituency.Wording,
-                        Comment = r.ReasonForRejection,
-                        Citizen = CitizenModel.FromDao(r.Citizen),
-                        CanBeDeleted = false,
-                        AuthorName = ((r.Author.FirstName ?? "") + " " + (r.Author.LastName ?? "")).Trim(),
-                    },
-                    cancellationToken
-                );
+                        ConstituencyName = r.ConstituencyName,
+                        Comment = r.Comment,
+                        Citizen = r.Citizen,
+                        CanBeDeleted = r.CanBeDeleted,
+                        CertificateOfNationalityDocumentId = r.CertificateOfNationalityDocumentId,
+                        CertificateOfNationalityDocumentName = r.CertificateOfNationalityDocumentName,
+                        IdentityDocumentId = r.IdentityDocumentId,
+                        IdentityDocumentName = r.IdentityDocumentName,
+                        PhotoId = r.PhotoId,
+                        PhotoName = r.PhotoName,
+                        AuthorName = r.AuthorName,
+                    })
+                    .ToList();
+
+                var result = new PagedList<GetRegistrationRequestsForAdminResponse>(items, totalCount);
+
+                await AddFileNameAsync(result.Items, cancellationToken);
 
                 return Result<PagedList<GetRegistrationRequestsForAdminResponse>>.From(result);
             }

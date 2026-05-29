@@ -7,17 +7,19 @@ namespace Application.Features.Users.GetCurrentUser
     public class GetCurrentUserResponse : UserModel
     {
         public Guid UserId { get; private set; }
+        public string UserRoleName { get; private set; } = string.Empty;
         public List<AppPermission> Permissions { get; private set; } = [];
 
         public static GetCurrentUserResponse FromDao(
-            UserDao userDao, 
-            List<AppPermission> permissions, 
+            UserDao userDao,
+            List<AppPermission> permissions,
             DateTimeOffset dateNow
         )
         {
             var result = new GetCurrentUserResponse();
-            UserModel.MapDaoToModel(userDao,result,dateNow);
+            UserModel.MapDaoToModel(userDao, result, dateNow);
             result.UserId = userDao.Id;
+            result.UserRoleName = userDao.UserRoles.FirstOrDefault()?.Role?.Name ?? string.Empty;
             result.Permissions = permissions;
             return result;
         }
