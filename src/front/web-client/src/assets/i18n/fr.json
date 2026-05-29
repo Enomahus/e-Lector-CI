@@ -31,6 +31,12 @@
       "google": "Google",
       "microsoft": "Microsoft",
       "email": "Email"
+    },
+    "action": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "toggleEnable": "Activer",
+      "toggleDisable": "Désactiver"
     }
   },
   "breadcrumb": {

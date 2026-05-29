@@ -52,6 +52,7 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.GetRegistrationRequests,
                     AppPermission.TriggerActionOnRegistrationRequest, // Approuver / Refuser
                     AppPermission.CheckRegistrationReferenceBeUnique,
+                    AppPermission.AccessRegistrationRequestsPage,
                 ]
             },
             {
@@ -83,6 +84,8 @@ namespace Infrastructure.Persistence.SQLServer.Contexts.Data
                     AppPermission.GetRegistrationRequest,
                     AppPermission.DeleteRegistrationRequest,
                     AppPermission.GetRegistrationRequests,
+                    AppPermission.UpdateRegistrationRequest,
+                    AppPermission.TriggerActionOnRegistrationRequest, // Approuver / Refuser
                 ]
             },
             {

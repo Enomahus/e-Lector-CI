@@ -33,9 +33,8 @@ export interface RegistrationRequestTableParams {
  * Extended row type: all three response types share the base model; management
  * and admin responses additionally carry `authorName`.
  */
-export type RegistrationRequestRow = GetRegistrationRequestsResponseModel & {
-  authorName?: string;
-};
+export type RegistrationRequestRow = GetRegistrationRequestsResponseModel;
+//authorName?: string;
 
 /**
  * Dumb / presentational component.

@@ -3002,6 +3002,7 @@ export interface WeatherForecast {
 
 export interface Result {
     duration?: number;
+    isCanceled?: boolean;
 }
 
 export interface ResultOfGuid extends Result {
@@ -3109,6 +3110,7 @@ export interface ResultOfGetCurrentUserResponse extends Result {
 
 export interface GetCurrentUserResponse extends UserModel {
     userId?: string;
+    userRoleName?: string;
     permissions?: AppPermission[];
 }
 

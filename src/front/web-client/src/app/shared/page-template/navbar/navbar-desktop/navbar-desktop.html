@@ -13,38 +13,29 @@
     </div>
 
     <ul class="menu menu-left">
-      <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
-        <a routerLink="/registration-requests/new">{{
-          'navbar.registrationRequest' | translate
-        }}</a>
-      </li>
-      @if (showAdminRequestsText()) {
-        <li class="menu-item" [routerLinkActive]="'active'">
-          <a
-            class="menu-item-interaction"
-            routerLink="registration-requests-for-admin"
-          >
-            {{ 'navbar.myRequestsForAdmin' | translate }}
+      @if (showElectorRequestsText()) {
+        <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
+          <a routerLink="/registration-requests/new">{{
+            'navbar.registrationRequest' | translate
+          }}</a>
+        </li>
+        <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
+          <a class="menu-item-interaction" routerLink="/registration-requests">
+            {{ 'navbar.myRequests' | translate }}
           </a>
         </li>
       }
       @if (showOrganismRequestsText()) {
         <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
-          <a
-            class="menu-item-interaction"
-            routerLink="registration-requests-for-management"
-          >
+          <a class="menu-item-interaction" routerLink="registration-requests-for-management">
             {{ 'navbar.myRequestsForOrganism' | translate }}
           </a>
         </li>
       }
-      @if (showElectorRequestsText()) {
-        <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
-          <a
-            class="menu-item-interaction"
-            routerLink="/registration-requests"
-          >
-            {{ 'navbar.myRequests' | translate }}
+      @if (showAdminRequestsText()) {
+        <li class="menu-item" [routerLinkActive]="'active'">
+          <a class="menu-item-interaction" routerLink="registration-requests-for-admin">
+            {{ 'navbar.myRequestsForAdmin' | translate }}
           </a>
         </li>
       }
@@ -99,7 +90,10 @@
       @if (userName$() | async; as userName) {
         <li class="menu-item" [routerLinkActive]="'active'">
           <a class="menu-item-interaction" routerLink="my-account">
-            <span class="current-username">{{ userName }}</span>
+            <div class="avatar">
+              <span class="current-username">{{ userName }}</span>
+              <span class="sr-only">({{ 'roles.' + currentUserRole() | translate }})</span>
+            </div>
           </a>
         </li>
       }

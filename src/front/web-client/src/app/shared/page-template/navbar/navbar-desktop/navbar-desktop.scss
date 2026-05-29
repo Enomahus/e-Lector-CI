@@ -88,11 +88,6 @@ $color-green-light: #0f8629;
           align-items: center;
           height: 100%;
           padding: 0 24px;
-
-          .current-username {
-            font-size: 0.95rem;
-            font-weight: 600;
-          }
         }
 
         .dropbtn {
@@ -103,6 +98,22 @@ $color-green-light: #0f8629;
 
           .ph {
             font-size: var(--font-size-menu);
+          }
+        }
+        .avatar {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+
+          .current-username {
+            font-size: 0.95rem;
+            font-weight: 600;
+          }
+          .sr-only {
+            //display: block;
+            color: $color-green-light;
+            font-size: 0.75rem;
+            margin-top: -4px;
           }
         }
 

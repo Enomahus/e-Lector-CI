@@ -3,14 +3,19 @@
     <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
       <a routerLink="/login">{{ 'navbar.registrationRequest' | translate }}</a>
     </li>
-    @if (showAdminRequestsText()) {
+    @if (showElectorRequestsText()) {
+      <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
+        <a routerLink="/registration-requests/new">{{
+          'navbar.registrationRequest' | translate
+        }}</a>
+      </li>
       <li class="menu-item" [routerLinkActive]="'active'">
         <a
           class="menu-item-interaction"
-          [classList]="isRouteMatching('certificate-requests-for-admin')"
-          routerLink="certificate-requests-for-admin"
+          [class.active]="isRouteMatching('registration-requests')"
+          routerLink="/registration-requests"
         >
-          {{ 'navbar.myRequestsForAdmin' | translate }}
+          {{ 'navbar.myRequests' | translate }}
         </a>
       </li>
     }
@@ -25,17 +30,18 @@
         </a>
       </li>
     }
-    @if (showElectorRequestsText()) {
+    @if (showAdminRequestsText()) {
       <li class="menu-item" [routerLinkActive]="'active'">
         <a
           class="menu-item-interaction"
-          [class.active]="isRouteMatching('registration-requests')"
-          routerLink="/registration-requests"
+          [classList]="isRouteMatching('certificate-requests-for-admin')"
+          routerLink="certificate-requests-for-admin"
         >
-          {{ 'navbar.myRequests' | translate }}
+          {{ 'navbar.myRequestsForAdmin' | translate }}
         </a>
       </li>
     }
+
     <li class="menu-item" [routerLinkActive]="'active'">
       <a routerLink="/faq">{{ 'navbar.faq' | translate }}</a>
     </li>

@@ -112,6 +112,24 @@ export const routes: Routes = [
         title: 'registrationRequests.titleEditRegistrationRequest',
       },
       {
+        path: 'registration-requests-for-admin/:id',
+        component: UpdateRegistrationRequestUi,
+        canActivate: [PermissionGuard],
+        data: {
+          permission: perm('updateRegistrationRequest'),
+        },
+        title: 'registrationRequests.titleEditRegistrationRequest',
+      },
+      {
+        path: 'registration-requests-for-management/:id',
+        component: UpdateRegistrationRequestUi,
+        canActivate: [PermissionGuard],
+        data: {
+          permission: perm('updateRegistrationRequest'),
+        },
+        title: 'registrationRequests.titleEditRegistrationRequest',
+      },
+      {
         path: 'admin',
         children: [
           {
