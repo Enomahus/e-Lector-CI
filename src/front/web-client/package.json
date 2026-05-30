@@ -42,6 +42,7 @@
     "@types/google-libphonenumber": "^7.4.30",
     "@types/google.accounts": "^0.0.18",
     "angular-eslint": "^21.2.0",
+    "chart.js": "^4.5.1",
     "google-libphonenumber": "^3.2.44",
     "jwt-decode": "^4.0.0",
     "ngx-toastr": "^20.0.4",
