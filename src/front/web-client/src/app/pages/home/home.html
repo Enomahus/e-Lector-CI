@@ -1,1 +1,47 @@
-<p>home works!</p>
+<!-- <p>home works!</p> -->
+<div class="dashboard-container">
+  @if (isLoading()) {
+    <div class="loading">Chargement des données statistiques...</div>
+  } @else if (hasError()) {
+    <div class="error">
+      Une erreur est survenue lors de la récupération des données statistiques.
+    </div>
+  } @else {
+    <div class="kpi-grid">
+      <div class="kpi-card total">
+        <h3>Population totale</h3>
+        <p class="value">{{ totalPopulation() | number }}</p>
+      </div>
+
+      @if (genderStats(); as gender) {
+        <div class="kpi-card men">
+          <h3>Hommes</h3>
+          <p class="value">
+            {{ gender.menCount | number }} soit
+            <span class="badge yellow">{{ gender.menPercentage }}%</span>
+          </p>
+        </div>
+
+        <div class="kpi-card women">
+          <h3>Femmes</h3>
+          <p class="value">
+            {{ gender.womenCount | number }} soit
+            <span class="badge green">{{ gender.womenPercentage }}%</span>
+          </p>
+        </div>
+      }
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Population par région</h3>
+        <canvas #regionChart></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>Tranches d'âge</h3>
+        <canvas #ageChart></canvas>
+      </div>
+    </div>
+  }
+</div>

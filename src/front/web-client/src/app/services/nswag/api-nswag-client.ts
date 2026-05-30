@@ -2546,6 +2546,72 @@ export class ServerClient extends CustomApiClient {
     }
 
     /**
+     * Recupérer les statistiques du tableau de bord.
+     */
+    getDashboardStats(query: GetDashboardStatsQuery): Observable<ResultOfGetDashboardStatsResponse> {
+        let url_ = this.baseUrl + "/dashboard";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = this.customStringify(query);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDashboardStats(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDashboardStats(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfGetDashboardStatsResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfGetDashboardStatsResponse>;
+        }));
+    }
+
+    protected processGetDashboardStats(response: HttpResponseBase): Observable<ResultOfGetDashboardStatsResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfGetDashboardStatsResponse;
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result401: any = null;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * Met à jour une Circonscrption.
      */
     updateConstituency(id: number, command: UpdateConstituencyCommandQuery): Observable<ResultOfLong> {
@@ -3394,6 +3460,39 @@ export interface GetDocumentsInfosResponse {
 
 export interface GetDocumentsInfosQuery {
     documentIds?: string[] | undefined;
+}
+
+export interface ResultOfGetDashboardStatsResponse extends Result {
+    data?: GetDashboardStatsResponse | undefined;
+}
+
+export interface GetDashboardStatsResponse {
+    totalPopulation?: number;
+    genderStats?: GenderStats;
+    regionGenderStats?: RegionGenderStatDto[];
+    ageRangeStats?: AgeRangeStatDto[];
+}
+
+export interface GenderStats {
+    menCount?: number;
+    menPercentage?: number;
+    womenCount?: number;
+    womenPercentage?: number;
+}
+
+export interface RegionGenderStatDto {
+    region?: string;
+    menCount?: number;
+    womenCount?: number;
+}
+
+export interface AgeRangeStatDto {
+    rangeLabel?: string;
+    count?: number;
+    percentage?: number;
+}
+
+export interface GetDashboardStatsQuery {
 }
 
 export interface ConstituencyModel {
