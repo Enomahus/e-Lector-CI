@@ -11,6 +11,8 @@ import {
 } from '@angular/core';
 import { DashboardApiService } from '@app/services/api/dashboard.api.service';
 import { GetDashboardStatsResponse } from '@app/services/nswag/api-nswag-client';
+import { Loader } from '@app/shared/loader/loader';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import Chart from 'chart.js/auto';
 
 export interface Tile {
@@ -22,12 +24,13 @@ export interface Tile {
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule, Loader],
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
 })
 export class Home implements OnInit {
   private readonly dashboardService = inject(DashboardApiService);
+  private readonly translateService = inject(TranslateService);
 
   // Éléments du DOM pour les graphiques (Syntaxe de requêtes de vue moderne Signal-based)
   private readonly regionChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('regionChart');
@@ -78,17 +81,20 @@ export class Home implements OnInit {
     const menData = stats.regionGenderStats?.map((r) => r.menCount);
     const womenData = stats.regionGenderStats?.map((r) => r.womenCount);
 
+    const legendMen = this.translateService.instant('global.men');
+    const legendWomen = this.translateService.instant('global.women');
+
     new Chart(canvas, {
       type: 'bar',
       data: {
         labels: labels,
         datasets: [
-          { label: 'Hommes', data: menData, backgroundColor: '#1d5b79' },
-          { label: 'Femmes', data: womenData, backgroundColor: '#f26a36' },
+          { label: legendMen, data: menData, backgroundColor: '#1d5b79' },
+          { label: legendWomen, data: womenData, backgroundColor: '#f26a36' },
         ],
       },
       options: {
-        indexAxis: 'y', // Mode horizontal comme sur l'image
+        indexAxis: 'x', // Mode vertical comme sur l'image
         responsive: true,
         plugins: { legend: { position: 'bottom' } },
       },

@@ -3,8 +3,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/app",
-    "types": ["@angular/localize","google.accounts"]
+    //"ignoreDeprecations": "6.0",
+    //"outDir": "../dist",
+    "types": ["@angular/localize","google.accounts","node"],
+    "moduleResolution": "bundler",
   },
   "include": [
     "src/**/*.ts"

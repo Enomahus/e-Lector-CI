@@ -37,7 +37,13 @@
       "delete": "Supprimer",
       "toggleEnable": "Activer",
       "toggleDisable": "Désactiver"
-    }
+    },
+    "population": "Population totale",
+    "populationByRegion": "Population par région",
+    "ageGroup": "Tranche d'âge",
+    "men": "Hommes",
+    "women": "Femmes",
+    "or": "soit"
   },
   "breadcrumb": {
     "pollingStations": "Les bureaux de vote",
@@ -75,6 +81,10 @@
     "signUp": "Inscrivez-vous",
     "externalLoginFailed": "Une erreur est survenue lors de la connexion, veuillez réessayer.",
     "continueWithEmail": "Ou continuez avec votre adresse e-mail"
+  },
+  "dashboard": {
+    "loading": "Chargement des données statistiques...",
+    "errorLoading": "Une erreur est survenue lors de la récupération des données statistiques."
   },
   "faq": {
     "title": "Foire aux questions",

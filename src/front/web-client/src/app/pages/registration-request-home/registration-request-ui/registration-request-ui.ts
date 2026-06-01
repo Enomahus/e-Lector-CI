@@ -30,9 +30,8 @@ import {
   GetRegistrationRequestResponse,
   RegistrationRequestModel,
   RegistrationStatus,
-} from '@app/services/nswag/api-nswag-client';
+} from '@app/services/nswag/api-nswag-client'; //'@app/services/nswag/api-nswag-client';
 import { ConstituencyTree } from '@app/shared/constituency-tree/constituency-tree';
-import { FileUploadUi } from '@app/shared/file-upload-ui/file-upload-ui';
 import { Loader } from '@app/shared/loader/loader';
 import { StickyButtonsContainer } from '@app/shared/sticky-buttons-container/sticky-buttons-container';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -59,11 +58,10 @@ interface ParentModel {
     TranslateModule,
     FormsModule,
     ReactiveFormsModule,
-    PermissionDirective,
     ConstituencyTree,
-    FileUploadUi,
     StickyButtonsContainer,
     Loader,
+    PermissionDirective,
     DatePipe,
   ],
   providers: [DatePipe],

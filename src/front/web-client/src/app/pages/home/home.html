@@ -1,31 +1,31 @@
 <!-- <p>home works!</p> -->
 <div class="dashboard-container">
   @if (isLoading()) {
-    <div class="loading">Chargement des données statistiques...</div>
+    <app-loader [size]="50" [message]="'dashboard.loading' | translate"></app-loader>
   } @else if (hasError()) {
     <div class="error">
-      Une erreur est survenue lors de la récupération des données statistiques.
+      {{'dashboard.errorLoading' | translate"}}
     </div>
   } @else {
     <div class="kpi-grid">
       <div class="kpi-card total">
-        <h3>Population totale</h3>
+        <h3>{{ 'global.population' | translate }}</h3>
         <p class="value">{{ totalPopulation() | number }}</p>
       </div>
 
       @if (genderStats(); as gender) {
         <div class="kpi-card men">
-          <h3>Hommes</h3>
+          <h3>{{ 'global.men' | translate }}</h3>
           <p class="value">
-            {{ gender.menCount | number }} soit
+            {{ gender.menCount | number }} {{ 'global.or' | translate }}
             <span class="badge yellow">{{ gender.menPercentage }}%</span>
           </p>
         </div>
 
         <div class="kpi-card women">
-          <h3>Femmes</h3>
+          <h3>{{ 'global.women' | translate }}</h3>
           <p class="value">
-            {{ gender.womenCount | number }} soit
+            {{ gender.womenCount | number }} {{ 'global.or' | translate }}
             <span class="badge green">{{ gender.womenPercentage }}%</span>
           </p>
         </div>
@@ -34,13 +34,17 @@
 
     <div class="charts-grid">
       <div class="chart-card">
-        <h3>Population par région</h3>
-        <canvas #regionChart></canvas>
+        <h3>{{ 'global.populationByRegion' | translate }}</h3>
+        <div class="chart-wrapper">
+          <canvas #regionChart></canvas>
+        </div>
       </div>
 
       <div class="chart-card">
-        <h3>Tranches d'âge</h3>
-        <canvas #ageChart></canvas>
+        <h3>{{ 'global.ageGroup' | translate }}</h3>
+        <div class="chart-wrapper">
+          <canvas #ageChart></canvas>
+        </div>
       </div>
     </div>
   }
