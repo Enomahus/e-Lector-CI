@@ -2,7 +2,11 @@ import { expect, Page } from 'playwright/test';
 import { setDefaultLanguage } from './language-helper';
 import { setFixedTime } from './time-helper';
 
-export async function login(page: Page, userName: 'admin' | 'user', expectedHomeComponent?: string) {
+export async function login(
+  page: Page,
+  userName: 'admin' | 'user1' | 'user2',
+  expectedHomeComponent?: string
+) {
   setFixedTime(page);
   setDefaultLanguage(page);
 

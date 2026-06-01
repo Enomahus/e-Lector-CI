@@ -22,7 +22,7 @@ const config: PlaywrightTestConfig = {
   workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? [['junit'], ['html', { open: 'never', outputFolder: '' }], ['list']] : 'html',
-  
+
   // Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     // Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
@@ -35,7 +35,6 @@ const config: PlaywrightTestConfig = {
 
     screenshot: 'only-on-failure',
   },
-
 
   /* Configure projects for major browsers */
   projects: [
@@ -50,13 +49,11 @@ const config: PlaywrightTestConfig = {
         },
       },
     },
-
   ],
-
 };
 
 if (process.env.ENABLE_FIREFOX === 'true') {
-  config.projects.push({
+  config.projects?.push({
     name: 'firefox',
     testDir: 'tests/desktop',
     use: {
