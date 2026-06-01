@@ -1,8 +1,6 @@
 ﻿using Application.Common.Enums;
 using Application.Common.Pagination;
-using Application.Exceptions.Auth;
 using Application.Features.Common;
-using Application.Features.Common.Citizen;
 using Application.Features.RegistrationRequests.Common;
 using Application.Interfaces.Services;
 using Application.Models;
@@ -11,7 +9,6 @@ using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Pcea.Core.Net.Authorization.Application.Attributes;
-using Pcea.Core.Net.Authorization.Application.Interfaces.Services;
 using Tools.Logging;
 
 namespace Application.Features.RegistrationRequests.GetRegistrationRequests

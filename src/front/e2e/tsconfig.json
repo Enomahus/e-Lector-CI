@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
+   //"ignoreDeprecations": "6.0",
     "types": ["node"],
-    "baseUrl": ".",
+    //"baseUrl": ".",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
 	"paths": {
 		"@helpers/*": ["./helpers/*"],
+    "@/*": ["./"]
 	}
   }
 }

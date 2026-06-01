@@ -35,7 +35,13 @@
       "delete": "Delete",
       "toggleEnable": "Enable",
       "toggleDisable": "Disable"
-    }
+    },
+    "population": "Total population",
+    "populationByRegion": "Population by region",
+    "ageGroup": "Age group",
+    "men": "Men",
+    "women": "Women",
+    "or": "Or"
   },
   "breadcrumb": {
     "pollingStations": "Polling stations",

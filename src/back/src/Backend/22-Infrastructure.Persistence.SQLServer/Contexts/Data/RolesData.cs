@@ -55,6 +55,7 @@ public static class RolesData
                 AppPermission.AccessRegistrationRequestsForManagementPage,
                 AppPermission.GetRegistrationRequestsForManagement,
                 AppPermission.UpdateRegistrationRequestsForManagement,
+                AppPermission.GetRegistrationRequest,
                 AppPermission.GetRegistrationRequests,
                 AppPermission.TriggerActionOnRegistrationRequest,
                 AppPermission.CheckRegistrationReferenceBeUnique,
@@ -74,6 +75,7 @@ public static class RolesData
             [
                 AppPermission.AccessRegistrationRequestsPage,
                 AppPermission.GetRegistrationRequests,
+                AppPermission.GetRegistrationRequest,
                 AppPermission.GetRegistrationRequestForCurrentUser,
             ],
 

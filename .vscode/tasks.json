@@ -32,7 +32,22 @@
       "path": "src/front/web-client",
       "problemMatcher": [],
       "label": "Generate nswag api client"
+    },
+    {
+      "label": "Add EF migration",
+      "type": "shell",
+      "command": "dotnet ef migration add ${input:migrationName} --context ApplicationDbContext --output-dir Migrations",
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}/src/back/src/Backend/22-Infrastructure.Persistence.SQLServer"
+      }
     }
-
+  ],
+  "inputs": [
+    {
+      "id": "migrationName",
+      "type": "promptString",
+      "description": "Name of migration"
+    }
   ]
 }

@@ -30,7 +30,7 @@ import {
   GetRegistrationRequestResponse,
   RegistrationRequestModel,
   RegistrationStatus,
-} from '@app/services/nswag/api-nswag-client';
+} from '@app/services/nswag/api-nswag-client'; //'@app/services/nswag/api-nswag-client';
 import { ConstituencyTree } from '@app/shared/constituency-tree/constituency-tree';
 import { Loader } from '@app/shared/loader/loader';
 import { StickyButtonsContainer } from '@app/shared/sticky-buttons-container/sticky-buttons-container';
@@ -58,10 +58,10 @@ interface ParentModel {
     TranslateModule,
     FormsModule,
     ReactiveFormsModule,
-    PermissionDirective,
     ConstituencyTree,
     StickyButtonsContainer,
     Loader,
+    PermissionDirective,
     DatePipe,
   ],
   providers: [DatePipe],
