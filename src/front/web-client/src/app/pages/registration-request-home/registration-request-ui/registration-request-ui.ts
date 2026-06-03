@@ -32,6 +32,7 @@ import {
   RegistrationStatus,
 } from '@app/services/nswag/api-nswag-client'; //'@app/services/nswag/api-nswag-client';
 import { ConstituencyTree } from '@app/shared/constituency-tree/constituency-tree';
+import { InputDatepickerUi } from '@app/shared/input-datepicker-ui/input-datepicker-ui';
 import { Loader } from '@app/shared/loader/loader';
 import { StickyButtonsContainer } from '@app/shared/sticky-buttons-container/sticky-buttons-container';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -63,6 +64,7 @@ interface ParentModel {
     Loader,
     PermissionDirective,
     DatePipe,
+    InputDatepickerUi,
   ],
   providers: [DatePipe],
   templateUrl: './registration-request-ui.html',
@@ -365,9 +367,6 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     }
   }
 
-  /**
-   * Gestionnaire d'événements pour la sélection de fichiers
-   */
   onFileSelectedTest(event: Event, type: 'certificate' | 'cni' | 'photo'): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] || null;

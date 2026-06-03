@@ -139,7 +139,11 @@
             <label for="birthDate">{{
               'registrationRequests.fields.citizenBirthDate' | translate
             }}</label>
-            <input id="birthDate" type="date" formControlName="birthDate" />
+            <!-- <input id="birthDate" type="date" formControlName="birthDate" /> -->
+            <app-input-datepicker-ui
+              id="birthDate"
+              formControlName="birthDate"
+            ></app-input-datepicker-ui>
             @if (
               citizenForm().controls.birthDate.touched && citizenForm().controls.birthDate.errors
             ) {
@@ -291,7 +295,6 @@
         <div class="inputs-container">
           <div class="input-block required">
             <label for="fatherSearch">{{ 'registrationRequests.fields.father' | translate }}</label>
-
             <input
               id="fatherSearch"
               type="text"
@@ -328,6 +331,9 @@
                 }
               </ul>
             }
+          </div>
+          <div class="input-block">
+            <button class="btn primary visu">Ajouter nouveau</button>
           </div>
           <div class="input-block required">
             <label for="fatherSearch">{{ 'registrationRequests.fields.mother' | translate }}</label>
@@ -368,6 +374,9 @@
                 }
               </ul>
             }
+          </div>
+          <div class="input-block">
+            <button class="btn primary visu">Ajouter nouveau</button>
           </div>
         </div>
       </form>
