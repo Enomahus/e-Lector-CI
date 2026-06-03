@@ -41,7 +41,49 @@
       "options": {
         "cwd": "${workspaceFolder}/src/back/src/Backend/22-Infrastructure.Persistence.SQLServer"
       }
-    }
+    },
+    {
+      "label": "Start services (Debug)",
+      "type": "shell",
+      "command": "docker compose -f src/back/docker-compose.yml --project-directory ./src/back up --build",
+      "problemMatcher": [
+        "$msCompile"
+      ],
+      "options": {
+        "env": {
+          "CONFIGURATION": "Debug"
+        }
+      }
+    },
+    {
+      "label": "Start services (Release)",
+      "type": "shell",
+      "command": "docker compose -f src/back/docker-compose.yml --project-directory ./src/back up --build",
+      "problemMatcher": [
+        "$msCompile"
+      ],
+      "options": {
+        "env": {
+          "CONFIGURATION": "Release"
+        }
+      }
+    },
+    {
+      "label": "Docker compose down",
+      "type": "shell",
+      "command": "docker compose -f src/back/docker-compose.yml --project-directory ./src/back down",
+      "problemMatcher": [
+        "$msCompile"
+      ]
+    },
+    {
+      "label": "Restart backend (Debug)",
+      "type": "shell",
+      "command": "docker compose -f src/back/docker-compose.yml --project-directory ./src/back up elector.backend --build -d",
+      "problemMatcher": [
+        "$msCompile"
+      ]
+    },
   ],
   "inputs": [
     {

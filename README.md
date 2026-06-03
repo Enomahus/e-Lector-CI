@@ -17,12 +17,12 @@ L'utilisation de **Docker** est obligatoire afin de pouvoir héberger la base de
 
 #### Backend
 
-Pour démarrer le backend depuis une console: `docker compose -f docker/dev/docker-compose.yml --project-directory ./docker/dev up --build`
+Pour démarrer le backend depuis une console: `docker compose -f src/back/docker-compose.yml --project-directory ./src/back up --build`
 depuis la racine du projet.
 
 Depuis **Visual Studio Code**, la tâche `Start services (Debug)` permet de lancer le projet.
 
-Si vous utilisez **Visual Studio 2026**, ouvrez la solution **e-Lector-CI.slnx** (src/back/EcoModulation.sln)
+Si vous utilisez **Visual Studio 2026**, ouvrez la solution **E-Lector-CI.slnx** (src/back/E-Lector-CI.slnx)
 et mettez le projet **docker-compose** en projet de démarrage, puis lancer-le.
 La compilation du projet web sera faite dans Visual Studio puis les fichiers seront remplacés dans le container directement.
 
