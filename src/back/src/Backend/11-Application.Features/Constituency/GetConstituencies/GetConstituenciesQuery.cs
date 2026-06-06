@@ -1,5 +1,4 @@
 ﻿using Application.Common.Enums;
-using Application.Features.Common.PollingStation;
 using Application.Models;
 using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;

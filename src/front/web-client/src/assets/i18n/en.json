@@ -314,6 +314,14 @@
     "titleForAdmin": "Request List",
     "titleNewRegistrationRequest": "New Request",
     "titleEditRegistrationRequest": "Edit Request",
+    "addFatherInfo": "Father Informations",
+    "addMatherInfo": "Mother Informations",
+    "addFather": "Create father",
+    "addMother": "Create mother",
+    "gender": {
+      "m": "Male",
+      "f": "Female"
+    },
     "status": {
       "pending": "Pending",
       "approved": "Approved",

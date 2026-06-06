@@ -12,6 +12,7 @@ namespace Application.Features.RegistrationRequests.Common
         public long? ConstituencyId { get; set; }
         public UserModel? Author { get; set; }
         public CitizenModel? Citizen { get; set; }
+
         public RegistrationRequestType RegistrationRequestType { get; set; }
 
         public Guid? CertificateOfNationalityDocumentIds { get; set; }

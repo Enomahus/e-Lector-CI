@@ -12,7 +12,7 @@ using Tools.Logging;
 
 namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAdmin
 {
-    [WithPermission([nameof(AppPermission.GetRegistrationRequestsFormAdmin)])]
+    [WithPermission([nameof(AppPermission.GetRegistrationRequestsForAdmin)])]
     public class GetRegistrationRequestsForAdminQuery
         : IRequest<Result<PagedList<GetRegistrationRequestsForAdminResponse>>>,
             IPagedQuery,

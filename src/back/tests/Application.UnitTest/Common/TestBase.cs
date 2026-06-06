@@ -1,4 +1,5 @@
-﻿using Application.Common.Enums;
+﻿using System.Globalization;
+using Application.Common.Enums;
 using Application.Exceptions;
 using Application.Features;
 using Application.Features.RegistrationRequests.Common;
@@ -17,6 +18,7 @@ using Infrastructure.Persistence.SQLServer;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Infrastructure.Persistence.SQLServer.Seeders;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -28,7 +30,6 @@ using Pcea.Core.Net.Authorization.Interfaces.Handlers;
 using Pcea.Core.Net.Authorization.Models;
 using Pcea.Core.Net.Authorization.Persistence;
 using Pcea.Core.Net.Authorization.Web.Interfaces.Services;
-using System.Globalization;
 using Tools.Configuration;
 using Web.Services;
 
@@ -44,7 +45,8 @@ namespace Application.UnitTest.Common
         public static IServiceCollection CreateServiceCollection(
             Action<TimeProvider>? setupDateService = null,
             Action<IStringLocalizer<ApplicationResources>>? stringLocalizer = null,
-            bool mockAuthorization = true)
+            bool mockAuthorization = true
+        )
         {
             var currentUserServiceSub = Substitute.For<ICurrentUserService>();
             var tokenRoleClaimBuilderSub = Substitute.For<ITokenRoleClaimBuilder<long>>();
@@ -54,7 +56,7 @@ namespace Application.UnitTest.Common
             >();
 
             var timeProviderSub = Substitute.For<TimeProvider>();
-            timeProviderSub.GetUtcNow().Returns(new DateTimeOffset(2026,1,1,10,0,0,TimeSpan.Zero));
+            timeProviderSub.GetUtcNow().Returns(new DateTimeOffset(2026, 1, 1, 10, 0, 0, TimeSpan.Zero));
 
             var stringLocalizerSub = Substitute.For<IStringLocalizer<ApplicationResources>>();
             var externalAuthSub = Substitute.For<IExternalAuthService>();
@@ -138,6 +140,90 @@ namespace Application.UnitTest.Common
             }
 
             return services;
+        }
+
+        public static async Task<UserDao> SetupCurrentUserAsync(
+            IServiceProvider serviceProvider,
+            string email = "dev@yopmail.com",
+            string? password = "Secret1",
+            long? constituencyId = null,
+            string? firstName = null,
+            string? lastName = null,
+            string? phoneNumber = null,
+            List<AppPermission>? permissions = null
+        )
+        {
+            var user = await CreateUserAsync(
+                serviceProvider,
+                email: email,
+                password: password,
+                constituencyId: constituencyId,
+                firstName: firstName,
+                lastName: lastName,
+                phoneNumber: phoneNumber
+            );
+            var userService = serviceProvider.GetRequiredService<ICurrentUserService>();
+            userService.UserId.Returns(user.Id);
+            userService.UserEmail.Returns(user.Email);
+            var currentPermissionService =
+                serviceProvider.GetRequiredService<ICurrentUserPermissionsProvider>();
+            currentPermissionService
+                .GetCurrentUserPermissionsAsync()
+                .Returns(Task.FromResult(permissions?.Select(p => p.ToString()) ?? []));
+            currentPermissionService.IsCurrentUserAuthenticatedAsync().Returns(Task.FromResult(true));
+            return user;
+        }
+
+        protected static async Task<UserDao> CreateUserAsync(
+            IServiceProvider serviceProvider,
+            string? email = "user@yopmail.com",
+            string? password = "Secret1",
+            long? constituencyId = null,
+            string? firstName = null,
+            string? lastName = null,
+            DateTimeOffset? disabledDate = null,
+            string? phoneNumber = null,
+            Guid? roleId = null,
+            AuthProvider? authProvider = null,
+            bool isActive = true
+        )
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<UserDao>>();
+            var context = serviceProvider.GetRequiredService<WritableDbContext>();
+
+            var user = new UserDao()
+            {
+                UserName = email,
+                FirstName = firstName ?? "FirstName",
+                LastName = lastName ?? "LastName",
+                Email = email,
+                DisabledDate = disabledDate,
+                PhoneNumber = phoneNumber,
+                AuthProvider = authProvider,
+            };
+            if (constituencyId != null)
+            {
+                user.UserConstituencies =
+                [
+                    new UserConstituencyDao() { ConstituencyId = constituencyId!.Value },
+                ];
+            }
+            if (roleId != null)
+            {
+                user.UserRoles = [new UserRoleDao() { RoleId = roleId!.Value }];
+            }
+            if (password != null)
+            {
+                await userManager.CreateAsync(user, password);
+            }
+            else
+            {
+                await userManager.CreateAsync(user);
+            }
+
+            await context.SaveChangesAsync();
+
+            return user;
         }
 
         protected static async Task<ConstituencyDao> CreateConstituencyAsync(

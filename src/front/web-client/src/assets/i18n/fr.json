@@ -348,6 +348,10 @@
     "titleForAdmin": "Liste des demandes",
     "titleNewRegistrationRequest": "Nouvelle demande",
     "titleEditRegistrationRequest": "Modifier la demande",
+    "addFatherInfo": "Informations du père",
+    "addMatherInfo": "Informations de la mère",
+    "addFather": "Créer un père",
+    "addMother": "Créer une mère",
     "gender": {
       "m": "Masculin",
       "f": "Féminin"

@@ -1,0 +1,112 @@
+<h2 mat-dialog-title>
+  {{
+    (genderData === 'm'
+      ? 'registrationRequests.addFatherInfo'
+      : 'registrationRequests.addMatherInfo'
+    ) | translate
+  }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="parentForm" class="modal-form">
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="modalFirstName">{{
+          'registrationRequests.fields.firstName' | translate
+        }}</label>
+        <input id="modalFirstName" formControlName="firstName" />
+        @if (
+          parentForm.controls.firstName.touched &&
+          parentForm.controls.firstName.errors?.['required']
+        ) {
+          <span class="form-error">{{ 'formError.required' | translate }}</span>
+        }
+      </div>
+
+      <div class="input-block required">
+        <label for="modalLastName">{{ 'registrationRequests.fields.lastName' | translate }}</label>
+        <input id="modalLastName" formControlName="lastName" />
+        @if (
+          parentForm.controls.lastName.touched && parentForm.controls.lastName.errors?.['required']
+        ) {
+          <span class="form-error">{{ 'formError.required' | translate }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="modalBirthDate">{{
+          'registrationRequests.fields.citizenBirthDate' | translate
+        }}</label>
+        <app-input-datepicker-ui
+          id="modalBirthDate"
+          formControlName="birthDate"
+        ></app-input-datepicker-ui>
+        @if (
+          parentForm.controls.birthDate.touched &&
+          parentForm.controls.birthDate.errors?.['required']
+        ) {
+          <span class="form-error">{{ 'formError.required' | translate }}</span>
+        }
+      </div>
+
+      <div class="input-block required">
+        <label for="modalBirthPlace">{{
+          'registrationRequests.fields.citizenBirthPlace' | translate
+        }}</label>
+        <input id="modalBirthPlace" formControlName="birthPlace" />
+        @if (
+          parentForm.controls.birthPlace.touched &&
+          parentForm.controls.birthPlace.errors?.['required']
+        ) {
+          <span class="form-error">{{ 'formError.required' | translate }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="nationality">{{ 'registrationRequests.fields.nationality' | translate }}</label>
+        <input id="nationality" formControlName="nationality" />
+        @if (
+          parentForm.controls.nationality.touched &&
+          parentForm.controls.nationality.errors?.['required']
+        ) {
+          <span class="form-error">{{ 'formError.required' | translate }}</span>
+        }
+      </div>
+      <div class="input-block required">
+        <label for="gender">{{ 'registrationRequests.fields.gender' | translate }}</label>
+        <select id="gender" formControlName="gender">
+          <option value="" selected>{{ 'global.select' | translate }}</option>
+          @for (gender of allGenders; track gender) {
+            <option [value]="gender">
+              {{ 'registrationRequests.gender.' + gender | translate }}
+            </option>
+          }
+        </select>
+        @if (parentForm.controls.gender.touched && parentForm.controls.gender.errors) {
+          <span class="form-error">{{ 'formError.required' | translate }}</span>
+        }
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+  <button type="button" class="btn outline outline-primary" (click)="onCancel()">
+    {{ 'global.cancel' | translate }}
+  </button>
+  <button
+    type="button"
+    class="btn primary"
+    [disabled]="parentForm.invalid || isSaving()"
+    (click)="onSave()"
+  >
+    {{ 'global.save' | translate }}
+    @if (isSaving()) {
+      <app-loader></app-loader>
+    }
+  </button>
+</mat-dialog-actions>

@@ -1,8 +1,8 @@
-﻿using Application.Models.Errors;
+﻿using System.Data;
+using Application.Models.Errors;
 using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 
 namespace Application.Features.Common.Elector
 {
@@ -10,16 +10,14 @@ namespace Application.Features.Common.Elector
     {
         public static IRuleBuilderOptions<T, Guid> IsValidCitizen<T>(this IRuleBuilder<T, Guid> ruleBuilder)
         {
-            return ruleBuilder
-                .NotEmpty()
-                .WithMessage(ValidationErrorCode.Required.ToString());
+            return ruleBuilder.NotEmpty().WithMessage(ValidationErrorCode.Required.ToString());
         }
 
-        public static IRuleBuilderOptions<T, long> IsValidPollingStation<T>(this IRuleBuilder<T, long> ruleBuilder)
+        public static IRuleBuilderOptions<T, long> IsValidPollingStation<T>(
+            this IRuleBuilder<T, long> ruleBuilder
+        )
         {
-            return ruleBuilder
-                .NotEmpty()
-                .WithMessage(ValidationErrorCode.Required.ToString());
+            return ruleBuilder.NotEmpty().WithMessage(ValidationErrorCode.Required.ToString());
         }
     }
 
@@ -33,38 +31,32 @@ namespace Application.Features.Common.Elector
             _context = context;
             _timeProvider = timeProvider;
 
-            RuleFor(x => x.CitizenId)
-            .IsValidCitizen();
+            RuleFor(x => x.CitizenId).IsValidCitizen();
 
-            RuleFor(x => x.PollingStationId)
-            .IsValidPollingStation();
+            RuleFor(x => x.PollingStationId).IsValidPollingStation();
 
-            // Vérifier si le citoyen n'est pas déjà un électeur (Unicité)
             RuleFor(x => x.CitizenId)
                 .MustAsync(BeUniqueElectorAsync)
                 .WithMessage(ValidationErrorCode.AlreadyRegisteredAsElector.ToString());
 
-            // Vérifier si le bureau de vote existe et est actif
             RuleFor(x => x.PollingStationId)
                 .MustAsync(BeActivePollingStationAsync)
                 .WithMessage(ValidationErrorCode.PollingStationMustExist.ToString());
-                       
         }
 
         private async Task<bool> BeUniqueElectorAsync(Guid citizenId, CancellationToken ct)
         {
-            // On vérifie en base de données si un ElectorDao existe déjà pour ce CitizenId
-            return !await _context.Electors
-                .AnyAsync(e => e.Citizen.Id == citizenId, ct);
+            return !await _context.Electors.AnyAsync(e => e.Citizen.Id == citizenId, ct);
         }
 
         private async Task<bool> BeActivePollingStationAsync(long stationId, CancellationToken ct)
         {
             var dateNow = _timeProvider.GetUtcNow();
-            
-            return await _context.PollingStations
-                .AnyAsync(ps => ps.Id == stationId && (ps.DisabledDate == null || ps.DisabledDate > dateNow), ct);
-            
+
+            return await _context.PollingStations.AnyAsync(
+                ps => ps.Id == stationId && (ps.DisabledDate == null || ps.DisabledDate > dateNow),
+                ct
+            );
         }
     }
 }
