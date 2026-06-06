@@ -55,8 +55,8 @@ public static class RolesData
                 AppPermission.AccessRegistrationRequestsForManagementPage,
                 AppPermission.GetRegistrationRequestsForManagement,
                 AppPermission.UpdateRegistrationRequestsForManagement,
-                AppPermission.GetRegistrationRequest,
-                AppPermission.GetRegistrationRequests,
+                AppPermission.GetRegistrationRequestForManagement,
+                //AppPermission.GetRegistrationRequests,
                 AppPermission.TriggerActionOnRegistrationRequest,
                 AppPermission.CheckRegistrationReferenceBeUnique,
             ],
@@ -85,6 +85,7 @@ public static class RolesData
                 AppPermission.AccessRegistrationRequestsForAdminPage,
                 AppPermission.AccessUpdateRegistrationRequest,
                 AppPermission.GetRegistrationRequest,
+                AppPermission.GetRegistrationRequestsForAdmin,
                 AppPermission.DeleteRegistrationRequest,
                 AppPermission.GetRegistrationRequests,
                 AppPermission.UpdateRegistrationRequest,
@@ -97,6 +98,8 @@ public static class RolesData
                 AppPermission.GetProfile,
                 AppPermission.GetConstituencies,
                 AppPermission.GetPollingStations,
+                AppPermission.GetCitizens,
+                AppPermission.CreateBasicCitizen,
             ],
         };
 

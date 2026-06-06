@@ -1,9 +1,7 @@
 ﻿using Application.Common.Enums;
 using Application.Common.Pagination;
 using Application.Features.Common;
-using Application.Features.Common.Citizen;
 using Application.Features.RegistrationRequests.Common;
-using Application.Features.RegistrationRequests.GetRegistrationRequests;
 using Application.Interfaces.Services;
 using Application.Models;
 using FluentValidation;

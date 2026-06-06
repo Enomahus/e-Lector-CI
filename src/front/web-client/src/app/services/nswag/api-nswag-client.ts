@@ -3057,6 +3057,78 @@ export class ServerClient extends CustomApiClient {
         }
         return _observableOf(null as any);
     }
+
+    /**
+     * Enregistre une nouveau citoyen basic.
+     */
+    createBasicCitizen(command: CreateBasicCitizenCommand): Observable<ResultOfGuid> {
+        let url_ = this.baseUrl + "/citizens";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = this.customStringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateBasicCitizen(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateBasicCitizen(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfGuid>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfGuid>;
+        }));
+    }
+
+    protected processCreateBasicCitizen(response: HttpResponseBase): Observable<ResultOfGuid> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 201) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result201: any = null;
+            result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfGuid;
+            return _observableOf(result201);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result401: any = null;
+            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result401);
+            }));
+        } else if (status === 403) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result403: any = null;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ResultOfError;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result403);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export interface WeatherForecast {
@@ -3180,7 +3252,7 @@ export interface GetCurrentUserResponse extends UserModel {
     permissions?: AppPermission[];
 }
 
-export type AppPermission = "superAdmin" | "accessUsersAdminPage" | "createUser" | "updateUser" | "deleteUser" | "getCurrentUser" | "getUser" | "getUsers" | "checkEmailBeUnique" | "getRoles" | "getProfile" | "accessConstituenciesAdminPage" | "createConstituency" | "updateConstituency" | "deleteConstituency" | "getConstituency" | "getConstituencies" | "accessPollingStationsAdminPage" | "createPollingStation" | "updatePollingStation" | "deletePollingStation" | "getPollingStation" | "getPollingStations" | "createRegistrationRequest" | "updateRegistrationRequest" | "deleteRegistrationRequest" | "getRegistrationRequest" | "getRegistrationRequests" | "getRegistrationRequestForCurrentUser" | "accessUpdateRegistrationRequest" | "accessRegistrationRequestsForAdminPage" | "accessRegistrationRequestsForManagementPage" | "getRegistrationRequestsForManagement" | "getRegistrationRequestsFormAdmin" | "updateRegistrationRequestsForManagement" | "deleteRegistrationRequestsForManagement" | "triggerActionOnRegistrationRequest" | "checkRegistrationReferenceBeUnique" | "accessRegistrationRequestsPage" | "uploadRegistrationRequestTempDocument" | "updateRegistrationRequestDraft" | "importExcelData" | "exportExcelData";
+export type AppPermission = "superAdmin" | "accessUsersAdminPage" | "createUser" | "updateUser" | "deleteUser" | "getCurrentUser" | "getUser" | "getUsers" | "checkEmailBeUnique" | "getRoles" | "getProfile" | "accessConstituenciesAdminPage" | "createConstituency" | "updateConstituency" | "deleteConstituency" | "getConstituency" | "getConstituencies" | "accessPollingStationsAdminPage" | "createPollingStation" | "updatePollingStation" | "deletePollingStation" | "getPollingStation" | "getPollingStations" | "createBasicCitizen" | "getCitizens" | "createRegistrationRequest" | "updateRegistrationRequest" | "deleteRegistrationRequest" | "getRegistrationRequest" | "getRegistrationRequests" | "getRegistrationRequestForManagement" | "getRegistrationRequestsForManagement" | "getRegistrationRequestsForAdmin" | "getRegistrationRequestForAdmin" | "getRegistrationRequestForCurrentUser" | "accessUpdateRegistrationRequest" | "accessRegistrationRequestsForAdminPage" | "accessRegistrationRequestsForManagementPage" | "updateRegistrationRequestsForManagement" | "deleteRegistrationRequestsForManagement" | "triggerActionOnRegistrationRequest" | "checkRegistrationReferenceBeUnique" | "accessRegistrationRequestsPage" | "uploadRegistrationRequestTempDocument" | "updateRegistrationRequestDraft" | "importExcelData" | "exportExcelData";
 
 export interface CreateUserCommand extends UserModel {
     password?: string | undefined;
@@ -3240,12 +3312,23 @@ export interface CitizenModel {
     father?: CitizenModel | undefined;
     motherId?: string | undefined;
     mother?: CitizenModel | undefined;
+    newFather?: BasicCitizenModel | undefined;
+    newMather?: BasicCitizenModel | undefined;
     elector?: ElectorModel | undefined;
 }
 
 export type Gender = "m" | "f";
 
 export type MaritalStatus = "single" | "married" | "divorced" | "widowed";
+
+export interface BasicCitizenModel {
+    gender?: Gender;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    birthDate?: string | undefined;
+    birthPlace?: string | undefined;
+    nationality?: string | undefined;
+}
 
 export interface ElectorModel {
     registrationDate?: string | undefined;
@@ -3545,10 +3628,15 @@ export interface ResultOfListOfGetCitizensResponse extends Result {
 
 export interface GetCitizensResponse {
     id?: string;
+    gender?: Gender;
     firstName?: string;
     lastName?: string;
     birthDate?: string;
     birthPlace?: string;
+    nationality?: string;
+}
+
+export interface CreateBasicCitizenCommand extends BasicCitizenModel {
 }
 
 export interface FileParameter {

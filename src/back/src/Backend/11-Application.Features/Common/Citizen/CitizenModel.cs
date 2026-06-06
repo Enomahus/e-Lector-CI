@@ -22,6 +22,9 @@ namespace Application.Features.Common.Citizen
         public CitizenModel? Father { get; set; }
         public Guid? MotherId { get; set; }
         public CitizenModel? Mother { get; set; }
+        public BasicCitizenModel? NewFather { get; set; }
+        public BasicCitizenModel? NewMather { get; set; }
+
         public ElectorModel? Elector { get; set; }
 
         public static CitizenModel FromDao(CitizenDao dao)
@@ -40,7 +43,6 @@ namespace Application.Features.Common.Citizen
                 Nationality = dao.Nationality,
                 PhysicalAddress = dao.PhysicalAddress,
                 PostalAddress = dao.PostalAddress,
-                // Mapping récursif de la filiation (attention aux cycles !)
                 FatherId = dao.FatherId,
                 Father = dao.Father != null ? FromDao(dao.Father) : null,
                 MotherId = dao.MotherId,

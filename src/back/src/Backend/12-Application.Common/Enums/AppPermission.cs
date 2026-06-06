@@ -29,17 +29,26 @@ public enum AppPermission
     GetPollingStation,
     GetPollingStations,
 
+    CreateBasicCitizen,
+    GetCitizens,
+
     CreateRegistrationRequest,
     UpdateRegistrationRequest,
     DeleteRegistrationRequest,
+
     GetRegistrationRequest,
     GetRegistrationRequests,
+
+    GetRegistrationRequestForManagement,
+    GetRegistrationRequestsForManagement,
+
+    GetRegistrationRequestsForAdmin,
+    GetRegistrationRequestForAdmin,
+
     GetRegistrationRequestForCurrentUser,
     AccessUpdateRegistrationRequest,
     AccessRegistrationRequestsForAdminPage,
     AccessRegistrationRequestsForManagementPage,
-    GetRegistrationRequestsForManagement,
-    GetRegistrationRequestsFormAdmin,
     UpdateRegistrationRequestsForManagement,
     DeleteRegistrationRequestsForManagement,
     TriggerActionOnRegistrationRequest,

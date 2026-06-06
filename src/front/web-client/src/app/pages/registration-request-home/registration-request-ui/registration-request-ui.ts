@@ -12,7 +12,8 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { ConstituencyNode } from '@app/models/constituency.model';
 import {
   allGenders,
@@ -26,6 +27,7 @@ import { PermissionDirective } from '@app/services/auth/permission.directive';
 import { BreadcrumbService } from '@app/services/breadcrumb.service';
 import { ConstituencyTreeHelperService } from '@app/services/constituency-tree-helper.service';
 import {
+  Gender,
   GetCitizensResponse,
   GetRegistrationRequestResponse,
   RegistrationRequestModel,
@@ -34,6 +36,7 @@ import {
 import { ConstituencyTree } from '@app/shared/constituency-tree/constituency-tree';
 import { InputDatepickerUi } from '@app/shared/input-datepicker-ui/input-datepicker-ui';
 import { Loader } from '@app/shared/loader/loader';
+import { ParentModalUi } from '@app/shared/parent-modal-ui/parent-modal-ui';
 import { StickyButtonsContainer } from '@app/shared/sticky-buttons-container/sticky-buttons-container';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -43,15 +46,6 @@ import {
   RequestDocumentsForm,
   RequestsForm,
 } from './registration-request-form';
-
-// On assume que ton parent ressemble à ça
-interface ParentModel {
-  id: string;
-  firstName: string;
-  lastName: string;
-  birthDate: string | Date;
-  birthPlace: string;
-}
 
 @Component({
   selector: 'app-registration-request-ui',
@@ -63,7 +57,6 @@ interface ParentModel {
     StickyButtonsContainer,
     Loader,
     PermissionDirective,
-    DatePipe,
     InputDatepickerUi,
   ],
   providers: [DatePipe],
@@ -91,7 +84,8 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   private readonly store = inject(ConstituencyTreeHelperService);
   private readonly citizenService = inject(CitizenApiService);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly datePipe = inject(DatePipe);
 
   isLoading = signal<boolean>(false);
   isEditMode = signal<boolean>(false);
@@ -106,6 +100,14 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
 
   constituencySelected = signal<ConstituencyNode[]>([]);
   parents = signal<GetCitizensResponse[]>([]);
+
+  // Signaux pour gérer l'état d'affichage strict des inputs
+  protected fatherInputValue = signal<string>('');
+  protected motherInputValue = signal<string>('');
+
+  // Computed properties pour filtrer les datalists
+  protected filteredFatherOptions = computed(() => this.filterParents(this.fatherInputValue()));
+  protected filteredMotherOptions = computed(() => this.filterParents(this.motherInputValue()));
 
   allRegistrationRequestType = allRegistrationRequestType;
   allMaritalStatus = allMaritalStatus;
@@ -162,9 +164,23 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     return this.form().controls.requestDocuments;
   }
 
+  private filterParents(query: string): GetCitizensResponse[] {
+    const q = query.toLowerCase().trim();
+    if (!q) return this.parents();
+    return this.parents().filter(
+      (p) => p.firstName?.toLowerCase().includes(q) || p.lastName?.toLowerCase().includes(q),
+    );
+  }
+
+  protected getParentDisplayName(parent: GetCitizensResponse): string {
+    const date = parent.birthDate ? this.datePipe.transform(parent.birthDate, 'dd/MM/yyyy') : 'N/A';
+    return `${parent.firstName} ${parent.lastName?.toUpperCase()} (${date}) ${parent.birthPlace}`.trim();
+  }
+
   private loadCitizens(): void {
     this.citizenService.getCitizens().subscribe((response) => {
       this.parents.set(response.data ?? []);
+      this.syncInputValues();
     });
   }
 
@@ -267,10 +283,13 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         targetRoute = '/registration-requests';
       }
 
-      if (permissions.some((p) => p === 'createRegistrationRequest')) {
+      if (permissions.some((p) => p === 'getRegistrationRequestForAdmin')) {
+        label = this.translateService.instant('breadcrumb.registrationRequestsForAdmin');
+      } else if (permissions.some((p) => p === 'getRegistrationRequestForManagement')) {
+        label = this.translateService.instant('breadcrumb.registrationRequestsForManagement');
+      } else if (permissions.some((p) => p === 'createRegistrationRequest')) {
         label = this.translateService.instant('breadcrumb.registrationRequestAdd');
       }
-      //TODO: Ajout des autres access ForManagement et ForAdmin
 
       this.breadcrumbService.setBreadcrumbs([
         {
@@ -286,84 +305,37 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     });
   }
 
-  protected fatherSearchQuery = signal<string>('');
-  protected motherSearchQuery = signal<string>('');
+  private syncInputValues(): void {
+    const fId = this.citizenForm().controls.fatherId.value;
+    if (fId) {
+      const parent = this.parents().find((p) => p.id === fId);
+      if (parent) this.fatherInputValue.set(this.getParentDisplayName(parent));
+    }
 
-  protected filteredParents = computed(() => {
-    const query = this.fatherSearchQuery().toLowerCase().trim();
-    const allParents = this.parents(); // Ton signal parent initial
-
-    if (!query) return allParents;
-
-    return allParents.filter(
-      (p) =>
-        p.firstName?.toLowerCase().includes(query) ||
-        p.lastName?.toLowerCase().includes(query) ||
-        p.birthPlace?.toLowerCase().includes(query),
-    );
-  });
-
-  protected selectedFatherName = computed(() => {
-    const currentId = this.citizenForm().controls.fatherId.value;
-    if (!currentId) return '';
-
-    const found = this.parents().find((p) => p.id === currentId);
-    return found ? `${found.firstName} ${found.lastName}` : '';
-  });
-
-  protected selectedMotherName = computed(() => {
-    const currentId = this.citizenForm().controls.motherId.value;
-    if (!currentId) return '';
-
-    const found = this.parents().find((p) => p.id === currentId);
-    return found ? `${found.firstName} ${found.lastName}` : '';
-  });
-
-  protected onFatherSearchChange(event: Event): void {
-    const inputVal = (event.target as HTMLInputElement).value;
-    this.fatherSearchQuery.set(inputVal);
-
-    // Recherche si la valeur saisie ou sélectionnée correspond à un parent existant
-    const matchedParent = this.parents().find((p) => {
-      const fullNameString = `${p.firstName} ${p.lastName}`.toLowerCase();
-      return inputVal.toLowerCase().startsWith(fullNameString);
-    });
-
-    if (matchedParent) {
-      // Si correspondance trouvée (clic dans la liste ou saisie complète), on pousse l'ID dans le formulaire
-      this.citizenForm().controls.fatherId.setValue(matchedParent.id);
-      this.citizenForm().controls.fatherId.markAsDirty();
-    } else {
-      // Si l'utilisateur efface ou tape un texte incomplet, l'ID redevient nul
-      this.citizenForm().controls.fatherId.setValue('');
+    const mId = this.citizenForm().controls.motherId.value;
+    if (mId) {
+      const parent = this.parents().find((p) => p.id === mId);
+      if (parent) this.motherInputValue.set(this.getParentDisplayName(parent));
     }
   }
 
   protected onParentSearchChange(event: Event, parentType: 'father' | 'mother'): void {
     const inputVal = (event.target as HTMLInputElement).value;
-    const lowerInputVal = inputVal.toLowerCase();
+    const isFather = parentType === 'father';
 
-    if (parentType === 'father') {
-      this.fatherSearchQuery.set(inputVal);
-    } else {
-      this.motherSearchQuery.set(inputVal);
-    }
+    if (isFather) this.fatherInputValue.set(inputVal);
+    else this.motherInputValue.set(inputVal);
 
-    const matchedParent = this.parents().find((p) => {
-      const fullNameString = `${p.firstName} ${p.lastName}`.toLowerCase();
-      return lowerInputVal.startsWith(fullNameString);
-    });
+    const matchedParent = this.parents().find((p) => this.getParentDisplayName(p) === inputVal);
 
-    const controlName = `${parentType}Id`;
-    const parentControl = this.citizenForm().get(controlName);
-
-    if (parentControl) {
+    const control = this.citizenForm().get(`${parentType}Id`);
+    if (control) {
       if (matchedParent) {
-        parentControl.setValue(matchedParent.id);
-        parentControl.markAsDirty();
+        control.setValue(matchedParent.id);
       } else {
-        parentControl.setValue('');
+        control.setValue(undefined);
       }
+      control.markAsDirty();
     }
   }
 
@@ -397,5 +369,35 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         this.requestDocumentsForm().controls.photoAttachments.markAsDirty();
         break;
     }
+  }
+
+  protected openAddParentModal(gender: Gender): void {
+    const dialogRef = this.dialog.open(ParentModalUi, {
+      width: '470px',
+      data: gender,
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((newParent: GetCitizensResponse | undefined) => {
+      if (newParent && newParent.id) {
+        this.parents.update((currentParents) => [...currentParents, newParent]);
+
+        const isFather = gender.toLowerCase() === 'm';
+        const controlName = isFather ? 'fatherId' : 'motherId';
+        const control = this.citizenForm().get(controlName);
+
+        if (control) {
+          control.setValue(newParent.id);
+          control.markAsDirty();
+          control.updateValueAndValidity();
+        }
+
+        if (isFather) {
+          this.fatherInputValue.set(this.getParentDisplayName(newParent));
+        } else {
+          this.motherInputValue.set(this.getParentDisplayName(newParent));
+        }
+      }
+    });
   }
 }

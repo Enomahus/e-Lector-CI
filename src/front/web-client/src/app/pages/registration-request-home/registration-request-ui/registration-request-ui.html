@@ -139,7 +139,6 @@
             <label for="birthDate">{{
               'registrationRequests.fields.citizenBirthDate' | translate
             }}</label>
-            <!-- <input id="birthDate" type="date" formControlName="birthDate" /> -->
             <app-input-datepicker-ui
               id="birthDate"
               formControlName="birthDate"
@@ -299,24 +298,14 @@
               id="fatherSearch"
               type="text"
               [placeholder]="'global.select' | translate"
-              [value]="selectedFatherName()"
+              [value]="fatherInputValue()"
               (input)="onParentSearchChange($event, 'father')"
               list="fatherOptions"
               autocomplete="off"
             />
             <datalist id="fatherOptions">
-              @for (parent of filteredParents(); track parent.id) {
-                <option
-                  [value]="
-                    parent.firstName +
-                    ' ' +
-                    parent.lastName?.toUpperCase() +
-                    ' (' +
-                    (parent.birthDate | date: 'dd/MM/yyyy') +
-                    ') ' +
-                    parent.birthPlace
-                  "
-                ></option>
+              @for (parent of filteredFatherOptions(); track parent.id) {
+                <option [value]="getParentDisplayName(parent)"></option>
               }
             </datalist>
 
@@ -333,33 +322,24 @@
             }
           </div>
           <div class="input-block">
-            <button class="btn primary visu">Ajouter nouveau</button>
+            <button class="btn primary visu" type="button" (click)="openAddParentModal('m')">
+              {{ 'registrationRequests.addFather' | translate }}
+            </button>
           </div>
           <div class="input-block required">
-            <label for="fatherSearch">{{ 'registrationRequests.fields.mother' | translate }}</label>
-
+            <label for="motherSearch">{{ 'registrationRequests.fields.mother' | translate }}</label>
             <input
-              id="fatherSearch"
+              id="motherSearch"
               type="text"
               [placeholder]="'global.select' | translate"
-              [value]="selectedMotherName()"
+              [value]="motherInputValue()"
               (input)="onParentSearchChange($event, 'mother')"
               list="motherOptions"
               autocomplete="off"
             />
             <datalist id="motherOptions">
-              @for (parent of filteredParents(); track parent.id) {
-                <option
-                  [value]="
-                    parent.firstName +
-                    ' ' +
-                    parent.lastName?.toUpperCase() +
-                    ' (' +
-                    (parent.birthDate | date: 'dd/MM/yyyy') +
-                    ') ' +
-                    parent.birthPlace
-                  "
-                ></option>
+              @for (parent of filteredMotherOptions(); track parent.id) {
+                <option [value]="getParentDisplayName(parent)"></option>
               }
             </datalist>
 
@@ -376,7 +356,9 @@
             }
           </div>
           <div class="input-block">
-            <button class="btn primary visu">Ajouter nouveau</button>
+            <button class="btn primary visu" type="button" (click)="openAddParentModal('f')">
+              {{ 'registrationRequests.addMother' | translate }}
+            </button>
           </div>
         </div>
       </form>

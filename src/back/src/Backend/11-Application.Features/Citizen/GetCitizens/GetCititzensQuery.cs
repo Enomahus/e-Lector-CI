@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Application.Common.Enums;
 using Application.Models;
 using FluentValidation;
-using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Pcea.Core.Net.Authorization.Application.Attributes;
 using Tools.Logging;
 
 namespace Application.Features.Citizen.GetCitizens
 {
+    [WithPermission(nameof(AppPermission.GetCitizens))]
     public class GetCititzensQuery : IRequest<Result<List<GetCitizensResponse>>> { }
 
     public class GetCititzensQueryValidator : AbstractValidator<GetCititzensQuery>
