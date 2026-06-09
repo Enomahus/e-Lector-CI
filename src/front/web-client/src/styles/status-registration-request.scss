@@ -1,4 +1,15 @@
 .registration-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+
   &.status-registration-pending {
     background-color: #f0ad4e;
     color: #f0ad4e;

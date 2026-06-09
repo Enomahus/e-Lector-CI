@@ -18,7 +18,7 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
     [WithPermission([
         nameof(AppPermission.GetRegistrationRequest),
         nameof(AppPermission.GetRegistrationRequestForAdmin),
-        nameof(AppPermission.GetRegistrationRequestsForManagement),
+        nameof(AppPermission.GetRegistrationRequestForManagement),
     ])]
     public class GetRegistrationRequestQuery(Guid id) : IRequest<Result<GetRegistrationRequestResponse>>
     {
@@ -58,6 +58,14 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
             var permissions = await currentUserPermissions.GetCurrentUserPermissionsAsync(cancellationToken);
             var userIsSuperAdmin = permissions.Contains(AppPermission.SuperAdmin.ToString());
 
+            // Identification des rôles par les permissions clés présentes dans RolesData.cs
+            var canManageAllRequests = permissions.Contains(
+                AppPermission.GetRegistrationRequestsForAdmin.ToString()
+            );
+            var isManagementAgent =
+                permissions.Contains(AppPermission.GetRegistrationRequestForManagement.ToString())
+                && !canManageAllRequests; // Évite les collisions Admin/Agent
+
             var registrationRequest =
                 await context
                     .RegistrationRequests.Include(r => r.Constituency)
@@ -67,15 +75,41 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
                     .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken)
                 ?? throw new NotFoundException(nameof(RegistrationRequestDao), request.Id);
 
-            if (
-                !userIsSuperAdmin
-                    && currentUser.UserConstituencies.Any(u =>
-                        u.ConstituencyId != registrationRequest.ConstituencyId
-                    )
-                || currentUser.Id != registrationRequest.AuthorId
-            )
+            //if (
+            //    !userIsSuperAdmin
+            //        && currentUser.UserConstituencies.Any(u =>
+            //            u.ConstituencyId != registrationRequest.ConstituencyId
+            //        )
+            //    || currentUser.Id != registrationRequest.AuthorId
+            //)
+            //{
+            //    throw new UserAccessException();
+            //}
+
+            if (!userIsSuperAdmin && !canManageAllRequests)
             {
-                throw new UserAccessException();
+                if (isManagementAgent)
+                {
+                    // RÈGLE AGENT : La demande doit appartenir à l'une des circonscriptions affectées à l'agent
+                    bool hasAccessToConstituency = currentUser.UserConstituencies.Any(u =>
+                        u.ConstituencyId == registrationRequest.ConstituencyId
+                    );
+
+                    if (!hasAccessToConstituency)
+                    {
+                        // L'agent n'est pas affecté à la circonscription de cette demande.
+                        throw new UserAccessException();
+                    }
+                }
+                else
+                {
+                    // RÈGLE ÉLECTEUR (Fallback) : L'utilisateur doit impérativement être l'auteur
+                    if (currentUser.Id != registrationRequest.AuthorId)
+                    {
+                        // Un citoyen ne peut accéder qu'à ses propres demandes.
+                        throw new UserAccessException();
+                    }
+                }
             }
 
             return Result<GetRegistrationRequestResponse>.From(

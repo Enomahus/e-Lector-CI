@@ -20,6 +20,45 @@
     max-height: 550px;
     overflow: auto;
 
+    .registration-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+
+      /* Couleurs sémantiques */
+      &.status-registration-pending {
+        background-color: #fff3e0; /* Orange très clair */
+        color: #e65100; /* Orange foncé */
+      }
+
+      &.status-registration-to-be-processed {
+        background-color: #e3f2fd; /* Bleu très clair */
+        color: #0d47a1; /* Bleu foncé */
+      }
+
+      &.status-registration-approved {
+        background-color: #e8f5e9; /* Vert très clair */
+        color: #1b5e20; /* Vert foncé */
+      }
+
+      &.status-registration-rejected {
+        background-color: #ffebee; /* Rouge très clair */
+        color: #b71c1c; /* Rouge foncé */
+      }
+
+      &.status-registration-no-status {
+        background-color: #f5f5f5;
+        color: #757575;
+      }
+    }
+
     table {
       width: 100%;
     }
