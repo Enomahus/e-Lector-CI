@@ -19,14 +19,34 @@ export class InputDatepickerUi implements ControlValueAccessor {
   readonly id = signal<string>('');
   readonly disabled = signal<boolean>(false);
 
-  onChange: (value: string) => void = () => {};
+  //onChange: (value: string) => void = () => {};
+  onChange: (value: Date | null) => void = () => {};
   onTouched: () => void = () => {};
 
-  writeValue(value: string): void {
-    this.value.set(value || '');
+  writeValue(value: Date | string): void {
+    // this.value.set(value || '');
+    if (!value) {
+      this.value.set('');
+      return;
+    }
+
+    if (value instanceof Date) {
+      if (!isNaN(value.getTime())) {
+        this.value.set(value.toISOString().split('T')[0]);
+      } else {
+        this.value.set('');
+      }
+    } else if (typeof value === 'string') {
+      this.value.set(value.split('T')[0]);
+    } else {
+      this.value.set('');
+    }
   }
 
-  registerOnChange(fn: (value: string) => void): void {
+  // registerOnChange(fn: (value: string) => void): void {
+  //   this.onChange = fn;
+  // }
+  registerOnChange(fn: (value: Date | null) => void): void {
     this.onChange = fn;
   }
 
@@ -42,6 +62,8 @@ export class InputDatepickerUi implements ControlValueAccessor {
   onInputChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.value.set(input.value);
-    this.onChange(input.value); // Notifie le formulaire parent du changement
+    //this.onChange(input.value); // Notifie le formulaire parent du changement
+    const newDate = input.value ? new Date(input.value) : null;
+    this.onChange(newDate);
   }
 }

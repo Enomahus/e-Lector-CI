@@ -1,7 +1,8 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 import { AfterViewInit, Component, input, OnDestroy, output, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -18,7 +19,15 @@ import {
   RegistrationStatus,
 } from '@app/services/nswag/api-nswag-client';
 import { TranslateModule } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged, merge, startWith, Subject, takeUntil } from 'rxjs';
+import {
+  debounceTime,
+  delay,
+  distinctUntilChanged,
+  merge,
+  startWith,
+  Subject,
+  takeUntil,
+} from 'rxjs';
 
 /** Params emitted on each user interaction (sort, page, search). */
 export interface RegistrationRequestTableParams {
@@ -62,6 +71,8 @@ export type RegistrationRequestRow = GetRegistrationRequestsResponseModel;
     MatButtonModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    MatChipsModule,
+    NgClass,
   ],
   templateUrl: './registration-requests-table.html',
   styleUrl: './registration-requests-table.scss',
@@ -117,7 +128,7 @@ export class RegistrationRequestsTableComponent implements AfterViewInit, OnDest
 
     // Emit on sort / page changes – and once immediately on init (startWith).
     merge(this.sort.sortChange, this.paginator.page)
-      .pipe(startWith({}), takeUntil(this.destroy$))
+      .pipe(startWith({}), delay(0), takeUntil(this.destroy$))
       .subscribe(() => this.emitCurrentParams());
   }
 
@@ -136,18 +147,17 @@ export class RegistrationRequestsTableComponent implements AfterViewInit, OnDest
     });
   }
 
-  getRegistrationStatusClass(status: RegistrationStatus): string {
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return 'status-registration-pending';
-      case 'tobeprocessed':
-        return 'status-registration-to-be-processed';
-      case 'approved':
-        return 'status-registration-approved';
-      case 'rejected':
-        return 'status-registration-rejected';
-      default:
-        return 'status-registration-no-status';
-    }
+  private readonly statusColorMap: Record<string, string> = {
+    pending: 'status-registration-pending',
+    tobeprocessed: 'status-registration-to-be-processed',
+    approved: 'status-registration-approved',
+    rejected: 'status-registration-rejected',
+  };
+
+  getRegistrationStatusClass(status: RegistrationStatus | string | undefined): string {
+    if (!status) return 'status-registration-no-status';
+
+    const normalizedStatus = String(status).toLowerCase();
+    return this.statusColorMap[normalizedStatus] || 'status-registration-no-status';
   }
 }
