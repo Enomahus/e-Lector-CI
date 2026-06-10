@@ -1,0 +1,138 @@
+<div class="min-h-screen bg-slate-50 flex flex-col">
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-8">
+    @if (isSubmitted()) {
+      <!-- <app-success-screen [data]="formData()" (reset)="resetForm()" /> -->
+    } @else {
+      <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden p-6">
+        <div class="request-form">
+          <form [formGroup]="requestForm()">
+            <div class="inputs-container">
+              <div class="=input-block required">
+                <label for="registrationType">{{
+                  'registrationRequests.fields.registrationRequestType' | translate
+                }}</label>
+                <select id="registrationType" formControlName="registrationType">
+                  <option value="" selected label="{{ 'global.select' | translate }}"></option>
+                  @for (requestType of allRegistrationRequestType; track requestType) {
+                    <option [value]="requestType">
+                      {{
+                        'registrationRequests.registrationRequestTypes.' + requestType | translate
+                      }}
+                    </option>
+                  }
+                </select>
+                @if (
+                  requestForm().controls.registrationType.touched &&
+                  requestForm().controls.registrationType.errors
+                ) {
+                  <ul class="form-error">
+                    @if (requestForm().controls.registrationType.errors?.['required']) {
+                      <li>{{ 'formError.required' | translate }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+              <div class="input-block">
+                <label for="reasonForRejection">{{
+                  'registrationRequests.fields.reasonForRejection' | translate
+                }}</label>
+                <textarea id="reasonForRejection" formControlName="reasonForRejection"></textarea>
+                @if (
+                  requestForm().controls.reasonForRejection.touched &&
+                  requestForm().controls.reasonForRejection.errors
+                ) {
+                  <ul class="form-error">
+                    @if (requestForm().controls.reasonForRejection.errors?.['required']) {
+                      <li>{{ 'formError.required' | translate }}</li>
+                    }
+                    @if (requestForm().controls.reasonForRejection.errors?.['maxLength']) {
+                      <li>{{ 'formError.maxLength' | translate: { max: 500 } }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            </div>
+          </form>
+        </div>
+        <mat-stepper orientation="vertical" [linear]="true" #stepper class="custom-stepper">
+          <mat-step [stepControl]="form.controls.identity">
+            <ng-template matStepLabel>Identité</ng-template>
+
+            <app-registration-step-identity-ui
+              [stepForm]="form.controls.identity"
+            ></app-registration-step-identity-ui>
+
+            <div class="flex justify-end mt-6">
+              <button mat-flat-button color="primary" matStepperNext>Étape suivante</button>
+            </div>
+          </mat-step>
+
+          <mat-step [stepControl]="form.controls.filiation">
+            <ng-template matStepLabel>Filiation</ng-template>
+            <app-registration-step-filiation-ui
+              [stepForm]="form.controls.filiation"
+              [situation]="situationMatrimoniale()!"
+            />
+
+            <div class="flex justify-between mt-6">
+              <button mat-stroked-button matStepperPrevious>Précédent</button>
+              <button mat-flat-button color="primary" matStepperNext>Étape suivante</button>
+            </div>
+          </mat-step>
+
+          <mat-step [stepControl]="form.controls.coordinates">
+            <ng-template matStepLabel>Coordonnées</ng-template>
+            <app-registration-step-coordinates-ui [stepForm]="form.controls.coordinates" />
+
+            <div class="flex justify-between mt-6">
+              <button mat-stroked-button matStepperPrevious>Précédent</button>
+              <button mat-flat-button color="primary" matStepperNext>Étape suivante</button>
+            </div>
+          </mat-step>
+
+          <mat-step [stepControl]="form.controls.residence">
+            <ng-template matStepLabel>Résidence</ng-template>
+            <app-registration-step-residence-ui [stepForm]="form.controls.residence" />
+
+            <div class="flex justify-between mt-6">
+              <button mat-stroked-button matStepperPrevious>Précédent</button>
+              <button mat-flat-button color="primary" matStepperNext>Étape suivante</button>
+            </div>
+          </mat-step>
+
+          <mat-step [stepControl]="form.controls.requestDocuments">
+            <ng-template matStepLabel>Justificatifs</ng-template>
+            <app-registration-step-justification-ui [stepForm]="form.controls.requestDocuments" />
+
+            <div class="flex justify-between mt-6">
+              <button mat-stroked-button matStepperPrevious>Précédent</button>
+              <button mat-flat-button color="primary" matStepperNext>Étape suivante</button>
+            </div>
+          </mat-step>
+
+          <mat-step>
+            <ng-template matStepLabel>Confirmation</ng-template>
+            <app-registration-step-confirmation-ui
+              [data]="form"
+              (editStep)="stepper.selectedIndex = $event"
+            />
+
+            <div class="flex justify-between mt-6">
+              <button mat-stroked-button matStepperPrevious [disabled]="isSubmitting()">
+                Précédent
+              </button>
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="submitForm()"
+                [disabled]="isSubmitting()"
+              >
+                Soumettre ma demande
+              </button>
+            </div>
+          </mat-step>
+        </mat-stepper>
+      </div>
+    }
+  </main>
+</div>

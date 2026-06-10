@@ -1,0 +1,199 @@
+<div class="registration-container">
+  <div class="header-section text-center">
+    <h1 class="main-title">Demande d'inscription en ligne</h1>
+    <p class="sub-title">Remplissez le formulaire en 6 étapes. Vos informations sont sécurisées.</p>
+  </div>
+
+  <div class="stepper-card card shadow-sm">
+    <div class="stepper">
+      @for (step of steps(); track step.id; let i = $index) {
+        <div class="step" [class.active]="step.state === 'active'">
+          <div class="circle">{{ step.id }}</div>
+          <span class="label">{{ step.name }}</span>
+
+          @if (i < steps().length - 1) {
+            <div class="line"></div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="form-content-card card shadow-sm mt-4 p-5">
+    <form [formGroup]="identityForm()" class="identity-form">
+      <div class="section-header mb-4">
+        <h2 class="section-title">Étape 1 — Identité</h2>
+        <p class="section-instruction">Informations exactes de votre carte d'identité.</p>
+      </div>
+
+      <div class="inputs-container">
+        <!-- <div class="input-block required">
+          <label for="nationalId" class="form-label">Numéro Carte Nationale d'Identité (NI)</label>
+          <input
+            type="text"
+            class="form-control"
+            id="nationalId"
+            formControlName="nationalId"
+            placeholder="CI012345678901"
+          />
+        </div> -->
+        <div class="input-block required">
+          <label for="gender">{{ 'registrationRequests.fields.gender' | translate }}</label>
+          <select id="gender" class="form-control" formControlName="gender">
+            <option value="" selected>{{ 'global.select' | translate }}</option>
+            @for (gender of allGenders; track gender) {
+              <option [value]="gender">
+                {{ 'registrationRequests.gender.' + gender | translate }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="lastName">{{ 'registrationRequests.fields.lastName' | translate }}</label>
+          <input
+            type="text"
+            class="form-control"
+            id="lastName"
+            formControlName="lastName"
+            placeholder="KOUASSI"
+          />
+          @if (
+            identityForm().controls.lastName.touched && identityForm().controls.lastName.errors
+          ) {
+            <ul class="form-error">
+              @if (identityForm().controls.lastName.errors?.['required']) {
+                <li>{{ 'formError.required' | translate }}</li>
+              }
+            </ul>
+          }
+        </div>
+        <div class="input-block required">
+          <label for="firstName">{{ 'registrationRequests.fields.firstName' | translate }}</label>
+          <input
+            type="text"
+            class="form-control"
+            id="firstNames"
+            formControlName="firstName"
+            placeholder="Jean-Baptiste Koffi"
+          />
+          @if (
+            identityForm().controls.firstName.touched && identityForm().controls.firstName.errors
+          ) {
+            <ul class="form-error">
+              @if (identityForm().controls.firstName.errors?.['required']) {
+                <li>{{ 'formError.required' | translate }}</li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label class="form-label" for="birthDate">{{
+            'registrationRequests.fields.citizenBirthDate' | translate
+          }}</label>
+          <app-input-datepicker-ui
+            id="birthDate"
+            formControlName="birthDate"
+          ></app-input-datepicker-ui>
+        </div>
+        <div class="input-block required">
+          <label for="birthPlace">{{
+            'registrationRequests.fields.citizenBirthPlace' | translate
+          }}</label>
+          <input
+            type="text"
+            class="form-control"
+            id="birthPlace"
+            formControlName="birthPlace"
+            placeholder="Abidjan"
+          />
+        </div>
+      </div>
+
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="nationality">{{
+            'registrationRequests.fields.nationality' | translate
+          }}</label>
+          <select class="form-select" id="nationality" formControlName="nationality">
+            @for (nationality of nationalities(); track nationality) {
+              <option [value]="nationality">{{ nationality }}</option>
+            }
+          </select>
+          @if (
+            identityForm().controls.nationality.touched &&
+            identityForm().controls.nationality.errors
+          ) {
+            <ul class="form-error">
+              @if (identityForm().controls.nationality.errors?.['required']) {
+                <li>{{ 'formError.required' | translate }}</li>
+              }
+            </ul>
+          }
+        </div>
+        <div class="input-block required">
+          <label for="maritalStatus">{{
+            'registrationRequests.fields.maritalStatus' | translate
+          }}</label>
+          <select id="maritalStatus" formControlName="maritalStatus">
+            <option value="" selected>{{ 'global.select' | translate }}</option>
+            @for (maritalStatus of allMaritalStatus; track maritalStatus) {
+              <option [value]="maritalStatus">
+                {{ 'registrationRequests.maritalStatus.' + maritalStatus | translate }}
+              </option>
+            }
+          </select>
+          @if (
+            identityForm().controls.maritalStatus.touched &&
+            identityForm().controls.maritalStatus.errors
+          ) {
+            <ul class="form-error">
+              @if (identityForm().controls.maritalStatus.errors?.['required']) {
+                <li>{{ 'formError.required' | translate }}</li>
+              }
+            </ul>
+          }
+        </div>
+        @if (identityForm().controls.maritalStatus.value === 'married') {
+          <div class="input-block">
+            <label for="marriedName">{{
+              'registrationRequests.fields.marriedName' | translate
+            }}</label>
+            <input id="marriedName" formControlName="marriedName" />
+            @if (
+              identityForm().controls.marriedName.touched &&
+              identityForm().controls.marriedName.errors
+            ) {
+              <ul class="form-error">
+                @if (identityForm().controls.marriedName.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="navigation-buttons d-flex justify-content-between mt-5 pt-3 border-top">
+        <button
+          type="button"
+          class="btn btn-outline-secondary nav-btn prev-btn"
+          (click)="onPrevious()"
+          [disabled]="true"
+        >
+          ← Précédent
+        </button>
+        <button type="button" class="btn btn-success nav-btn next-btn" (click)="onNext()">
+          Suivant →
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<pre>{{ form.controls.identity.value | json }}</pre>

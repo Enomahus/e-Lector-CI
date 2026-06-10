@@ -1,0 +1,99 @@
+<div [formGroup]="stepForm()" class="iddentity-container">
+  <div class="inputs-container">
+    <div class="input-block required">
+      <label for="lastName">{{ 'registrationRequests.fields.lastName' | translate }}</label>
+      <input id="lastName" formControlName="lastName" />
+      @if (stepForm().controls.lastName.hasError('required')) {
+        <ul class="form-error">
+          <li>{{ 'formError.required' | translate }}</li>
+        </ul>
+      }
+    </div>
+
+    <div class="input-block required">
+      <label for="firstName">{{ 'registrationRequests.fields.firstName' | translate }}</label>
+      <input id="firstName" formControlName="firstName" />
+      @if (stepForm().controls.firstName.hasError('required')) {
+        <ul class="form-error">
+          <li>{{ 'formError.required' | translate }}</li>
+        </ul>
+      }
+    </div>
+  </div>
+
+  <div class="inputs-container">
+    <div class="input-block required">
+      <label>{{ 'registrationRequests.fields.gender' | translate }}</label>
+      <select id="gender" formControlName="gender">
+        <option value="" selected>{{ 'global.select' | translate }}</option>
+        @for (gender of allGenders; track gender) {
+          <option [value]="gender">
+            {{ 'registrationRequests.gender.' + gender | translate }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="input-block required">
+      <label for="maritalStatus">{{
+        'registrationRequests.fields.maritalStatus' | translate
+      }}</label>
+      <select id="maritalStatus" formControlName="maritalStatus">
+        <option value="" selected>{{ 'global.select' | translate }}</option>
+        @for (maritalStatus of allMaritalStatus; track maritalStatus) {
+          <option [value]="maritalStatus">
+            {{ 'registrationRequests.maritalStatus.' + maritalStatus | translate }}
+          </option>
+        }
+      </select>
+    </div>
+    @if (stepForm().controls.maritalStatus.value === 'married') {
+      <div class="input-block">
+        <label for="marriedName">{{ 'registrationRequests.fields.marriedName' | translate }}</label>
+        <input id="marriedName" formControlName="marriedName" />
+        @if (stepForm().controls.marriedName.hasError('required')) {
+          <ul class="form-error">
+            <li>{{ 'formError.required' | translate }}</li>
+          </ul>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="inputs-container">
+    <div class="input-block required">
+      <label for="birthDate">{{
+        'registrationRequests.fields.citizenBirthDate' | translate
+      }}</label>
+      <app-input-datepicker-ui id="birthDate" formControlName="birthDate"></app-input-datepicker-ui>
+      @if (stepForm().controls.birthDate.hasError('required')) {
+        <ul class="form-error">
+          <li>{{ 'formError.required' | translate }}</li>
+        </ul>
+      }
+    </div>
+    <div class="input-block required">
+      <label for="birthPlace">{{
+        'registrationRequests.fields.citizenBirthPlace' | translate
+      }}</label>
+      <input id="birthPlace" formControlName="birthPlace" />
+      @if (stepForm().controls.birthPlace.hasError('required')) {
+        <ul class="form-error">
+          <li>{{ 'formError.required' | translate }}</li>
+        </ul>
+      }
+    </div>
+  </div>
+
+  <div class="inputs-container">
+    <div class="input-bloc required">
+      <label for="nationality">{{ 'registrationRequests.fields.nationality' | translate }}</label>
+      <input id="nationality" formControlName="nationality" />
+      @if (stepForm().controls.nationality.hasError('required')) {
+        <ul class="form-error">
+          <li>{{ 'formError.required' | translate }}</li>
+        </ul>
+      }
+    </div>
+  </div>
+</div>

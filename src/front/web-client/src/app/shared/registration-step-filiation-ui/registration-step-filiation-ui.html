@@ -1,0 +1,19 @@
+<div [formGroup]="stepForm()" class="space-y-6 pt-4">
+  @if (situation() === 'married') {
+    <div class="p-4 rounded-xl bg-rose-50 border border-rose-100 text-xs text-rose-700 mb-4">
+      Ces informations sont requises car vous avez indiqué être marié(e).
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nom du conjoint(e)</mat-label>
+        <input matInput formControlName="nomConjoint" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Prénom du conjoint(e)</mat-label>
+        <input matInput formControlName="prenomConjoint" />
+      </mat-form-field>
+    </div>
+  }
+</div>

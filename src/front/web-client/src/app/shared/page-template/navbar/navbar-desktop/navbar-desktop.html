@@ -15,6 +15,9 @@
     <ul class="menu menu-left">
       @if (showElectorRequestsText()) {
         <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
+          <a routerLink="/registration/new">{{ 'navbar.registration' | translate }}</a>
+        </li>
+        <li class="menu-item" [routerLinkActive]="'active'" *appHideIfAdmin>
           <a routerLink="/registration-requests/new">{{
             'navbar.registrationRequest' | translate
           }}</a>

@@ -1,0 +1,230 @@
+$primary-green: #008060;
+$light-grey: #f9f9f9;
+$step-orange: #ff6f00;
+
+.registration-container {
+  max-width: 1000px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: $light-grey;
+
+  .card {
+    border: none;
+    border-radius: 12px;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+  .main-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1a1a1a;
+  }
+  .sub-title {
+    color: #6c757d;
+  }
+
+  /* Stepper */
+  .stepper-card {
+    padding: 15px 0;
+  }
+  .stepper {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 25%;
+
+    .circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: #f1f1f1;
+      color: #a0a0a0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 14px;
+      z-index: 2;
+      margin-bottom: 8px;
+    }
+
+    .label {
+      font-size: 12px;
+      color: #a0a0a0;
+      text-align: center;
+    }
+
+    .line {
+      position: absolute;
+      top: 18px; // Mi-hauteur du cercle
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background-color: #f1f1f1;
+      z-index: 1;
+    }
+
+    &.active {
+      .circle {
+        background-color: $step-orange;
+        color: white;
+      }
+      .label {
+        color: #1a1a1a;
+        font-weight: bold;
+      }
+      .line {
+        background-color: $step-orange; // Ligne menant à l'étape active
+      }
+    }
+  }
+
+  /* Formulaire */
+  .form-content-card {
+    background-color: white;
+  }
+
+  .section-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1a1a1a;
+  }
+  .section-instruction {
+    color: #6c757d;
+    font-size: 14px;
+  }
+
+  .form-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #3a3a3a;
+    margin-bottom: 5px;
+  }
+
+  .form-control,
+  .form-select {
+    border: 1px solid #d1d1d1;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    color: #a0a0a0; // Couleur du placeholder
+
+    &:focus {
+      border-color: $primary-green;
+      box-shadow: 0 0 0 0.2rem rgba($primary-green, 0.25);
+    }
+  }
+
+  /* Input date */
+  input[type='date']::-webkit-calendar-picker-indicator {
+    filter: opacity(0.5); // Rendre l'icône de calendrier plus discrète
+  }
+
+  /* Boutons de sexe */
+  .gender-buttons {
+    .gender-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 1px solid #d1d1d1;
+      color: #a0a0a0;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: #f1f1f1;
+        color: #1a1a1a;
+      }
+
+      &.active {
+        background-color: $primary-green;
+        color: white;
+        border-color: $primary-green;
+      }
+
+      &.btn-outline-success.active {
+        background-color: $primary-green;
+        color: white;
+        border-color: $primary-green;
+      }
+
+      &.btn-outline-secondary.active {
+        background-color: #f1f1f1;
+        color: #1a1a1a;
+        border-color: #d1d1d1;
+      }
+
+      i {
+        font-size: 16px;
+      }
+    }
+  }
+
+  /* Placeholder pour les icônes - vous devriez utiliser des icônes réelles (FontAwesome, etc.) */
+  .icon-man::after {
+    content: '👨';
+  }
+  .icon-woman::after {
+    content: '👩';
+  }
+
+  /* Menu déroulant de nationalité */
+  .nationality-select-wrapper {
+    position: relative;
+    .form-select {
+      padding-right: 35px; // Espace pour l'icône de flèche
+      appearance: none; // Désactiver l'apparence par défaut
+      background: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3%3Cpolyline points="6 9 12 15 18 9"%3E%3C/polyline%3E%3C/svg%3E')
+        no-repeat right 10px center / 20px 20px;
+    }
+  }
+
+  /* Boutons de navigation */
+  .nav-btn {
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .prev-btn {
+    border-color: #d1d1d1;
+    color: #a0a0a0;
+
+    &:disabled {
+      border-color: #f1f1f1;
+      color: #c0c0c0;
+      opacity: 1; // Désactiver l'effet d'opacité par défaut
+    }
+  }
+
+  .next-btn {
+    background-color: $primary-green;
+    color: white;
+    border-color: $primary-green;
+
+    &:hover {
+      background-color: darken($primary-green, 5%);
+    }
+  }
+
+  .border-top {
+    border-color: #f1f1f1 !important;
+  }
+}
