@@ -36,7 +36,9 @@ export type ParentForm = FormGroup<{
   nationality: FormControl<string | undefined>;
 }>;
 export type FiliationForm = FormGroup<{
+  fatherId: FormControl<string | undefined>;
   father: ParentForm;
+  motherId: FormControl<string | undefined>;
   mother: ParentForm;
 }>;
 export type CoordinatesForm = FormGroup<{
@@ -90,7 +92,16 @@ export function createIdentityForm(): IdentityForm {
 }
 export function createFiliationForm(): FiliationForm {
   const filisation = new FormGroup({
+    fatherId: new FormControl<string | undefined>(undefined, {
+      //validators: Validators.required,
+      nonNullable: true,
+    }),
     father: createParentForm(),
+    motherId: new FormControl<string | undefined>(undefined, {
+      //validators: Validators.required,
+      nonNullable: true,
+    }),
+
     mother: createParentForm(),
   }) as FiliationForm;
   return filisation;
