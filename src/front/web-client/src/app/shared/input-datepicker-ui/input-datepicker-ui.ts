@@ -43,9 +43,6 @@ export class InputDatepickerUi implements ControlValueAccessor {
     }
   }
 
-  // registerOnChange(fn: (value: string) => void): void {
-  //   this.onChange = fn;
-  // }
   registerOnChange(fn: (value: Date | null) => void): void {
     this.onChange = fn;
   }
@@ -62,7 +59,6 @@ export class InputDatepickerUi implements ControlValueAccessor {
   onInputChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.value.set(input.value);
-    //this.onChange(input.value); // Notifie le formulaire parent du changement
     const newDate = input.value ? new Date(input.value) : null;
     this.onChange(newDate);
   }

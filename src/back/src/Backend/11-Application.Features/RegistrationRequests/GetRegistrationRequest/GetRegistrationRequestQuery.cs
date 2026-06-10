@@ -75,17 +75,6 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
                     .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken)
                 ?? throw new NotFoundException(nameof(RegistrationRequestDao), request.Id);
 
-            //if (
-            //    !userIsSuperAdmin
-            //        && currentUser.UserConstituencies.Any(u =>
-            //            u.ConstituencyId != registrationRequest.ConstituencyId
-            //        )
-            //    || currentUser.Id != registrationRequest.AuthorId
-            //)
-            //{
-            //    throw new UserAccessException();
-            //}
-
             if (!userIsSuperAdmin && !canManageAllRequests)
             {
                 if (isManagementAgent)

@@ -1,0 +1,39 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 78vh;
+  background-color: #f5f7f9;
+  padding: 20px;
+}
+
+.registration-wizard-container {
+  display: grid;
+  flex-direction: column;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+
+  .form-container-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+
+    .request-form {
+      height: 120px;
+    }
+    .wizard-container {
+      background-color: olivedrab;
+
+      .step-action {
+        display: flex;
+        gap: 12px;
+      }
+    }
+  }
+}

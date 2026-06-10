@@ -1,0 +1,31 @@
+<div class="flex flex-col gap-1">
+  <label class="text-sm font-semibold text-slate-700">{{ label() }} *</label>
+
+  <div
+    class="relative border-2 border-dashed rounded-xl p-4 transition-all cursor-pointer flex flex-col items-center"
+    [class.border-indigo-400]="isDragging()"
+    [class.bg-indigo-50]="isDragging()"
+    [class.border-emerald-300]="file()"
+    (click)="fileInput.click()"
+  >
+    <input
+      #fileInput
+      type="file"
+      class="hidden"
+      [accept]="accept()"
+      (change)="onFileSelected($event)"
+    />
+
+    @if (file()) {
+      <div class="flex items-center gap-3 w-full">
+        <mat-icon color="primary">insert_drive_file</mat-icon>
+        <span class="truncate flex-1 text-sm">{{ file()?.name }}</span>
+        <mat-icon class="text-red-500 cursor-pointer" (click)="clearFile($event)">close</mat-icon>
+      </div>
+    } @else {
+      <mat-icon class="text-slate-400 mb-2">cloud_upload</mat-icon>
+      <p class="text-sm text-indigo-600 font-medium">Cliquez ou glissez-déposez</p>
+      <p class="text-xs text-slate-400 mt-1">{{ hint() }}</p>
+    }
+  </div>
+</div>

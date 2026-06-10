@@ -1,0 +1,69 @@
+<div [formGroup]="stepForm()" class="filiation-layout">
+  <div class="father-container">
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="fatherSearch">{{ 'registrationRequests.fields.father' | translate }}</label>
+        <input
+          id="fatherSearch"
+          type="text"
+          [placeholder]="'global.select' | translate"
+          [value]="fatherInputValue()"
+          (input)="onParentSearchChange($event, 'father')"
+          list="fatherOptions"
+          autocomplete="off"
+        />
+        <datalist id="fatherOptions">
+          @for (parent of filteredFatherOptions(); track parent.id) {
+            <option [value]="getParentDisplayName(parent)"></option>
+          }
+        </datalist>
+
+        <input type="hidden" formControlName="fatherId" />
+        @if (stepForm().controls.fatherId.hasError('required')) {
+          <ul class="form-error">
+            <li>{{ 'formError.required' | translate }}</li>
+          </ul>
+        }
+      </div>
+      <div class="input-block">
+        <button class="btn primary visu" type="button" (click)="openAddParentModal('m')">
+          {{ 'registrationRequests.addFather' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mother-container">
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="motherSearch">{{ 'registrationRequests.fields.mother' | translate }}</label>
+        <input
+          id="motherSearch"
+          type="text"
+          [placeholder]="'global.select' | translate"
+          [value]="motherInputValue()"
+          (input)="onParentSearchChange($event, 'mother')"
+          list="motherOptions"
+          autocomplete="off"
+        />
+        <datalist id="motherOptions">
+          @for (parent of filteredMotherOptions(); track parent.id) {
+            <option [value]="getParentDisplayName(parent)"></option>
+          }
+        </datalist>
+
+        <input type="hidden" formControlName="motherId" />
+        @if (stepForm().controls.motherId.hasError('required')) {
+          <ul class="form-error">
+            <li>{{ 'formError.required' | translate }}</li>
+          </ul>
+        }
+      </div>
+      <div class="input-block">
+        <button class="btn primary visu" type="button" (click)="openAddParentModal('f')">
+          {{ 'registrationRequests.addMother' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
