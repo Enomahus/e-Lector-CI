@@ -1,8 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatStepperModule } from '@angular/material/stepper';
+import { MatStepperModule, StepperOrientation } from '@angular/material/stepper';
 import { allRegistrationRequestType } from '@app/pages/types/enumerations';
 import { RegistrationStepConfirmationUi } from '@app/shared/registration-step-confirmation-ui/registration-step-confirmation-ui';
 import { RegistrationStepCoordinatesUi } from '@app/shared/registration-step-coordinates-ui/registration-step-coordinates-ui';
@@ -11,6 +12,7 @@ import { RegistrationStepIdentityUi } from '@app/shared/registration-step-identi
 import { RegistrationStepJustificationUi } from '@app/shared/registration-step-justification-ui/registration-step-justification-ui';
 import { RegistrationStepResidenceUi } from '@app/shared/registration-step-residence-ui/registration-step-residence-ui';
 import { TranslateModule } from '@ngx-translate/core';
+import { map } from 'rxjs';
 import { createRegistrationForm, RegistrationForm, RequestForm } from './registration-wizard-form';
 
 @Component({
@@ -37,6 +39,15 @@ export class RegistrationWizardUi {
 
   form = createRegistrationForm();
   allRegistrationRequestType = allRegistrationRequestType;
+
+  private breakpointObserver = inject(BreakpointObserver);
+
+  stepperOrientation = toSignal(
+    this.breakpointObserver
+      .observe('(max-width: 800px)')
+      .pipe(map((result) => (result.matches ? 'vertical' : 'horizontal') as StepperOrientation)),
+    { initialValue: 'horizontal' as StepperOrientation },
+  );
 
   requestForm(): RequestForm {
     return this.form.controls.request;

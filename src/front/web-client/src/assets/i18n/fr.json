@@ -353,6 +353,8 @@
     "addMatherInfo": "Informations de la mère",
     "addFather": "Créer un père",
     "addMother": "Créer une mère",
+    "proofOfIdentity": "Pièce d'identité",
+    "consent": "Consentements",
     "gender": {
       "m": "Masculin",
       "f": "Féminin"
@@ -386,7 +388,12 @@
       "mother": "Mère",
       "cni": "Pièce nationale d'identité",
       "registrationCertificate": "Certificat de nationalité",
-      "photo": "Photo",
+      "issueDate": "Date de délivrance",
+      "expiryDate": "Date d'expiration",
+      "issuePlace": "Lieu de délivrance",
+      "identityType": "Type de pièce d'identité",
+      "identityNumber": "Numéro de la pièce",
+      "photo": "Photo d'identité récente",
       "remark": "Remarque",
       "firstName": "Prénom",
       "lastName": "Nom de famille",
@@ -399,7 +406,11 @@
       "gender": "Genre",
       "registrationRequestType": "Type de demande d'inscription",
       "requestDocuments": "Documents justificatifs",
-      "reasonForRejection": "Commentaire"
+      "reasonForRejection": "Commentaire",
+      "municipality": "Commune / Village",
+      "subPrefecture": "Sous-préfecture",
+      "department": "Département",
+      "region": "Région"
     },
     "registrationRequestTypes": {
       "registrationRequest": "Demande d'inscription",

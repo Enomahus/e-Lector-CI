@@ -1,1 +1,192 @@
+<div class="document-container">
+  <form [formGroup]="stepForm()">
+    <fieldset class="section-block">
+      <legend class="section-header">
+        <div class="header-text">
+          <h2>{{ 'registrationRequests.proofOfIdentity' | translate }}</h2>
+        </div>
+      </legend>
 
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="identityType">{{
+            'registrationRequests.fields.identityType' | translate
+          }}</label>
+          <input id="identityType" type="text" formControlName="typeOfIdentificationDocument" />
+          @if (
+            stepForm().controls.typeOfIdentificationDocument.touched &&
+            stepForm().controls.typeOfIdentificationDocument.hasError('required')
+          ) {
+            <ul class="form-error">
+              <li>{{ 'formError.required' | translate }}</li>
+            </ul>
+          }
+        </div>
+
+        <div class="input-block required">
+          <label for="identityNumber">{{
+            'registrationRequests.fields.identityNumber' | translate
+          }}</label>
+          <input id="identityNumber" type="text" formControlName="identificationDocumentNumber" />
+          @if (
+            stepForm().controls.identificationDocumentNumber.touched &&
+            stepForm().controls.identificationDocumentNumber.hasError('required')
+          ) {
+            <ul class="form-error">
+              <li>{{ 'formError.required' | translate }}</li>
+            </ul>
+          }
+        </div>
+      </div>
+
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="issueDate">{{ 'registrationRequests.fields.issueDate' | translate }}</label>
+          <input id="issueDate" type="date" formControlName="issueDate" />
+          @if (
+            stepForm().controls.issueDate.touched &&
+            stepForm().controls.issueDate.hasError('required')
+          ) {
+            <ul class="form-error">
+              <li>{{ 'formError.required' | translate }}</li>
+            </ul>
+          }
+        </div>
+
+        <div class="input-block required">
+          <label for="expiryDate">{{ 'registrationRequests.fields.expiryDate' | translate }}</label>
+          <input id="expiryDate" type="date" formControlName="expiryDate" />
+          @if (
+            stepForm().controls.expiryDate.touched &&
+            stepForm().controls.expiryDate.hasError('required')
+          ) {
+            <ul class="form-error">
+              <li>{{ 'formError.required' | translate }}</li>
+            </ul>
+          }
+        </div>
+      </div>
+
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="issuePlace">{{ 'registrationRequests.fields.issuePlace' | translate }}</label>
+          <input id="issuePlace" type="text" formControlName="issuePlace" />
+          @if (
+            stepForm().controls.issuePlace.touched &&
+            stepForm().controls.issuePlace.hasError('required')
+          ) {
+            <ul class="form-error">
+              <li>{{ 'formError.required' | translate }}</li>
+            </ul>
+          }
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section-block">
+      <legend class="section-header">
+        <span class="icon-wrapper green-bg"> </span>
+        <div class="header-text">
+          <h2>Téléchargement des documents</h2>
+          <p>Formats acceptés : PDF, JPG, PNG (max 5 Mo par fichier)</p>
+        </div>
+      </legend>
+
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label>Pièce d'identité (recto-verso)</label>
+          <div class="dropzone">
+            <input
+              type="file"
+              id="registrationCniAttachments"
+              accept=".pdf,.jpg,.png"
+              (change)="onFileChange($event, 'registrationCniAttachments')"
+            />
+          </div>
+          @if (
+            stepForm().controls.registrationCniAttachments.touched &&
+            stepForm().controls.registrationCniAttachments.hasError('required')
+          ) {
+            <span class="error-text">Document requis.</span>
+          }
+        </div>
+      </div>
+
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label>{{ 'registrationRequests.fields.registrationCertificate' | translate }}</label>
+          <div class="dropzone">
+            <input
+              type="file"
+              id="registrationCertificateAttachments"
+              accept=".pdf,.jpg,.png"
+              (change)="onFileChange($event, 'registrationCertificateAttachments')"
+            />
+          </div>
+          @if (
+            stepForm().controls.registrationCertificateAttachments.touched &&
+            stepForm().controls.registrationCertificateAttachments.hasError('required')
+          ) {
+            <ul class="form-error">
+              <li>{{ 'formError.required' | translate }}</li>
+            </ul>
+          }
+        </div>
+      </div>
+      <div class="inputs-container">
+        <div class="input-block required">
+          <label for="photoAttachments">{{
+            'registrationRequests.fields.photo' | translate
+          }}</label>
+          <div class="dropzone">
+            <input
+              type="file"
+              id="photoAttachments"
+              accept=".jpg,.png"
+              (change)="onFileChange($event, 'photoAttachments')"
+            />
+          </div>
+          @if (
+            stepForm().controls.photoAttachments.touched &&
+            stepForm().controls.photoAttachments.hasError('required')
+          ) {
+            <ul class="form-error">
+              <li>{{ 'formError.required' | translate }}</li>
+            </ul>
+          }
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section-block">
+      <legend class="section-header">
+        <div class="header-text">
+          <h2>{{ 'registrationRequests.consent' | translate }}</h2>
+        </div>
+      </legend>
+
+      <div class="consent-card">
+        <label class="checkbox-container">
+          <input type="checkbox" formControlName="isRgpdConsent" />
+          <span class="checkmark"></span>
+          <span class="label-text">
+            <strong>Traitement des données personnelles <span class="asterisk">*</span></strong>
+            <p>
+              J'accepte que mes données personnelles soient collectées et traitées conformément à la
+              politique de protection des données et au RGPD, dans le seul but de traiter ma demande
+              d'inscription.
+            </p>
+          </span>
+        </label>
+        @if (
+          stepForm().controls.isRgpdConsent.touched &&
+          stepForm().controls.isRgpdConsent.hasError('requiredTrue')
+        ) {
+          <span class="error-text consent-error"
+            >Le consentement est obligatoire pour continuer.</span
+          >
+        }
+      </div>
+    </fieldset>
+  </form>
+</div>

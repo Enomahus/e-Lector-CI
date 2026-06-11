@@ -37,9 +37,9 @@ export type ParentForm = FormGroup<{
 }>;
 export type FiliationForm = FormGroup<{
   fatherId: FormControl<string | undefined>;
-  father: ParentForm;
+  //father: ParentForm;
   motherId: FormControl<string | undefined>;
-  mother: ParentForm;
+  //mother: ParentForm;
 }>;
 export type CoordinatesForm = FormGroup<{
   profession: FormControl<string | undefined>;
@@ -50,11 +50,19 @@ export type ResidenceForm = FormGroup<{
   departmentId: FormControl<number | undefined>;
   subPrefectureId: FormControl<number | undefined>;
   municipalityId: FormControl<number | undefined>;
+  physicalAddress: FormControl<string | undefined>;
+  postalAddress: FormControl<string | undefined>;
 }>;
 export type RequestDocumentsForm = FormGroup<{
+  typeOfIdentificationDocument: FormControl<string | undefined>;
+  identificationDocumentNumber: FormControl<string | undefined>;
+  issueDate: FormControl<Date | undefined>;
+  expiryDate: FormControl<Date | undefined>;
+  issuePlace: FormControl<string | undefined>;
   registrationCertificateAttachments: FormControl<File | undefined>;
   registrationCniAttachments: FormControl<File | undefined>;
   photoAttachments: FormControl<File | undefined>;
+  isRgpdConsent: FormControl<boolean | undefined>;
 }>;
 export function createIdentityForm(): IdentityForm {
   const identity = new FormGroup({
@@ -96,13 +104,13 @@ export function createFiliationForm(): FiliationForm {
       //validators: Validators.required,
       nonNullable: true,
     }),
-    father: createParentForm(),
+    //father: createParentForm(),
     motherId: new FormControl<string | undefined>(undefined, {
       //validators: Validators.required,
       nonNullable: true,
     }),
 
-    mother: createParentForm(),
+    //mother: createParentForm(),
   }) as FiliationForm;
   return filisation;
 }
@@ -136,11 +144,39 @@ export function createResidenceForm(): ResidenceForm {
       validators: Validators.required,
       nonNullable: true,
     }),
+    physicalAddress: new FormControl<string | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    postalAddress: new FormControl<string | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
   }) as ResidenceForm;
   return residence;
 }
 export function createRequestDocumentsForm(): RequestDocumentsForm {
   const requestDocuments = new FormGroup({
+    typeOfIdentificationDocument: new FormControl<string | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    identificationDocumentNumber: new FormControl<string | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    issueDate: new FormControl<Date | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    expiryDate: new FormControl<Date | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    issuePlace: new FormControl<string | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
     registrationCertificateAttachments: new FormControl<File | undefined>(undefined, {
       validators: Validators.required,
       nonNullable: true,
@@ -150,6 +186,10 @@ export function createRequestDocumentsForm(): RequestDocumentsForm {
       nonNullable: true,
     }),
     photoAttachments: new FormControl<File | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    isRgpdConsent: new FormControl<boolean | undefined>(undefined, {
       validators: Validators.required,
       nonNullable: true,
     }),

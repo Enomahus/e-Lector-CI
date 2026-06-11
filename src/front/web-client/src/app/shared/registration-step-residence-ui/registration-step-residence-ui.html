@@ -1,1 +1,98 @@
-<p>registration-step-residence-ui works!</p>
+<div class="residence-container">
+  <form [formGroup]="stepForm()">
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="regionId">{{ 'registrationRequests.fields.region' | translate }}</label>
+        <select id="regionId" formControlName="regionId">
+          <option value="" selected>{{ 'global.select' | translate }}</option>
+          @for (region of allRegion(); track region.id) {
+            <option [value]="region.id">{{ region.code }} {{ region.wording }}</option>
+          }
+        </select>
+        @if (stepForm().controls.regionId.hasError('required')) {
+          <ul class="form-error">
+            <li>{{ 'formError.required' | translate }}</li>
+          </ul>
+        }
+      </div>
+      <div class="input-block required">
+        <label for="departmentId">{{ 'registrationRequests.fields.department' | translate }}</label>
+        <select id="departmentId" formControlName="departmentId">
+          <option value="" selected>{{ 'global.select' | translate }}</option>
+          @for (department of allDepartement(); track department.id) {
+            <option [value]="department.id">{{ department.code }} {{ department.wording }}</option>
+          }
+        </select>
+        @if (stepForm().controls.departmentId.hasError('required')) {
+          <ul class="form-error">
+            <li>{{ 'formError.required' | translate }}</li>
+          </ul>
+        }
+      </div>
+    </div>
+
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="subPrefecture">{{
+          'registrationRequests.fields.subPrefecture' | translate
+        }}</label>
+        <select id="subPrefecture" formControlName="subPrefectureId">
+          <option value="" selected>{{ 'global.select' | translate }}</option>
+          @for (subPrefecture of allSubPrefectures(); track subPrefecture.id) {
+            <option [value]="subPrefecture.id">
+              {{ subPrefecture.code }} {{ subPrefecture.wording }}
+            </option>
+          }
+        </select>
+        @if (stepForm().controls.subPrefectureId.hasError('required')) {
+          <ul class="form-error">
+            <li>{{ 'formError.required' | translate }}</li>
+          </ul>
+        }
+      </div>
+      <div class="input-block required">
+        <label for="municipalityId">{{
+          'registrationRequests.fields.municipality' | translate
+        }}</label>
+        <select id="municipalityId" formControlName="municipalityId">
+          <option value="" selected>{{ 'global.select' | translate }}</option>
+          @for (municipality of allMunicipalities(); track municipality.id) {
+            <option [value]="municipality.id">
+              {{ municipality.code }} {{ municipality.wording }}
+            </option>
+          }
+        </select>
+        @if (stepForm().controls.municipalityId.hasError('required')) {
+          <ul class="form-error">
+            <li>{{ 'formError.required' | translate }}</li>
+          </ul>
+        }
+      </div>
+    </div>
+
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="physicalAddress">{{
+          'registrationRequests.fields.physicalAddress' | translate
+        }}</label>
+        <input id="physicalAddress" formControlName="physicalAddress" />
+        @if (stepForm().controls.physicalAddress.hasError('required')) {
+          <ul class="form-error">
+            <li>{{ 'formError.required' | translate }}</li>
+          </ul>
+        }
+      </div>
+      <div class="input-block required">
+        <label for="postalAddress">{{
+          'registrationRequests.fields.postalAddress' | translate
+        }}</label>
+        <input id="postalAddress" formControlName="postalAddress" />
+        @if (stepForm().controls.postalAddress.hasError('required')) {
+          <ul class="form-error">
+            <li>{{ 'formError.required' | translate }}</li>
+          </ul>
+        }
+      </div>
+    </div>
+  </form>
+</div>

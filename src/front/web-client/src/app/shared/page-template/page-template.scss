@@ -10,7 +10,10 @@
 
     .content {
       width: 95%;
-      background-color: rgb(248, 246, 246);
+      //background-color: rgb(248, 246, 246);
+      /* Dégradé linéaire élégant inspiré du drapeau de la Côte d'Ivoire (Orange, Blanc, Vert) */
+  background: linear-gradient(135deg, #f77f00 0%, #ffffff 50%, #009e49 100%);
+
     }
   }
 }
