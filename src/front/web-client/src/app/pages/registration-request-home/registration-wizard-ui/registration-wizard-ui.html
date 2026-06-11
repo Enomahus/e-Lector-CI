@@ -53,7 +53,7 @@
       </section>
 
       <section class="wizard-container">
-        <mat-stepper [linear]="true" header-height="40px" #stepper class="custom-stepper">
+        <mat-stepper [linear]="true" [orientation]="stepperOrientation()" #stepper class="custom-stepper">
           <mat-step [stepControl]="form.controls.identity">
             <ng-template matStepLabel>Identité</ng-template>
 

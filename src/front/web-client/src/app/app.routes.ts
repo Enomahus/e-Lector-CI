@@ -46,11 +46,6 @@ export const routes: Routes = [
     title: 'login.title',
   },
   {
-    path: 'faq',
-    component: FaqUi,
-    title: 'faq.title',
-  },
-  {
     path: 'reset-password',
     component: ResetPasswordUi,
     title: 'resetPassword.resetPassword',
@@ -75,6 +70,11 @@ export const routes: Routes = [
         component: CreateAccount,
         title: 'register.title',
         canActivate: [PermissionGuard],
+      },
+      {
+        path: 'faq',
+        component: FaqUi,
+        title: 'faq.title',
       },
       {
         path: 'registration-requests',

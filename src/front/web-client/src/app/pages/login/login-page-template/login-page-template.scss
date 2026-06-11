@@ -3,6 +3,9 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  /* Dégradé linéaire élégant inspiré du drapeau de la Côte d'Ivoire (Orange, Blanc, Vert) */
+  background: linear-gradient(135deg, #f77f00 0%, #ffffff 50%, #009e49 100%);
+
 
   .language-switcher {
     position: absolute;

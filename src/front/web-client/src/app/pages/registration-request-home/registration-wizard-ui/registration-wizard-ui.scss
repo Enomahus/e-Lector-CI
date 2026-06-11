@@ -3,37 +3,114 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 78vh;
-  background-color: #f5f7f9;
-  padding: 20px;
+  width: 100%;
+  padding: 40px 20px;
+  box-sizing: border-box;
+
+  /* Dégradé linéaire élégant inspiré du drapeau de la Côte d'Ivoire (Orange, Blanc, Vert) */
+  //background: linear-gradient(135deg, #f77f00 0%, #ffffff 50%, #009e49 100%);
+
+  /* Adaptabilité du fond sur petits écrans */
+  @media (max-width: 800px) {
+    padding: 16px 10px;
+  }
 }
 
 .registration-wizard-container {
-  display: grid;
+  display: flex;
   flex-direction: column;
   padding: 32px 24px;
   width: 100%;
   max-width: 900px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-sizing: border-box;
+
+  /* Arrière-plan du cadre : Blanc semi-transparent pour le contraste et la lisibilité */
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+
+  /* Réduction des marges intérieures de la boîte sur Mobile */
+  @media (max-width: 800px) {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
 
   .form-container-group {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 24px;
     width: 100%;
 
+    @media (max-width: 800px) {
+      gap: 16px;
+    }
+
     .request-form {
-      height: 120px;
+      //height: 80px;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 8px;
+      padding: 16px;
+      border-left: 4px solid #f77f00; /* Rappel de l'Orange ivoirien */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+      @media (max-width: 800px) {
+        padding: 12px;
+      }
     }
     .wizard-container {
-      background-color: olivedrab;
+      width: 100%;
 
+      .custom-stepper {
+        background: transparent;
+        width: 100%;
+
+        /* Surcharge responsive pour l'en-tête du stepper d'Angular Material */
+        ::v-deep .mat-horizontal-stepper-header-container {
+          @media (max-width: 800px) {
+            padding: 0;
+          }
+        }
+
+        ::v-deep .mat-step-header {
+          @media (max-width: 600px) {
+            padding: 8px 10px;
+
+            .mat-step-label {
+              font-size: 12px;
+              max-width: 70px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+
+          /* Sur écran ultra-petit (ex: iPhone SE), masque le texte pour ne garder que la bulle */
+          @media (max-width: 420px) {
+            padding: 6px 4px;
+            justify-content: center;
+
+            .mat-step-label {
+              display: none;
+            }
+            .mat-step-icon {
+              margin-right: 0 !important;
+            }
+          }
+        }
+      }
       .step-action {
         display: flex;
         gap: 12px;
+        justify-content: flex-end;
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
       }
     }
+  }
+
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
   }
 }

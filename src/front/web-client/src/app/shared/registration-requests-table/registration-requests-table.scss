@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  margin: 16px;
 
   .table-header {
     display: flex;
@@ -17,7 +18,6 @@
   .table-container {
     position: relative;
     min-height: 200px;
-    max-height: 550px;
     overflow: auto;
 
     .registration-status {
@@ -79,6 +79,7 @@
       text-align: center;
       color: rgba(0, 0, 0, 0.54);
       font-style: italic;
+      height: 100px;
     }
 
     .loading-overlay {

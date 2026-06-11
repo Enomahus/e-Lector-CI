@@ -318,6 +318,8 @@
     "addMatherInfo": "Mother Informations",
     "addFather": "Create father",
     "addMother": "Create mother",
+    "proofOfIdentity": "Proof of identity",
+    "consent": "Consentments",
     "gender": {
       "m": "Male",
       "f": "Female"
@@ -329,7 +331,6 @@
     },
     "fields": {
       "reference": "Reference",
-      "subPrefecture": "Sub-prefecture",
       "status": "Status",
       "citizenName": "Applicant name",
       "citizenBirthDate": "Date of birth",
@@ -344,7 +345,12 @@
       "mother": "Mother",
       "cni": "National Identity Card",
       "registrationCertificate": "Nationality certificate",
-      "photo": "Picture",
+      "issueDate": "Issue date",
+      "expiryDate": "Expiry date",
+      "issuePlace": "Issue place",
+      "identityType": "Type de pièce d'identité",
+      "identityNumber": "Identity number",
+      "photo": "A recente passport photo",
       "remark": "Remark",
       "firstName": "First name",
       "lastName": "Last name",
@@ -356,7 +362,11 @@
       "gender": "Gender",
       "registrationRequestType": "Registration request type",
       "requestDocuments": "Supporting documents",
-      "reasonForRejection": "Reason for rejection"
+      "reasonForRejection": "Reason for rejection",
+      "municipality": "Municipality / Village",
+      "subPrefecture": "Sub-prefecture",
+      "department": "Department",
+      "region": "Region"
     },
     "registrationRequestTypes": {
       "registrationRequest": "Registration request",

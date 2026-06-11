@@ -1,1 +1,27 @@
-<p>registration-step-coordinates-ui works!</p>
+<div class="coordinate-container">
+  <form [formGroup]="stepForm()">
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="profession">{{ 'registrationRequests.fields.occupation' | translate }}</label>
+        <input id="profession" formControlName="profession" />
+        @if (stepForm().controls.profession.hasError('required')) {
+          <ul class="form-error">
+            <li>{{ 'formError.required' | translate }}</li>
+          </ul>
+        }
+      </div>
+    </div>
+
+    <div class="inputs-container">
+      <div class="input-block required">
+        <label for="email">{{ 'registrationRequests.fields.email' | translate }}</label>
+        <input id="email" formControlName="email" />
+        @if (stepForm().controls.email.hasError('required')) {
+          <ul class="form-error">
+            <li>{{ 'formError.required' | translate }}</li>
+          </ul>
+        }
+      </div>
+    </div>
+  </form>
+</div>
