@@ -1,9 +1,8 @@
-<div class="confirmation-container">
-
+<div class="flex flex-col gap-6">
   <app-recap-section-ui
     title="Identité"
     [step]="0"
-    color="border-slate-200"
+    color="border-indigo-200"
     [items]="identityItems()"
     (edit)="editStep.emit($event)"
   >
@@ -12,7 +11,7 @@
   <app-recap-section-ui
     title="Filiation"
     [step]="1"
-    color="border-slate-200"
+    color="border-amber-200"
     [items]="filiationItems()"
     (edit)="editStep.emit($event)"
   >
@@ -21,7 +20,7 @@
   <app-recap-section-ui
     title="Coordonnées"
     [step]="2"
-    color="border-slate-200"
+    color="border-indigo-200"
     [items]="coordonneesItems()"
     (edit)="editStep.emit($event)"
   >
@@ -30,7 +29,7 @@
   <app-recap-section-ui
     title="Résidence"
     [step]="3"
-    color="border-slate-200"
+    color="border-indigo-200"
     [items]="residenceItems()"
     (edit)="editStep.emit($event)"
   >
@@ -39,7 +38,7 @@
   <app-recap-section-ui
     title="Justificatifs"
     [step]="4"
-    color="border-slate-200"
+    color="border-indigo-200"
     [items]="justificatifsItems()"
     (edit)="editStep.emit($event)"
   >

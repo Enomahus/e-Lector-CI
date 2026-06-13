@@ -1,10 +1,12 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatStepperModule, StepperOrientation } from '@angular/material/stepper';
 import { allRegistrationRequestType } from '@app/pages/types/enumerations';
+import { CitizenApiService } from '@app/services/api/citizen.api.service';
+import { GetCitizensResponse } from '@app/services/nswag/api-nswag-client';
 import { RegistrationStepConfirmationUi } from '@app/shared/registration-step-confirmation-ui/registration-step-confirmation-ui';
 import { RegistrationStepCoordinatesUi } from '@app/shared/registration-step-coordinates-ui/registration-step-coordinates-ui';
 import { RegistrationStepFiliationUi } from '@app/shared/registration-step-filiation-ui/registration-step-filiation-ui';
@@ -32,10 +34,13 @@ import { createRegistrationForm, RegistrationForm, RequestForm } from './registr
   templateUrl: './registration-wizard-ui.html',
   styleUrl: './registration-wizard-ui.scss',
 })
-export class RegistrationWizardUi {
+export class RegistrationWizardUi implements OnInit {
   isSubmitted = signal(false);
   isSubmitting = signal(false);
   formData = signal<RegistrationForm | null>(null);
+
+  private readonly citizenService = inject(CitizenApiService);
+  citizens = signal<GetCitizensResponse[] | null>(null);
 
   form = createRegistrationForm();
   allRegistrationRequestType = allRegistrationRequestType;
@@ -58,6 +63,12 @@ export class RegistrationWizardUi {
     this.form.controls.identity.controls.maritalStatus.valueChanges,
     { initialValue: this.form.controls.identity.controls.maritalStatus.value },
   );
+
+  ngOnInit(): void {
+    this.citizenService.getCitizens().subscribe({
+      next: (res) => this.citizens.set(res.data ?? []),
+    });
+  }
 
   submitForm() {
     if (this.form.invalid) return;

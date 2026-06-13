@@ -1,4 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
 
 export interface RecapItem {
   label: string;
@@ -7,7 +10,7 @@ export interface RecapItem {
 
 @Component({
   selector: 'app-recap-section-ui',
-  imports: [],
+  imports: [CommonModule, MatExpansionModule, MatIconModule],
   templateUrl: './recap-section-ui.html',
   styleUrl: './recap-section-ui.scss',
 })
