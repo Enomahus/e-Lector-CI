@@ -1,10 +1,10 @@
-﻿using Application.Api;
+﻿using System.Diagnostics.CodeAnalysis;
+using Application.Api;
 using Application.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using NSwag.Annotations;
-using System.Diagnostics.CodeAnalysis;
 using Tools.Exceptions.Errors;
 
 namespace Application.Features.RegistrationRequests.UpdateRegistrationRequest
@@ -37,8 +37,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequest
             {
                 Id = formData.Id,
                 RegistrationRequest = formData.GetRegistrationRequest(),
-                RegistrationRequestCertificateAttachments = formData.RegistrationRequestCertificateAttachments,
-                RegistrationRequestCniAttachments = formData.RegistrationRequestCniAttachments,
+                RegistrationRequestCniOrCertificateAttachments = formData.RegistrationRequestCniAttachments,
                 Photo = formData.Photo,
             };
             return Mediator.Send(command, cancellationToken);

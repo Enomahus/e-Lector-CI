@@ -2,7 +2,6 @@
 
 public enum RegistrationRequestDocumentType
 {
-    IdentityDocument,
-    CertificateOfNationality,
     Photo,
+    IdentityDocumentOrNationalCertificate,
 }

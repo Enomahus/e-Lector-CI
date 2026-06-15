@@ -1,7 +1,8 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, JsonPipe } from '@angular/common';
 import {
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
@@ -11,6 +12,7 @@ import {
   signal,
   SimpleChanges,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -19,9 +21,11 @@ import {
   allGenders,
   allMaritalStatus,
   allPersonTitle,
+  allRegistrationDocumentType,
   allRegistrationRequestType,
 } from '@app/pages/types/enumerations';
 import { CitizenApiService } from '@app/services/api/citizen.api.service';
+import { ConstituencyApiService } from '@app/services/api/constituency.api.service';
 import { AuthService } from '@app/services/auth/auth.service';
 import { PermissionDirective } from '@app/services/auth/permission.directive';
 import { BreadcrumbService } from '@app/services/breadcrumb.service';
@@ -29,6 +33,7 @@ import { ConstituencyTreeHelperService } from '@app/services/constituency-tree-h
 import {
   Gender,
   GetCitizensResponse,
+  GetConstituenciesResponse,
   GetRegistrationRequestResponse,
   RegistrationRequestModel,
   RegistrationStatus,
@@ -58,7 +63,6 @@ import {
     TranslateModule,
     FormsModule,
     ReactiveFormsModule,
-    ConstituencyTree,
     StickyButtonsContainer,
     Loader,
     PermissionDirective,
@@ -92,6 +96,8 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
   private readonly datePipe = inject(DatePipe);
+  private readonly constituencieService = inject(ConstituencyApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
   isLoading = signal<boolean>(false);
   isEditMode = signal<boolean>(false);
@@ -99,6 +105,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   residenceForm = signal<ResidenceForm>(createResidenceForm());
   registrationRequestId = signal<number | undefined>(undefined);
   municipalityId = signal<number | null>(null);
+  constituencies = signal<GetConstituenciesResponse[] | null>(null);
 
   nodes = this.store.nodesData;
   selectedNode = this.store.selectedNode;
@@ -121,12 +128,42 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   allMaritalStatus = allMaritalStatus;
   allGenders = allGenders;
   allPersonTitle = allPersonTitle;
+  allRegistrationDocumentType = allRegistrationDocumentType;
 
   certificateFile = signal<File | null>(null);
   cniFile = signal<File | null>(null);
   photoFile = signal<File | null>(null);
   isSubmitting = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
+
+  allRegion = signal<GetConstituenciesResponse[] | null>(null);
+  selectedRegionId = signal<number | null>(null);
+  selectedDepartmentId = signal<number | null>(null);
+  selectedSubPrefectureId = signal<number | null>(null);
+
+  allDepartement = computed<GetConstituenciesResponse[]>(() => {
+    const regionId = this.selectedRegionId();
+    if (!regionId) return [];
+
+    const selectedRegion = this.allRegion()?.find((r) => r.id === regionId);
+    return selectedRegion?.children ?? [];
+  });
+
+  allSubPrefectures = computed<GetConstituenciesResponse[]>(() => {
+    const departmentId = this.selectedDepartmentId();
+    if (!departmentId) return [];
+
+    const selectedDepartment = this.allDepartement()?.find((d) => d.id === departmentId);
+    return selectedDepartment?.children ?? [];
+  });
+
+  allMunicipalities = computed<GetConstituenciesResponse[]>(() => {
+    const subPrefectureId = this.selectedSubPrefectureId();
+    if (!subPrefectureId) return [];
+
+    const selectedSubPrefecture = this.allSubPrefectures()?.find((sp) => sp.id === subPrefectureId);
+    return selectedSubPrefecture?.children ?? [];
+  });
 
   constructor() {
     effect(() => {
@@ -158,6 +195,8 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         this.isEditMode.set(true);
       }
     }
+    this.loadConstituencies();
+    this.setupFormLinkage();
     this.loadCitizens();
     this.setBreadcrumbs();
   }
@@ -190,6 +229,112 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
       this.parents.set(response.data ?? []);
       this.syncInputValues();
     });
+  }
+
+  private loadConstituencies(): void {
+    this.constituencieService.getConstituencyTree({}).subscribe({
+      next: (response) => {
+        this.constituencies.set(response.data!);
+        const data = this.constituencies()?.filter((d) => d.level === 'region');
+        this.allRegion.set(data!);
+
+        const controls = this.residenceForm().controls;
+        if (controls.regionId.value) this.selectedRegionId.set(Number(controls.regionId.value));
+
+        if (controls.departmentId.value)
+          this.selectedDepartmentId.set(Number(controls.departmentId.value));
+
+        if (controls.subPrefectureId.value)
+          this.selectedSubPrefectureId.set(Number(controls.subPrefectureId.value));
+
+        // Application de l'état d'activation initial (Utile pour le rechargement de données / mode édition)
+        this.toggleControlStates();
+      },
+    });
+  }
+
+  private setupFormLinkage(): void {
+    const formControls = this.residenceForm().controls;
+
+    // Écoute de la Région
+    formControls.regionId.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.selectedRegionId.set(value ? Number(value) : null);
+
+        // Reset en cascade des valeurs enfants sans propager d'événements de boucle
+        formControls.departmentId.setValue(undefined, { emitEvent: false });
+        formControls.subPrefectureId.setValue(undefined, { emitEvent: false });
+        formControls.municipalityId.setValue(undefined, { emitEvent: false });
+
+        this.selectedDepartmentId.set(null);
+        this.selectedSubPrefectureId.set(null);
+
+        //this.municipalityChange.emit(null);
+        this.toggleControlStates();
+      });
+
+    // Écoute du Département
+    formControls.departmentId.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.selectedDepartmentId.set(value ? Number(value) : null);
+
+        formControls.subPrefectureId.setValue(undefined, { emitEvent: false });
+        formControls.municipalityId.setValue(undefined, { emitEvent: false });
+
+        this.selectedSubPrefectureId.set(null);
+
+        //this.municipalityChange.emit(null);
+        this.toggleControlStates();
+
+        //this.selectedDepartmentId.set(value ? Number(value) : null);
+        //formControls.subPrefectureId.setValue(undefined);
+      });
+
+    // Écoute de la Sous-Préfecture
+    formControls.subPrefectureId.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.selectedSubPrefectureId.set(value ? Number(value) : null);
+        formControls.municipalityId.setValue(undefined, { emitEvent: false });
+
+        //this.municipalityChange.emit(null);
+        this.toggleControlStates();
+      });
+
+    // 3. Écoute spécifique de la Municipalité pour émettre vers le parent
+    formControls.municipalityId.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        const municipalityId = value ? Number(value) : null;
+        //this.municipalityChange.emit(municipalityId);
+      });
+  }
+
+  private toggleControlStates(): void {
+    const controls = this.residenceForm().controls;
+
+    // 1. Département actif ssi Région renseignée
+    if (controls.regionId.value) {
+      controls.departmentId.enable({ emitEvent: false });
+    } else {
+      controls.departmentId.disable({ emitEvent: false });
+    }
+
+    // 2. Sous-Préfecture active ssi Département renseigné et actif
+    if (controls.departmentId.value && controls.departmentId.enabled) {
+      controls.subPrefectureId.enable({ emitEvent: false });
+    } else {
+      controls.subPrefectureId.disable({ emitEvent: false });
+    }
+
+    // 3. Municipalité active ssi Sous-Préfecture renseignée et active
+    if (controls.subPrefectureId.value && controls.subPrefectureId.enabled) {
+      controls.municipalityId.enable({ emitEvent: false });
+    } else {
+      controls.municipalityId.disable({ emitEvent: false });
+    }
   }
 
   onNodeSelected(node: ConstituencyNode): void {
@@ -359,7 +504,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     }
   }
 
-  onFileSelectedTest(event: Event, type: 'certificate' | 'cni' | 'photo'): void {
+  onFileSelectedTest(event: Event, type: 'cniOrcertificate' | 'photo'): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] || null;
 
@@ -371,17 +516,12 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     this.errorMessage.set(null);
 
     switch (type) {
-      case 'certificate':
+      case 'cniOrcertificate':
         this.certificateFile.set(file);
-        this.requestDocumentsForm().controls.registrationCertificateAttachments.setValue(
+        this.requestDocumentsForm().controls.registrationCniOrCretificateAttachments.setValue(
           file ?? undefined,
         );
-        this.requestDocumentsForm().controls.registrationCertificateAttachments.markAsDirty();
-        break;
-      case 'cni':
-        this.cniFile.set(file);
-        this.requestDocumentsForm().controls.registrationCniAttachments.setValue(file ?? undefined);
-        this.requestDocumentsForm().controls.registrationCniAttachments.markAsDirty();
+        this.requestDocumentsForm().controls.registrationCniOrCretificateAttachments.markAsDirty();
         break;
       case 'photo':
         this.photoFile.set(file);

@@ -2,6 +2,7 @@
 using Application.Common.Enums;
 using Application.Exceptions;
 using Application.Exceptions.Auth;
+using Application.Features.Common.RegistrationRequestDocument;
 using Application.Features.RegistrationRequests.Common;
 using Application.Interfaces.Services;
 using Application.Models;
@@ -88,19 +89,18 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
                     await context.SaveChangesAsync(cancellationToken);
                     activity.AddParameter(registrationRequest, r => r.Id);
 
-                    //Upload document
-                    await registrationRequestService.UploadRegistrationRequestDocumentsByType(
-                        command.RegistrationRequestCertificateAttachments,
-                        RegistrationRequestDocumentType.CertificateOfNationality,
-                        registrationRequest,
-                        cancellationToken
+                    var cniOrCertificateDocument = command.RegistrationRequest.Documents?.FirstOrDefault(d =>
+                        d.DocumentType
+                        == RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate
                     );
 
+                    //Upload document
                     await registrationRequestService.UploadRegistrationRequestDocumentsByType(
-                        command.RegistrationRequestCniAttachments,
-                        RegistrationRequestDocumentType.IdentityDocument,
+                        command.RegistrationRequestCniOrCertificateAttachments,
+                        RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate,
                         registrationRequest,
-                        cancellationToken
+                        cancellationToken,
+                        cniOrCertificateDocument
                     );
                     await registrationRequestService.UploadRegistrationRequestDocumentsByType(
                         command.Photo,

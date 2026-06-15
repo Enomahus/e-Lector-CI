@@ -16,10 +16,8 @@ namespace Application.Features.RegistrationRequests.Common
         public required string AuthorName { get; set; }
         public required CitizenModel Citizen { get; set; }
         public required bool CanBeDeleted { get; set; }
-        public string? CertificateOfNationalityDocumentId { get; set; }
-        public string? CertificateOfNationalityDocumentName { get; set; }
-        public string? IdentityDocumentId { get; set; }
-        public string? IdentityDocumentName { get; set; }
+        public string? IdentityDocumentOrCertificateId { get; set; }
+        public string? IdentityDocumentOrCertificateName { get; set; }
         public string? PhotoId { get; set; }
         public string? PhotoName { get; set; }
     }

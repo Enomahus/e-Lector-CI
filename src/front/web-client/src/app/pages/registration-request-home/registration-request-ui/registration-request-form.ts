@@ -2,6 +2,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   Gender,
   MaritalStatus,
+  RegistrationRequestDocumentType,
   RegistrationRequestType,
 } from '@app/services/nswag/api-nswag-client';
 export type RegistrationRequestForm = FormGroup<{
@@ -18,8 +19,12 @@ export type RequestsForm = FormGroup<{
 }>;
 
 export type RequestDocumentsForm = FormGroup<{
-  registrationCertificateAttachments: FormControl<File | undefined>;
-  registrationCniAttachments: FormControl<File | undefined>;
+  registrationDocumentType: FormControl<RegistrationRequestDocumentType | undefined>;
+  partNumber: FormControl<string | undefined>;
+  issuePlace: FormControl<string | undefined>;
+  issueDate: FormControl<Date | undefined>;
+  expiryDate: FormControl<Date | undefined>;
+  registrationCniOrCretificateAttachments: FormControl<File | undefined>;
   photoAttachments: FormControl<File | undefined>;
 }>;
 
@@ -118,11 +123,30 @@ export function createCitizenForm(): CitizenForm {
 
 export function createRequestDocumentsForm(): RequestDocumentsForm {
   const form = new FormGroup({
-    registrationCertificateAttachments: new FormControl<File | undefined>(undefined, {
+    registrationDocumentType: new FormControl<RegistrationRequestDocumentType | undefined>(
+      undefined,
+      {
+        validators: Validators.required,
+        nonNullable: true,
+      },
+    ),
+    partNumber: new FormControl<string | undefined>(undefined, {
       validators: Validators.required,
       nonNullable: true,
     }),
-    registrationCniAttachments: new FormControl<File | undefined>(undefined, {
+    issuePlace: new FormControl<string | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    issueDate: new FormControl<Date | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    expiryDate: new FormControl<Date | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    registrationCniOrCretificateAttachments: new FormControl<File | undefined>(undefined, {
       validators: Validators.required,
       nonNullable: true,
     }),

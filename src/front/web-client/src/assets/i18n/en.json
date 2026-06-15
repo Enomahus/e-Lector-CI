@@ -344,7 +344,7 @@
       "father": "Father",
       "mother": "Mother",
       "cni": "National Identity Card",
-      "registrationCertificate": "Nationality certificate",
+      "registrationCertificate": "National identity card / Nationality certificate",
       "issueDate": "Issue date",
       "expiryDate": "Expiry date",
       "issuePlace": "Issue place",
@@ -382,6 +382,11 @@
     "successUpdating": "Registration request updated successfully",
     "supportingDocuments": "Supporting Documents",
     "citizenInformation": "Citizen Information",
-    "requestInformation": "Request Information"
+    "requestInformation": "Request Information",
+    "docType": "Identity document type",
+    "documentType": {
+      "photo": "Passport photo",
+      "identityDocumentOrNationalCertificate": "National identity card / Certificate of nationaliyé"
+    }
   }
 }

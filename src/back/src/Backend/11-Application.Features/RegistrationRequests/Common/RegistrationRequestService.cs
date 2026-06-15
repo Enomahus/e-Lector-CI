@@ -1,8 +1,8 @@
 ﻿using Application.Common.Enums;
 using Application.Exceptions;
 using Application.Exceptions.Auth;
+using Application.Features.Common.RegistrationRequestDocument;
 using Application.Interfaces.Services;
-using Application.Models;
 using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.SQLServer.Contexts;
 using Microsoft.AspNetCore.Http;
@@ -79,17 +79,14 @@ namespace Application.Features.RegistrationRequests.Common
             CancellationToken cancellationToken
         )
         {
-            //Remove old document
-            await RemoveObsoleteDocuments(
-                command.RegistrationRequest?.CertificateOfNationalityDocumentIds,
-                RegistrationRequestDocumentType.CertificateOfNationality,
-                registrationRequestDao,
-                cancellationToken
+            var cniOrCetificateDocument = command.RegistrationRequest?.Documents?.FirstOrDefault(d =>
+                d.DocumentType == RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate
             );
 
+            //Remove old document
             await RemoveObsoleteDocuments(
-                command.RegistrationRequest?.IdentityDocumentIds,
-                RegistrationRequestDocumentType.IdentityDocument,
+                command.RegistrationRequest?.IdentityDocumentOrCertificateIds,
+                RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate,
                 registrationRequestDao,
                 cancellationToken
             );
@@ -102,17 +99,11 @@ namespace Application.Features.RegistrationRequests.Common
 
             //Upload documents
             await UploadRegistrationRequestDocumentsByType(
-                command.RegistrationRequestCertificateAttachments,
-                RegistrationRequestDocumentType.CertificateOfNationality,
+                command.RegistrationRequestCniOrCertificateAttachments,
+                RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate,
                 registrationRequestDao,
-                cancellationToken
-            );
-
-            await UploadRegistrationRequestDocumentsByType(
-                command.RegistrationRequestCniAttachments,
-                RegistrationRequestDocumentType.IdentityDocument,
-                registrationRequestDao,
-                cancellationToken
+                cancellationToken,
+                cniOrCetificateDocument
             );
 
             await UploadRegistrationRequestDocumentsByType(
@@ -127,7 +118,8 @@ namespace Application.Features.RegistrationRequests.Common
             IFormFile? attachement,
             RegistrationRequestDocumentType documentType,
             RegistrationRequestDao existingRegistrationRequest,
-            CancellationToken cancellationToken
+            CancellationToken cancellationToken,
+            RegistrationRequestDocumentModel? cniOrCetificateDocument = null
         )
         {
             var existingDocumentsForType =
@@ -169,6 +161,13 @@ namespace Application.Features.RegistrationRequests.Common
                         DocumentId = documentId,
                         RegistrationRequestDocumentType = documentType,
                     };
+                    if (documentType == RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate)
+                    {
+                        newDocument.PartNumber = cniOrCetificateDocument?.PartNumber;
+                        newDocument.IssueDate = cniOrCetificateDocument?.IssueDate;
+                        newDocument.ExpiryDate = cniOrCetificateDocument?.ExpiryDate;
+                        newDocument.IssuePlace = cniOrCetificateDocument?.IssuePlace;
+                    }
 
                     newDocuments.Add(newDocument);
                 }
