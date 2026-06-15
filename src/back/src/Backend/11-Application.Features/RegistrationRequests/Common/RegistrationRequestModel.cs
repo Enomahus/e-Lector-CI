@@ -1,5 +1,6 @@
 ﻿using Application.Common.Enums;
 using Application.Features.Common.Citizen;
+using Application.Features.Common.RegistrationRequestDocument;
 using Application.Features.Users.Common;
 using Infrastructure.Persistence.Entities;
 
@@ -12,11 +13,9 @@ namespace Application.Features.RegistrationRequests.Common
         public long? ConstituencyId { get; set; }
         public UserModel? Author { get; set; }
         public CitizenModel? Citizen { get; set; }
-
         public RegistrationRequestType RegistrationRequestType { get; set; }
-
-        public Guid? CertificateOfNationalityDocumentIds { get; set; }
-        public Guid? IdentityDocumentIds { get; set; }
+        public List<RegistrationRequestDocumentModel>? Documents { get; set; }
+        public Guid? IdentityDocumentOrCertificateIds { get; set; }
         public Guid? PhotoIds { get; set; }
 
         public static RegistrationRequestModel FromDao(RegistrationRequestDao dao, TimeProvider timeProvider)
@@ -31,6 +30,10 @@ namespace Application.Features.RegistrationRequests.Common
                 Author = UserModel.FromDao(dao.Author, dateNow),
                 Citizen = CitizenModel.FromDao(dao.Citizen),
                 ConstituencyId = dao.ConstituencyId,
+                Documents =
+                [
+                    .. dao.RegistrationRequestDocuments.Select(d => RegistrationRequestDocumentModel.From(d)),
+                ],
             };
         }
 
@@ -43,6 +46,7 @@ namespace Application.Features.RegistrationRequests.Common
                 ConstituencyId = constituencyId,
                 Citizen = Citizen?.ToDao(),
                 RequestType = RegistrationRequestType,
+                //RegistrationRequestDocuments = [.. Documents?.Select(d => d.ToDao()) ?? []],
             };
         }
     }

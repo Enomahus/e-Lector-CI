@@ -3290,8 +3290,8 @@ export interface RegistrationRequestModel {
     author?: UserModel | undefined;
     citizen?: CitizenModel | undefined;
     registrationRequestType?: RegistrationRequestType;
-    certificateOfNationalityDocumentIds?: string | undefined;
-    identityDocumentIds?: string | undefined;
+    documents?: RegistrationRequestDocumentModel[] | undefined;
+    identityDocumentOrCertificateIds?: string | undefined;
     photoIds?: string | undefined;
 }
 
@@ -3340,6 +3340,19 @@ export interface ElectorModel {
 export type ElectorStatus = "active" | "inactive";
 
 export type RegistrationRequestType = "registrationRequest" | "registrationDataUpdate";
+
+export interface RegistrationRequestDocumentModel {
+    id?: string;
+    documentId?: string | undefined;
+    registrationRequestId?: string | undefined;
+    documentType?: RegistrationRequestDocumentType;
+    issueDate?: string | undefined;
+    expiryDate?: string | undefined;
+    partNumber?: string | undefined;
+    issuePlace?: string | undefined;
+}
+
+export type RegistrationRequestDocumentType = "photo" | "identityDocumentOrNationalCertificate";
 
 export interface ResultOfUpdateRegistrationRequestStatusResponse extends Result {
     data?: UpdateRegistrationRequestStatusResponse | undefined;
@@ -3390,10 +3403,8 @@ export interface GetRegistrationRequestsResponseModel {
     authorName?: string;
     citizen?: CitizenModel;
     canBeDeleted?: boolean;
-    certificateOfNationalityDocumentId?: string | undefined;
-    certificateOfNationalityDocumentName?: string | undefined;
-    identityDocumentId?: string | undefined;
-    identityDocumentName?: string | undefined;
+    identityDocumentOrCertificateId?: string | undefined;
+    identityDocumentOrCertificateName?: string | undefined;
     photoId?: string | undefined;
     photoName?: string | undefined;
 }

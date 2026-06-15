@@ -387,7 +387,7 @@
       "father": "Père",
       "mother": "Mère",
       "cni": "Pièce nationale d'identité",
-      "registrationCertificate": "Certificat de nationalité",
+      "registrationCertificate": "CNI / Certificat de nationalité",
       "issueDate": "Date de délivrance",
       "expiryDate": "Date d'expiration",
       "issuePlace": "Lieu de délivrance",
@@ -426,6 +426,16 @@
     "successUpdating": "Demande d'inscription mise à jour avec succès",
     "supportingDocuments": "Documents justificatifs",
     "citizenInformation": "Informations du citoyen",
-    "requestInformation": "Informations de la demande"
+    "requestInformation": "Informations de la demande",
+    "residence": "Résidence",
+    "docType": "Type de pièce",
+    "documentType": {
+      "photo": "Photo d'identité",
+      "identityDocumentOrNationalCertificate": "CNI / Certificat de nationalité",
+      "partNumber": "Numéro de pièce",
+      "issueDate": "Date de délivrance",
+      "expiryDate": "Date d'expiration",
+      "issuePlace": "Lieu de délivrance"
+    }
   }
 }

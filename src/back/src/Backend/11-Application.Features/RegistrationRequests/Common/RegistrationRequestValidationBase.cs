@@ -48,33 +48,15 @@ namespace Application.Features.RegistrationRequests.Common
                             RuleFor(r => r.RegistrationRequest!.Citizen!)
                                 .SetValidator(new CitizenValidatorBase<CitizenModel>(_context, _timeProvider))
                     );
-
-                    // Validation imbriquée de l'auteur
-                    //When(
-                    //    r => r.RegistrationRequest!.Author != null,
-                    //    () =>
-                    //        RuleFor(r => r.RegistrationRequest!.Author!)
-                    //            .SetValidator(new UserCommandValidatorBase<UserModel>(_context, true))
-                    //);
                 }
             );
 
-            RuleFor(r => r.RegistrationRequestCertificateAttachments)
+            RuleFor(r => r.RegistrationRequestCniOrCertificateAttachments)
                 .NotNull()
                 .WithMessage(ValidationErrorCode.Required.ToString())
                 .DependentRules(() =>
                 {
-                    RuleFor(r => r.RegistrationRequestCertificateAttachments)
-                        .Must(file => file!.Length > 0)
-                        .WithMessage(ValidationErrorCode.Required.ToString());
-                });
-
-            RuleFor(r => r.RegistrationRequestCniAttachments)
-                .NotNull()
-                .WithMessage(ValidationErrorCode.Required.ToString())
-                .DependentRules(() =>
-                {
-                    RuleFor(r => r.RegistrationRequestCniAttachments)
+                    RuleFor(r => r.RegistrationRequestCniOrCertificateAttachments)
                         .Must(file => file!.Length > 0)
                         .WithMessage(ValidationErrorCode.Required.ToString());
                 });

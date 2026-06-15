@@ -785,14 +785,13 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                 [
                     new()
                     {
-                        RegistrationRequestDocumentType = RegistrationRequestDocumentType.IdentityDocument,
-                        Document = idDoc,
-                    },
-                    new()
-                    {
+                        PartNumber = "partNumber",
+                        IssueDate = DateTime.UtcNow,
+                        ExpiryDate = DateTime.UtcNow,
+                        IssuePlace = "issuePlace",
                         RegistrationRequestDocumentType =
-                            RegistrationRequestDocumentType.CertificateOfNationality,
-                        Document = certDoc,
+                            RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate,
+                        Document = idDoc,
                     },
                     new()
                     {

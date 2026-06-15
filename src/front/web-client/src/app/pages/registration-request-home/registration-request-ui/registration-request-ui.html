@@ -13,6 +13,83 @@
   </aside>
   <main class="form-container-group">
     <h2>{{ 'registrationRequest.requestDetails' | translate }}</h2>
+
+    <!-- constituency selected -->
+    <section class="grid-item constituency-form">
+      <h2>{{ 'registrationRequest.residence' | translate }}</h2>
+      <form [formGroup]="residenceForm()">
+        <div class="inputs-container">
+          <div class="input-block required">
+            <label for="regionId">{{ 'registrationRequests.fields.region' | translate }}</label>
+            <select id="regionId" formControlName="regionId">
+              <option value="" selected>{{ 'global.select' | translate }}</option>
+              @for (region of allRegion(); track region.id) {
+                <option [value]="region.id">{{ region.code }} {{ region.wording }}</option>
+              }
+            </select>
+            @if (residenceForm().controls.regionId.hasError('required')) {
+              <ul class="form-error">
+                <li>{{ 'formError.required' | translate }}</li>
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="departmentId">{{
+              'registrationRequests.fields.department' | translate
+            }}</label>
+            <select id="departmentId" formControlName="departmentId">
+              <option value="" selected>{{ 'global.select' | translate }}</option>
+              @for (department of allDepartement(); track department.id) {
+                <option [value]="department.id">
+                  {{ department.code }} {{ department.wording }}
+                </option>
+              }
+            </select>
+            @if (residenceForm().controls.departmentId.hasError('required')) {
+              <ul class="form-error">
+                <li>{{ 'formError.required' | translate }}</li>
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="subPrefecture">{{
+              'registrationRequests.fields.subPrefecture' | translate
+            }}</label>
+            <select id="subPrefecture" formControlName="subPrefectureId">
+              <option value="" selected>{{ 'global.select' | translate }}</option>
+              @for (subPrefecture of allSubPrefectures(); track subPrefecture.id) {
+                <option [value]="subPrefecture.id">
+                  {{ subPrefecture.code }} {{ subPrefecture.wording }}
+                </option>
+              }
+            </select>
+            @if (residenceForm().controls.subPrefectureId.hasError('required')) {
+              <ul class="form-error">
+                <li>{{ 'formError.required' | translate }}</li>
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="municipalityId">{{
+              'registrationRequests.fields.municipality' | translate
+            }}</label>
+            <select id="municipalityId" formControlName="municipalityId">
+              <option value="" selected>{{ 'global.select' | translate }}</option>
+              @for (municipality of allMunicipalities(); track municipality.id) {
+                <option [value]="municipality.id">
+                  {{ municipality.code }} {{ municipality.wording }}
+                </option>
+              }
+            </select>
+            @if (residenceForm().controls.municipalityId.hasError('required')) {
+              <ul class="form-error">
+                <li>{{ 'formError.required' | translate }}</li>
+              </ul>
+            }
+          </div>
+        </div>
+      </form>
+    </section>
     <!-- request information section -->
     <section class="grid-item request-form">
       <h2>{{ 'registrationRequest.requestInformation' | translate }}</h2>
@@ -374,31 +451,108 @@
       <form [formGroup]="requestDocumentsForm()">
         <div class="inputs-container">
           <div class="input-block required">
+            <label for="registrationDocumentType">{{
+              'registrationRequest.docType' | translate
+            }}</label>
+            <select id="registrationDocumentType" formControlName="registrationDocumentType">
+              <option value="" selected>{{ 'global.select' | translate }}</option>
+              @for (docType of allRegistrationDocumentType; track docType) {
+                <option [value]="docType">
+                  {{ 'registrationRequest.documentType.' + docType | translate }}
+                </option>
+              }
+            </select>
+            @if (
+              requestDocumentsForm().controls.registrationDocumentType.touched &&
+              requestDocumentsForm().controls.registrationDocumentType.errors
+            ) {
+              <ul class="form-error">
+                @if (
+                  requestDocumentsForm().controls.registrationDocumentType.errors?.['required']
+                ) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="partNumber">{{ 'registrationRequest.documentType.partNumber' | translate }}</label>
+            <input id="partNumber" type="text" formControlName="partNumber" />
+            @if (
+              requestDocumentsForm().controls.partNumber.touched &&
+              requestDocumentsForm().controls.partNumber.errors
+            ) {
+              <ul class="form-error">
+                @if (requestDocumentsForm().controls.partNumber.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="issueDate">{{ 'registrationRequest.documentType.issueDate' | translate }}</label>
+            <app-input-datepicker-ui
+              id="issueDate"
+              formControlName="issueDate"
+            ></app-input-datepicker-ui>
+            @if (
+              requestDocumentsForm().controls.issueDate.touched &&
+              requestDocumentsForm().controls.issueDate.errors
+            ) {
+              <ul class="form-error">
+                @if (requestDocumentsForm().controls.issueDate.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
+            <label for="expiryDate">{{ 'registrationRequest.documentType.expiryDate' | translate }}</label>
+            <app-input-datepicker-ui
+              id="expiryDate"
+              formControlName="expiryDate"
+            ></app-input-datepicker-ui>
+            @if (
+              requestDocumentsForm().controls.expiryDate.touched &&
+              requestDocumentsForm().controls.expiryDate.errors
+            ) {
+              <ul class="form-error">
+                @if (requestDocumentsForm().controls.expiryDate.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+        <div class="inputs-container">
+          <div class="input-block required">
+            <label for="issuePlace">{{ 'registrationRequest.documentType.issuePlace' | translate }}</label>
+            <input id="issuePlace" type="text" formControlName="issuePlace" />
+            @if (
+              requestDocumentsForm().controls.issuePlace.touched &&
+              requestDocumentsForm().controls.issuePlace.errors
+            ) {
+              <ul class="form-error">
+                @if (requestDocumentsForm().controls.issuePlace.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="input-block required">
             <label for="registrationCertificateAttachments">{{
               'registrationRequests.fields.registrationCertificate' | translate
             }}</label>
             <input
               id="certificate"
               type="file"
-              (change)="onFileSelectedTest($event, 'certificate')"
+              (change)="onFileSelectedTest($event, 'cniOrcertificate')"
               class="form-control"
               accept=".pdf,.jpg,.jpeg,.png"
               formControlName="registrationCertificateAttachments"
             />
           </div>
-          <div class="input-block required">
-            <label for="registrationCniAttachments">{{
-              'registrationRequests.fields.cni' | translate
-            }}</label>
-            <input
-              id="cni"
-              type="file"
-              (change)="onFileSelectedTest($event, 'cni')"
-              class="form-control"
-              accept=".pdf"
-              formControlName="registrationCniAttachments"
-            />
-          </div>
+
           <div class="input-block required">
             <label for="photoAttachments">{{
               'registrationRequests.fields.photo' | translate
@@ -408,7 +562,7 @@
               type="file"
               (change)="onFileSelectedTest($event, 'photo')"
               class="form-control"
-              accept=".jpeg"
+              accept=".jpg,.jpeg,.png"
               formControlName="photoAttachments"
             />
           </div>

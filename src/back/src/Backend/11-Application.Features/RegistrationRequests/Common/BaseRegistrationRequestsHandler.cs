@@ -56,9 +56,7 @@ namespace Application.Features.RegistrationRequests.Common
                     Documents = x
                         .RegistrationRequestDocuments.Where(d =>
                             d.RegistrationRequestDocumentType
-                                == RegistrationRequestDocumentType.CertificateOfNationality
-                            || d.RegistrationRequestDocumentType
-                                == RegistrationRequestDocumentType.IdentityDocument
+                                == RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate
                             || d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.Photo
                         )
                         .Select(d => new { d.RegistrationRequestDocumentType, d.DocumentId })
@@ -82,20 +80,13 @@ namespace Application.Features.RegistrationRequests.Common
                         userId.HasValue
                         && x.AuthorId == userId.Value
                         && x.Status == RegistrationStatus.ToBeProcessed,
-                    CertificateOfNationalityDocumentId = x
+                    IdentityDocumentOrCertificateId = x
                         .Documents.FirstOrDefault(d =>
                             d.RegistrationRequestDocumentType
-                            == RegistrationRequestDocumentType.CertificateOfNationality
+                            == RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate
                         )
                         ?.DocumentId.ToString(),
-                    CertificateOfNationalityDocumentName = null,
-                    IdentityDocumentId = x
-                        .Documents.FirstOrDefault(d =>
-                            d.RegistrationRequestDocumentType
-                            == RegistrationRequestDocumentType.IdentityDocument
-                        )
-                        ?.DocumentId.ToString(),
-                    IdentityDocumentName = null,
+                    IdentityDocumentOrCertificateName = null,
                     PhotoId = x
                         .Documents.FirstOrDefault(d =>
                             d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.Photo
@@ -113,53 +104,32 @@ namespace Application.Features.RegistrationRequests.Common
             CancellationToken cancellationToken
         )
         {
-            //Certificat de nationalité
-            var nationalCertificateIds = data.Where(x =>
-                    !string.IsNullOrEmpty(x.CertificateOfNationalityDocumentId)
+            //CNI ou Certificat de nationalité
+            var identityDocumentOrCertificateIds = data.Where(x =>
+                    !string.IsNullOrEmpty(x.IdentityDocumentOrCertificateId)
                 )
-                .Select(x => Guid.Parse(x.CertificateOfNationalityDocumentId!))
+                .Select(x => Guid.Parse(x.IdentityDocumentOrCertificateId!))
                 .Distinct()
                 .ToList();
-            if (nationalCertificateIds.Count > 0)
+            if (identityDocumentOrCertificateIds.Count > 0)
             {
                 var certificateFileNames = await _context
-                    .Documents.Where(d => nationalCertificateIds.Contains(d.Id))
+                    .Documents.Where(d => identityDocumentOrCertificateIds.Contains(d.Id))
                     .Select(d => new { d.Id, d.FileName })
                     .ToDictionaryAsync(d => d.Id.ToString(), d => d.FileName, cancellationToken);
 
                 foreach (
-                    var item in data.Where(x => !string.IsNullOrEmpty(x.CertificateOfNationalityDocumentId))
+                    var item in data.Where(x => !string.IsNullOrEmpty(x.IdentityDocumentOrCertificateId))
                 )
                 {
                     if (
                         certificateFileNames.TryGetValue(
-                            item.CertificateOfNationalityDocumentId!,
+                            item.IdentityDocumentOrCertificateId!,
                             out var fileName
                         )
                     )
                     {
-                        item.CertificateOfNationalityDocumentName = fileName;
-                    }
-                }
-            }
-
-            //CNI
-            var identityDocumentsIds = data.Where(x => !string.IsNullOrEmpty(x.IdentityDocumentId))
-                .Select(x => Guid.Parse(x.IdentityDocumentId!))
-                .Distinct()
-                .ToList();
-            if (identityDocumentsIds.Count > 0)
-            {
-                var identityFileNames = await _context
-                    .Documents.Where(d => identityDocumentsIds.Contains(d.Id))
-                    .Select(d => new { d.Id, d.FileName })
-                    .ToDictionaryAsync(d => d.Id.ToString(), d => d.FileName, cancellationToken);
-
-                foreach (var item in data.Where(x => !string.IsNullOrEmpty(x.IdentityDocumentId)))
-                {
-                    if (identityFileNames.TryGetValue(item.IdentityDocumentId!, out var fileName))
-                    {
-                        item.IdentityDocumentName = fileName;
+                        item.IdentityDocumentOrCertificateName = fileName;
                     }
                 }
             }

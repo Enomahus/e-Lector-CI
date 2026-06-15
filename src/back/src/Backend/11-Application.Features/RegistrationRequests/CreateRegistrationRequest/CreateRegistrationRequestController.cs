@@ -1,9 +1,9 @@
-﻿using Application.Api;
+﻿using System.Diagnostics.CodeAnalysis;
+using Application.Api;
 using Application.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
-using System.Diagnostics.CodeAnalysis;
 using Tools.Exceptions.Errors;
 
 namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
@@ -14,7 +14,6 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
     [OpenApiTag("registration-requests")]
     public class CreateRegistrationRequestController : ApiControllerBase
     {
-
         /// <summary>
         /// Create a new registration request
         /// </summary>
@@ -32,12 +31,10 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
             CancellationToken token
         )
         {
-
             var command = new CreateRegistrationRequestCommand()
             {
                 RegistrationRequest = formData.GetRegistrationRequest(),
-                RegistrationRequestCertificateAttachments = formData.RegistrationRequestCertificateAttachments,
-                RegistrationRequestCniAttachments = formData.RegistrationRequestCniAttachments,
+                RegistrationRequestCniOrCertificateAttachments = formData.RegistrationRequestCniAttachments,
                 Photo = formData.Photo,
             };
 

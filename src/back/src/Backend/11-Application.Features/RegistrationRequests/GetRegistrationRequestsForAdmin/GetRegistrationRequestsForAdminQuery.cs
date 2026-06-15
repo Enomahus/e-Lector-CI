@@ -75,10 +75,9 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
                         Comment = r.Comment,
                         Citizen = r.Citizen,
                         CanBeDeleted = r.CanBeDeleted,
-                        CertificateOfNationalityDocumentId = r.CertificateOfNationalityDocumentId,
-                        CertificateOfNationalityDocumentName = r.CertificateOfNationalityDocumentName,
-                        IdentityDocumentId = r.IdentityDocumentId,
-                        IdentityDocumentName = r.IdentityDocumentName,
+
+                        IdentityDocumentOrCertificateId = r.IdentityDocumentOrCertificateId,
+                        IdentityDocumentOrCertificateName = r.IdentityDocumentOrCertificateName,
                         PhotoId = r.PhotoId,
                         PhotoName = r.PhotoName,
                         AuthorName = r.AuthorName,

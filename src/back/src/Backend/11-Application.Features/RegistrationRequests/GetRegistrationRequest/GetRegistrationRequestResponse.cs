@@ -29,16 +29,11 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
                 ReasonForRejection = dao.ReasonForRejection,
                 Citizen = CitizenModel.FromDao(dao.Citizen),
                 Author = UserModel.FromDao(userDao, dateNow),
-                CertificateOfNationalityDocumentIds = dao
+
+                IdentityDocumentOrCertificateIds = dao
                     .RegistrationRequestDocuments.FirstOrDefault(d =>
                         d.RegistrationRequestDocumentType
-                        == RegistrationRequestDocumentType.CertificateOfNationality
-                    )
-                    ?.DocumentId,
-
-                IdentityDocumentIds = dao
-                    .RegistrationRequestDocuments.FirstOrDefault(d =>
-                        d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.IdentityDocument
+                        == RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate
                     )
                     ?.DocumentId,
                 PhotoIds = dao

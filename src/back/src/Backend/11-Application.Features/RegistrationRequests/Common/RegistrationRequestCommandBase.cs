@@ -8,10 +8,7 @@ namespace Application.Features.RegistrationRequests.Common
         public RegistrationRequestModel? RegistrationRequest { get; set; }
 
         [JsonIgnore]
-        public IFormFile? RegistrationRequestCertificateAttachments { get; set; }
-
-        [JsonIgnore]
-        public IFormFile? RegistrationRequestCniAttachments { get; set; }
+        public IFormFile? RegistrationRequestCniOrCertificateAttachments { get; set; }
 
         [JsonIgnore]
         public IFormFile? Photo { get; set; }
