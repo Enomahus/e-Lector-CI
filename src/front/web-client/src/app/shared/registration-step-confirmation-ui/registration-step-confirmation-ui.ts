@@ -1,6 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RegistrationForm } from '@app/pages/registration-request-home/registration-wizard-ui/registration-wizard-form';
+import { GetCitizensResponse } from '@app/services/nswag/api-nswag-client';
 import { TranslateModule } from '@ngx-translate/core';
 import { RecapItem, RecapSectionUi } from '../recap-section-ui/recap-section-ui';
 
@@ -13,6 +14,7 @@ import { RecapItem, RecapSectionUi } from '../recap-section-ui/recap-section-ui'
 export class RegistrationStepConfirmationUi {
   data = input.required<RegistrationForm>();
   isSubmitting = input<boolean>(false);
+  citizens = input<GetCitizensResponse[] | null>(null);
   editStep = output<number>();
   submitRequest = output<void>();
 
@@ -47,11 +49,13 @@ export class RegistrationStepConfirmationUi {
 
   protected filiationItems = computed<RecapItem[]>(() => {
     const raw = this.data().value.filiation || {};
+    const father = this.citizens()?.find((f) => f.id === raw.fatherId);
+    const mother = this.citizens()?.find((f) => f.id === raw.motherId);
     return [
-      { label: 'Nom du père', value: raw.fatherId },
+      { label: 'Nom du père', value: `${father?.firstName} ${father?.lastName}` },
       //{ label: 'Prénom du père', value: raw.prenomPere },
       //{ label: 'Nationalité du père', value: raw.nationalitePere },
-      { label: 'Nom de la mère', value: raw.motherId },
+      { label: 'Nom de la mère', value: `${mother?.firstName} ${mother?.lastName}` },
       // { label: 'Prénom de la mère', value: raw.prenomPere },
       // { label: 'Nationalité de la mère', value: raw.nationaliteMere },
     ];

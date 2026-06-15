@@ -37,8 +37,13 @@ import { ConstituencyTree } from '@app/shared/constituency-tree/constituency-tre
 import { InputDatepickerUi } from '@app/shared/input-datepicker-ui/input-datepicker-ui';
 import { Loader } from '@app/shared/loader/loader';
 import { ParentModalUi } from '@app/shared/parent-modal-ui/parent-modal-ui';
+import { RegistrationStepResidenceUi } from '@app/shared/registration-step-residence-ui/registration-step-residence-ui';
 import { StickyButtonsContainer } from '@app/shared/sticky-buttons-container/sticky-buttons-container';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  createResidenceForm,
+  ResidenceForm,
+} from '../registration-wizard-ui/registration-wizard-form';
 import {
   CitizenForm,
   createRegistrationRequestForm,
@@ -58,6 +63,7 @@ import {
     Loader,
     PermissionDirective,
     InputDatepickerUi,
+    RegistrationStepResidenceUi,
   ],
   providers: [DatePipe],
   templateUrl: './registration-request-ui.html',
@@ -90,7 +96,9 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   isLoading = signal<boolean>(false);
   isEditMode = signal<boolean>(false);
   form = signal<RegistrationRequestForm>(createRegistrationRequestForm());
+  residenceForm = signal<ResidenceForm>(createResidenceForm());
   registrationRequestId = signal<number | undefined>(undefined);
+  municipalityId = signal<number | null>(null);
 
   nodes = this.store.nodesData;
   selectedNode = this.store.selectedNode;
@@ -269,6 +277,18 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
 
   cancel(): void {
     this.goBack.emit();
+  }
+
+  onMunicipalitySelected(municipalityId: number | null): void {
+    if (!municipalityId) {
+      this.constituencySelected.set([]);
+      return;
+    }
+
+    const constituency = this.store.findNode(municipalityId!);
+    this.constituencySelected.set([constituency!]);
+
+    this.form().controls.request.controls.constituencyId.setValue(municipalityId!);
   }
 
   setBreadcrumbs(): void {

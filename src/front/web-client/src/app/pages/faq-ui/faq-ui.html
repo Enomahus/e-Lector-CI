@@ -1,61 +1,40 @@
-<div class="max-w-3xl mx-auto px-4 py-12">
-  <div class="text-center mb-10">
-    <h2 class="text-3xl font-extrabold text-slate-950 sm:text-4xl tracking-tight">
-      {{ title() }}
-    </h2>
-    <p class="mt-3 text-base text-slate-500">
-      {{ subtitle() }}
-    </p>
+<div class="faq-container">
+  <div class="faq-header">
+    <h2>{{ title().toUpperCase() }}</h2>
+    <p>{{ subtitle() }}</p>
   </div>
 
-  <div class="space-y-4">
-    @for (item of questions(); track item.question; let idx = $index) {
-      <div
-        class="border rounded-2xl bg-white shadow-sm transition-all duration-200"
-        [class.border-indigo-100]="openedIndex() === idx"
-        [class.border-slate-200]="openedIndex() !== idx"
-        [class.shadow-md]="openedIndex() === idx"
-      >
-        <button
-          type="button"
-          (click)="toggleQuestion(idx)"
-          class="w-full flex justify-between items-center px-6 py-5 text-left text-slate-800 font-semibold rounded-2xl hover:bg-slate-50/50 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-          [attr.aria-expanded]="openedIndex() === idx"
-        >
-          <span
-            [class.text-indigo-600]="openedIndex() === idx"
-            class="transition-colors duration-200"
+  <main class="faq-container-group">
+    <aside class="grid-item faq-category">
+      <div class="category-list">
+        @for (cat of categories(); track cat.id) {
+          <button
+            type="button"
+            class="category-btn"
+            [class.active]="selectedCategoryId() === cat.id"
+            (click)="selectCategory(cat.id)"
           >
-            {{ item.question }}
-          </span>
-
-          <svg
-            class="w-5 h-5 text-slate-400 transition-transform duration-200 flex-shrink-0 ml-4"
-            [class.rotate-180]="openedIndex() === idx"
-            [class.text-indigo-500]="openedIndex() === idx"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
-
-        @if (openedIndex() === idx) {
-          <div
-            class="px-6 pb-5 text-sm text-slate-600 border-t border-slate-50 mt-1 animate-fade-in"
-          >
-            <p class="leading-relaxed pt-4">
-              {{ item.answer }}
-            </p>
-          </div>
+            <span>{{ cat.name }}</span>
+          </button>
         }
       </div>
-    }
-  </div>
+    </aside>
+
+    <section class="grid-item faq-category-items">
+      @if (filteredQuestions().length === 0) {
+        <p class="empty-state">Aucune question pour cette catégorie.</p>
+      } @else {
+        <mat-accordion>
+          @for (item of filteredQuestions(); track item.id) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{ item.question }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <p class="content" [innerHTML]="item.answer"></p>
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+      }
+    </section>
+  </main>
 </div>

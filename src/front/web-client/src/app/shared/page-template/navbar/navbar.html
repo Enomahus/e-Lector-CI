@@ -1,4 +1,9 @@
 <header>
+  <div class="logo">
+    <a class="site-logo" routerLink="/">
+      <img src="assets/images/Logo.png" alt="logo" height="56px" />
+    </a>
+  </div>
   @if (isToggleMobileMenu()) {
     <app-navbar-mobile
       [userName$]="userName$"

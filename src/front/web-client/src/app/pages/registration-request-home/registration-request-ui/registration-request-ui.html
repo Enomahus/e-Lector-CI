@@ -1,11 +1,15 @@
 <div class="registration-layout">
   <aside class="grid-item constituency-tree">
     <h2>{{ 'registrationRequests.fields.constituency' | translate }}</h2>
-    <app-constituency-tree
+    <!-- <app-constituency-tree
       [nodes]="nodes()"
       [initialSelectedId]="initialTreeSelectedId()"
       (nodeSelected)="onNodeSelected($event)"
-    ></app-constituency-tree>
+    ></app-constituency-tree> -->
+    <app-registration-step-residence-ui
+      [stepForm]="residenceForm()"
+      (municipalityChange)="onMunicipalitySelected($event)"
+    ></app-registration-step-residence-ui>
   </aside>
   <main class="form-container-group">
     <h2>{{ 'registrationRequest.requestDetails' | translate }}</h2>
