@@ -282,6 +282,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   onMunicipalitySelected(municipalityId: number | null): void {
     if (!municipalityId) {
       this.constituencySelected.set([]);
+      return;
     }
 
     const constituency = this.store.findNode(municipalityId!);
