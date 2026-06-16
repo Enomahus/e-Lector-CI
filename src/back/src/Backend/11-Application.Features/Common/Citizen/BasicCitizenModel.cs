@@ -10,5 +10,6 @@ namespace Application.Features.Common.Citizen
         public DateTimeOffset? BirthDate { get; set; }
         public string? BirthPlace { get; set; }
         public string? Nationality { get; set; }
+        public MaritalStatus? MaritalStatus { get; set; }
     }
 }

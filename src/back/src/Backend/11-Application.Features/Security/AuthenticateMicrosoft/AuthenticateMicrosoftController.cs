@@ -1,14 +1,11 @@
-﻿using Application.Api;
+﻿using System.Diagnostics.CodeAnalysis;
+using Application.Api;
 using Application.Features.Security.Common;
 using Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Tools.Exceptions.Errors;
 
 namespace Application.Features.Security.AuthenticateMicrosoft
@@ -19,7 +16,6 @@ namespace Application.Features.Security.AuthenticateMicrosoft
     [OpenApiTag("auth")]
     public class AuthenticateMicrosoftController : ApiControllerBase
     {
-
         /// <summary>
         /// Authenticate a Microsoft user with an authorization code
         /// </summary>

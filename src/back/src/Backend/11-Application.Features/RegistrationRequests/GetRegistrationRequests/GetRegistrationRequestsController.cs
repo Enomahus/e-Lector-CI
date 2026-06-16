@@ -15,6 +15,12 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequests
     [OpenApiTag("registration-requests")]
     public class GetRegistrationRequestsController : ApiControllerBase
     {
+        /// <summary>
+        /// Get all registrations requests
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPost("get-registration-requests")]
         [OpenApiOperation(
             "GetRegistrationRequests",

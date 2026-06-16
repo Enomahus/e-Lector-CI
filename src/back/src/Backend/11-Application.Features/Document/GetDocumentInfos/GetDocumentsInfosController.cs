@@ -18,7 +18,7 @@ namespace Application.Features.Document.GetDocumentInfos
     public class GetDocumentsInfosController : ApiControllerBase
     {
         /// <summary>
-        /// Gets file information
+        /// Gets files informations
         /// </summary>
         /// <param name="query"></param>
         /// <param name="cancellationToken"></param>

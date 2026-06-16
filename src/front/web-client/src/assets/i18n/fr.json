@@ -351,8 +351,8 @@
     "titleEditRegistrationRequest": "Modifier la demande",
     "addFatherInfo": "Informations du père",
     "addMatherInfo": "Informations de la mère",
-    "addFather": "Créer un père",
-    "addMother": "Créer une mère",
+    "addFather": "Père",
+    "addMother": "Mère",
     "proofOfIdentity": "Pièce d'identité",
     "consent": "Consentements",
     "gender": {
@@ -420,6 +420,7 @@
   "registrationRequest": {
     "requestDetails": "Détails de la demande d'inscription",
     "newRegistrationRequestTitle": "Nouvelle demande d'inscription",
+    "editRegistrationRequestTitle": "Modifier une demande d'inscription",
     "errorCreating": "Erreur lors de la création de la demande d'inscription.",
     "successCreating": "Demande d'inscription créée avec succès",
     "errorUpdating": "Erreur lors de la mise à jour de la demande d'inscription.",

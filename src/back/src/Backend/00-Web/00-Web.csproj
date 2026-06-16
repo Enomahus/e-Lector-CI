@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Web</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <UserSecretsId>d0fe281d-5782-4a55-a75b-6f1de80b4faf</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>

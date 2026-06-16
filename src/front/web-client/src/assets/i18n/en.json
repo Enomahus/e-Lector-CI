@@ -376,6 +376,7 @@
   "registrationRequest": {
     "requestDetails": "Registration Request Details",
     "newRegistrationRequestTitle": "New Registration Request",
+    "editRegistrationRequestTitle": "Update Registration Request",
     "errorCreating": "Error creating the registration request.",
     "successCreating": "Registration request created successfully",
     "errorUpdating": "Error updating the registration request.",

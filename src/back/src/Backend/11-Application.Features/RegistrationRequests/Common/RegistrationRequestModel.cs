@@ -46,7 +46,6 @@ namespace Application.Features.RegistrationRequests.Common
                 ConstituencyId = constituencyId,
                 Citizen = Citizen?.ToDao(),
                 RequestType = RegistrationRequestType,
-                //RegistrationRequestDocuments = [.. Documents?.Select(d => d.ToDao()) ?? []],
             };
         }
     }

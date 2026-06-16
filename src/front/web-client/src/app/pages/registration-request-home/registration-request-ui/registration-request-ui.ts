@@ -38,13 +38,12 @@ import {
   RegistrationRequestModel,
   RegistrationStatus,
 } from '@app/services/nswag/api-nswag-client'; //'@app/services/nswag/api-nswag-client';
-import { ConstituencyTree } from '@app/shared/constituency-tree/constituency-tree';
 import { InputDatepickerUi } from '@app/shared/input-datepicker-ui/input-datepicker-ui';
 import { Loader } from '@app/shared/loader/loader';
 import { ParentModalUi } from '@app/shared/parent-modal-ui/parent-modal-ui';
-import { RegistrationStepResidenceUi } from '@app/shared/registration-step-residence-ui/registration-step-residence-ui';
 import { StickyButtonsContainer } from '@app/shared/sticky-buttons-container/sticky-buttons-container';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { forkJoin } from 'rxjs';
 import {
   createResidenceForm,
   ResidenceForm,
@@ -67,8 +66,6 @@ import {
     Loader,
     PermissionDirective,
     InputDatepickerUi,
-    RegistrationStepResidenceUi,
-    ConstituencyTree,
   ],
   providers: [DatePipe],
   templateUrl: './registration-request-ui.html',
@@ -79,7 +76,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   isSaving = input<boolean>(false);
   constituencyId = input<number | undefined>(undefined);
   registrationRequest = input<GetRegistrationRequestResponse | undefined>(undefined);
-  selectedStatus = input<RegistrationStatus | undefined>(undefined);
+  selectedStatus = input<RegistrationStatus | null>(null);
   saveTriggered = output<{
     registrationRequest: RegistrationRequestModel;
     certificateOfNationalityAttachments?: File;
@@ -200,9 +197,32 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         this.isEditMode.set(true);
       }
     }
-    this.loadConstituencies();
+
+    const getConstituenciesData = this.constituencieService.getConstituencyTree({});
+    const getCitizensData = this.citizenService.getCitizens();
+
+    forkJoin([getConstituenciesData, getCitizensData]).subscribe({
+      next: ([constituenciesData, citizensData]) => {
+        this.parents.set(citizensData.data ?? []);
+        this.syncInputValues();
+
+        this.constituencies.set(constituenciesData.data!);
+        const regionDataLevel = this.constituencies()?.filter((d) => d.level === 'region');
+        this.allRegion.set(regionDataLevel!);
+
+        const controls = this.residenceForm().controls;
+        if (controls.regionId.value) this.selectedRegionId.set(Number(controls.regionId.value));
+
+        if (controls.departmentId.value)
+          this.selectedDepartmentId.set(Number(controls.departmentId.value));
+
+        if (controls.subPrefectureId.value)
+          this.selectedSubPrefectureId.set(Number(controls.subPrefectureId.value));
+
+        this.toggleControlStates();
+      },
+    });
     this.setupFormLinkage();
-    this.loadCitizens();
     this.setBreadcrumbs();
   }
 
@@ -229,33 +249,33 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     return `${parent.firstName} ${parent.lastName?.toUpperCase()} (${date}) ${parent.birthPlace}`.trim();
   }
 
-  private loadCitizens(): void {
-    this.citizenService.getCitizens().subscribe((response) => {
-      this.parents.set(response.data ?? []);
-      this.syncInputValues();
-    });
-  }
+  // private loadCitizens(): void {
+  //   this.citizenService.getCitizens().subscribe((response) => {
+  //     this.parents.set(response.data ?? []);
+  //     this.syncInputValues();
+  //   });
+  // }
 
-  private loadConstituencies(): void {
-    this.constituencieService.getConstituencyTree({}).subscribe({
-      next: (response) => {
-        this.constituencies.set(response.data!);
-        const data = this.constituencies()?.filter((d) => d.level === 'region');
-        this.allRegion.set(data!);
+  // private loadConstituencies(): void {
+  //   this.constituencieService.getConstituencyTree({}).subscribe({
+  //     next: (response) => {
+  //       this.constituencies.set(response.data!);
+  //       const data = this.constituencies()?.filter((d) => d.level === 'region');
+  //       this.allRegion.set(data!);
 
-        const controls = this.residenceForm().controls;
-        if (controls.regionId.value) this.selectedRegionId.set(Number(controls.regionId.value));
+  //       const controls = this.residenceForm().controls;
+  //       if (controls.regionId.value) this.selectedRegionId.set(Number(controls.regionId.value));
 
-        if (controls.departmentId.value)
-          this.selectedDepartmentId.set(Number(controls.departmentId.value));
+  //       if (controls.departmentId.value)
+  //         this.selectedDepartmentId.set(Number(controls.departmentId.value));
 
-        if (controls.subPrefectureId.value)
-          this.selectedSubPrefectureId.set(Number(controls.subPrefectureId.value));
+  //       if (controls.subPrefectureId.value)
+  //         this.selectedSubPrefectureId.set(Number(controls.subPrefectureId.value));
 
-        this.toggleControlStates();
-      },
-    });
-  }
+  //       this.toggleControlStates();
+  //     },
+  //   });
+  // }
 
   private setupFormLinkage(): void {
     const formControls = this.residenceForm().controls;
@@ -487,9 +507,9 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
           url: targetRoute,
         },
         {
-          label: !this.isEditMode()
-            ? this.translateService.instant('breadcrumb.registrationRequestAdd')
-            : (this.registrationRequest()?.reference ?? ''),
+          label: this.isEditMode()
+            ? (this.registrationRequest()?.reference ?? '')
+            : this.translateService.instant('breadcrumb.registrationRequestAdd'),
         },
       ]);
     });

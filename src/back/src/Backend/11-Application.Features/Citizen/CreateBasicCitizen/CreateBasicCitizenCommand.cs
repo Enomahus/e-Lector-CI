@@ -49,6 +49,7 @@ namespace Application.Features.Citizen.CreateBasicCitizen
                 BirthDate = command.BirthDate!.Value,
                 BirthPlace = command.BirthPlace,
                 Nationality = command.Nationality,
+                MaritalStatus = command.MaritalStatus ?? MaritalStatus.Single,
             };
             context.Citizens.Add(newEntity);
             await context.SaveChangesAsync(cancellationToken);
