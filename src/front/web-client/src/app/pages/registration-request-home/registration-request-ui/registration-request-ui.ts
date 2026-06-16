@@ -249,34 +249,6 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     return `${parent.firstName} ${parent.lastName?.toUpperCase()} (${date}) ${parent.birthPlace}`.trim();
   }
 
-  // private loadCitizens(): void {
-  //   this.citizenService.getCitizens().subscribe((response) => {
-  //     this.parents.set(response.data ?? []);
-  //     this.syncInputValues();
-  //   });
-  // }
-
-  // private loadConstituencies(): void {
-  //   this.constituencieService.getConstituencyTree({}).subscribe({
-  //     next: (response) => {
-  //       this.constituencies.set(response.data!);
-  //       const data = this.constituencies()?.filter((d) => d.level === 'region');
-  //       this.allRegion.set(data!);
-
-  //       const controls = this.residenceForm().controls;
-  //       if (controls.regionId.value) this.selectedRegionId.set(Number(controls.regionId.value));
-
-  //       if (controls.departmentId.value)
-  //         this.selectedDepartmentId.set(Number(controls.departmentId.value));
-
-  //       if (controls.subPrefectureId.value)
-  //         this.selectedSubPrefectureId.set(Number(controls.subPrefectureId.value));
-
-  //       this.toggleControlStates();
-  //     },
-  //   });
-  // }
-
   private setupFormLinkage(): void {
     const formControls = this.residenceForm().controls;
 

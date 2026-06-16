@@ -56,5 +56,41 @@ Pour accéder à la base de données, nous conseillons l'utilisation des outils 
 - **Front** : <https://localhost:44082/>
 - **Swagger** : <http://localhost:44210/swagger/index.html>
 - **ReDoc** : <http://localhost:44210/docs/index.html>
-- **Jeager** : <http://localhost:42201/search>
+- **Jeager** : <http://localhost:41100/search>
 
+
+### Git
+
+Pour commencer un dévelopement, vous devez d'abord faire un **fetch** du repository pour récupérer l'état actuel de ce dernier.
+
+Ensuite, vous devez créer une branche à partir d'**origin/develop**,
+dont le nom aura le format suivant **(trigramme)\/(n° du ticket)-(description du développement en 2-3 mots)**.
+
+Pour les messages de commit, veillez à suivre la convention décrite sur ce [Lien](https://www.conventionalcommits.org/en/v1.0.0/).
+
+A la fin de votre développement, pensez bien à refaire un fetch pour récupérer les développements qu'il y a pu avoir entre temps.
+Il faut ensuite faire un **rebase** d'**origin/develop** sur votre branche, résoudre les conflits s'il y en a, puis pousser vos commits.
+
+Sur **GitHub**, vous pourrez créer une Pull Request de votre branche vers **develop**,
+des pipelines se lanceront automatiquement pour valider vos développements.
+
+Une validation d'un autre développeur est nécessaire pour pouvoir compléter la Pull Request.
+Si lors de vos développements, vous avez créer plusieurs commits,
+nous vous encourageons lors de la complétion de la Pull Request de faire un **Squash Commit**
+afin des les fusionner en un seul pour garder un historique propre.
+
+#### Environnements
+
+- Dev:
+- Qa:
+- Prod:
+
+#### Création d'un environnement
+
+La création d'un environnement se fait automatiquement grâce aux fichiers Biceps à la racine du projet.
+
+#### Déploiement
+
+Le déploiement sur l'environnement de **Dev** se fait automatiquement à la fusion des Pull Request sur la branche **develop**.
+
+Le déploiement sur l'environnement de **Qa** se fait automatiquement à la fusion des Pull Request sur la branche **qa**.
