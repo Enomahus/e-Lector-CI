@@ -1,4 +1,4 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   Component,
   computed,
@@ -68,6 +68,7 @@ import {
     PermissionDirective,
     InputDatepickerUi,
     RegistrationStepResidenceUi,
+    ConstituencyTree,
   ],
   providers: [DatePipe],
   templateUrl: './registration-request-ui.html',
@@ -119,6 +120,10 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   // Signaux pour gérer l'état d'affichage strict des inputs
   protected fatherInputValue = signal<string>('');
   protected motherInputValue = signal<string>('');
+
+  // Signaux pour suivre l'état des documents déjà enregistrés en base
+  existingCertificateName = signal<string | null>(null);
+  existingPhotoName = signal<string | null>(null);
 
   // Computed properties pour filtrer les datalists
   protected filteredFatherOptions = computed(() => this.filterParents(this.fatherInputValue()));
@@ -247,7 +252,6 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         if (controls.subPrefectureId.value)
           this.selectedSubPrefectureId.set(Number(controls.subPrefectureId.value));
 
-        // Application de l'état d'activation initial (Utile pour le rechargement de données / mode édition)
         this.toggleControlStates();
       },
     });
@@ -270,7 +274,6 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         this.selectedDepartmentId.set(null);
         this.selectedSubPrefectureId.set(null);
 
-        //this.municipalityChange.emit(null);
         this.toggleControlStates();
       });
 
@@ -285,11 +288,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
 
         this.selectedSubPrefectureId.set(null);
 
-        //this.municipalityChange.emit(null);
         this.toggleControlStates();
-
-        //this.selectedDepartmentId.set(value ? Number(value) : null);
-        //formControls.subPrefectureId.setValue(undefined);
       });
 
     // Écoute de la Sous-Préfecture
@@ -299,7 +298,6 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         this.selectedSubPrefectureId.set(value ? Number(value) : null);
         formControls.municipalityId.setValue(undefined, { emitEvent: false });
 
-        //this.municipalityChange.emit(null);
         this.toggleControlStates();
       });
 
@@ -308,7 +306,10 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         const municipalityId = value ? Number(value) : null;
-        //this.municipalityChange.emit(municipalityId);
+        const constituency = this.store.findNode(municipalityId!);
+        this.constituencySelected.set([constituency!]);
+
+        this.form().controls.request.controls.constituencyId.setValue(municipalityId!);
       });
   }
 
@@ -345,37 +346,73 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   }
 
   private async loadRegistrationRequest(): Promise<void> {
-    if (!this.isCreateMode() && this.registrationRequest()) {
+    const requestData = this.registrationRequest();
+    if (!this.isCreateMode() && requestData) {
+      const documentData = requestData.documents?.find(
+        (d) =>
+          d.registrationRequestId === requestData.id &&
+          d.documentType === 'identityDocumentOrNationalCertificate',
+      );
       this.form().patchValue(
         {
+          id: requestData.id?.toString(),
           request: {
-            constituencyId: this.registrationRequest()?.constituencyId,
-            registrationType: this.registrationRequest()?.registrationRequestType,
-            reasonForRejection: this.registrationRequest()?.reasonForRejection,
+            constituencyId: requestData.constituencyId,
+            registrationType: requestData.registrationRequestType,
+            reasonForRejection: requestData.reasonForRejection,
           },
           citizen: {
-            gender: this.registrationRequest()?.citizen?.gender,
-            firstName: this.registrationRequest()?.citizen?.firstName,
-            lastName: this.registrationRequest()?.citizen?.lastName,
-            birthDate: this.registrationRequest()?.citizen?.birthDate
-              ? new Date(this.registrationRequest()?.citizen?.birthDate!)
+            gender: requestData.citizen?.gender,
+            firstName: requestData.citizen?.firstName,
+            lastName: requestData.citizen?.lastName,
+            birthDate: requestData.citizen?.birthDate
+              ? new Date(requestData.citizen?.birthDate!)
               : undefined,
-            birthPlace: this.registrationRequest()?.citizen?.birthPlace,
-            maritalStatus: this.registrationRequest()?.citizen?.maritalStatus,
-            marriedName: this.registrationRequest()?.citizen?.marriedName,
-            nationality: this.registrationRequest()?.citizen?.nationality,
-            profession: this.registrationRequest()?.citizen?.profession,
-            physicalAddress: this.registrationRequest()?.citizen?.physicalAddress,
-            postalAddress: this.registrationRequest()?.citizen?.postalAddress,
-            fatherId: this.registrationRequest()?.citizen?.fatherId,
-            motherId: this.registrationRequest()?.citizen?.motherId,
+            birthPlace: requestData.citizen?.birthPlace,
+            maritalStatus: requestData.citizen?.maritalStatus,
+            marriedName: requestData.citizen?.marriedName,
+            nationality: requestData.citizen?.nationality,
+            profession: requestData.citizen?.profession,
+            physicalAddress: requestData.citizen?.physicalAddress,
+            postalAddress: requestData.citizen?.postalAddress,
+            fatherId: requestData.citizen?.fatherId,
+            motherId: requestData.citizen?.motherId,
           },
-          // registrationCertificateAttachments: this.registrationRequest()?.certificateOfNationalityDocumentIds,
-          // registrationCniAttachments: this.registrationRequest()?.identityDocumentIds,
-          // photoAttachments: this.registrationRequest()?.photoIds,
+          requestDocuments: {
+            partNumber: documentData?.partNumber,
+            issueDate: documentData?.issueDate ? new Date(documentData?.issueDate) : undefined,
+            expiryDate: documentData?.expiryDate ? new Date(documentData?.expiryDate) : undefined,
+            issuePlace: documentData?.issuePlace,
+          },
         },
         { emitEvent: false },
       );
+
+      if (
+        requestData.identityDocumentOrCertificateIds &&
+        requestData.identityDocumentOrCertificateIds.length > 0
+      ) {
+        this.existingCertificateName.set(`Document_Identité_${requestData.id}.pdf`);
+        // On supprime le validateur requis car le fichier existe déjà côté serveur
+        this.requestDocumentsForm().controls.registrationCniOrCretificateAttachments.clearValidators();
+        this.requestDocumentsForm().controls.registrationCniOrCretificateAttachments.updateValueAndValidity(
+          { emitEvent: false },
+        );
+      }
+
+      if (requestData.photoIds && requestData.photoIds.length > 0) {
+        this.existingPhotoName.set(`Photo_Identite_${requestData.id}.jpg`);
+        // On supprime le validateur requis car le fichier existe déjà côté serveur
+        this.requestDocumentsForm().controls.photoAttachments.clearValidators();
+        this.requestDocumentsForm().controls.photoAttachments.updateValueAndValidity({
+          emitEvent: false,
+        });
+      }
+
+      const constituency = this.store.findNode(requestData.constituencyId!);
+      if (constituency) this.constituencySelected.set([constituency]);
+
+      this.syncInputValues();
     }
   }
 
@@ -422,18 +459,6 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
 
   cancel(): void {
     this.goBack.emit();
-  }
-
-  onMunicipalitySelected(municipalityId: number | null): void {
-    if (!municipalityId) {
-      this.constituencySelected.set([]);
-      return;
-    }
-
-    const constituency = this.store.findNode(municipalityId!);
-    this.constituencySelected.set([constituency!]);
-
-    this.form().controls.request.controls.constituencyId.setValue(municipalityId!);
   }
 
   setBreadcrumbs(): void {
