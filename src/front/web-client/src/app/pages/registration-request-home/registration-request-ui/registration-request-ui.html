@@ -1,16 +1,4 @@
 <div class="registration-layout">
-  <aside class="grid-item constituency-tree">
-    <h2>{{ 'registrationRequests.fields.constituency' | translate }}</h2>
-    <!-- <app-constituency-tree
-      [nodes]="nodes()"
-      [initialSelectedId]="initialTreeSelectedId()"
-      (nodeSelected)="onNodeSelected($event)"
-    ></app-constituency-tree> -->
-    <app-registration-step-residence-ui
-      [stepForm]="residenceForm()"
-      (municipalityChange)="onMunicipalitySelected($event)"
-    ></app-registration-step-residence-ui>
-  </aside>
   <main class="form-container-group">
     <h2>{{ 'registrationRequest.requestDetails' | translate }}</h2>
 
@@ -476,7 +464,9 @@
             }
           </div>
           <div class="input-block required">
-            <label for="partNumber">{{ 'registrationRequest.documentType.partNumber' | translate }}</label>
+            <label for="partNumber">{{
+              'registrationRequest.documentType.partNumber' | translate
+            }}</label>
             <input id="partNumber" type="text" formControlName="partNumber" />
             @if (
               requestDocumentsForm().controls.partNumber.touched &&
@@ -490,7 +480,9 @@
             }
           </div>
           <div class="input-block required">
-            <label for="issueDate">{{ 'registrationRequest.documentType.issueDate' | translate }}</label>
+            <label for="issueDate">{{
+              'registrationRequest.documentType.issueDate' | translate
+            }}</label>
             <app-input-datepicker-ui
               id="issueDate"
               formControlName="issueDate"
@@ -507,7 +499,9 @@
             }
           </div>
           <div class="input-block required">
-            <label for="expiryDate">{{ 'registrationRequest.documentType.expiryDate' | translate }}</label>
+            <label for="expiryDate">{{
+              'registrationRequest.documentType.expiryDate' | translate
+            }}</label>
             <app-input-datepicker-ui
               id="expiryDate"
               formControlName="expiryDate"
@@ -526,7 +520,9 @@
         </div>
         <div class="inputs-container">
           <div class="input-block required">
-            <label for="issuePlace">{{ 'registrationRequest.documentType.issuePlace' | translate }}</label>
+            <label for="issuePlace">{{
+              'registrationRequest.documentType.issuePlace' | translate
+            }}</label>
             <input id="issuePlace" type="text" formControlName="issuePlace" />
             @if (
               requestDocumentsForm().controls.issuePlace.touched &&
@@ -540,17 +536,43 @@
             }
           </div>
           <div class="input-block required">
-            <label for="registrationCertificateAttachments">{{
+            <label for="registrationCniOrCretificateAttachments">{{
               'registrationRequests.fields.registrationCertificate' | translate
             }}</label>
             <input
-              id="certificate"
+              id="registrationCniOrCretificateAttachments"
               type="file"
               (change)="onFileSelectedTest($event, 'cniOrcertificate')"
               class="form-control"
-              accept=".pdf,.jpg,.jpeg,.png"
-              formControlName="registrationCertificateAttachments"
+              accept=".pdf"
+              formControlName="registrationCniOrCretificateAttachments"
             />
+            @if (!isCreateMode() && existingCertificateName()) {
+              <div class="file-preview-zone">
+                <span class="file-info">
+                  <i class="ph ph-file"></i>
+                  {{ existingCertificateName() }}
+                  <!-- <span style="font-style: italic; color: #666"
+                    >({{ 'global.alreadyUploaded' | translate: 'Fichier enregistré' }})</span
+                  > -->
+                </span>
+              </div>
+            }
+
+            @if (
+              requestDocumentsForm().controls.registrationCniOrCretificateAttachments.touched &&
+              requestDocumentsForm().controls.registrationCniOrCretificateAttachments.errors
+            ) {
+              <ul class="form-error">
+                @if (
+                  requestDocumentsForm().controls.registrationCniOrCretificateAttachments.errors?.[
+                    'required'
+                  ]
+                ) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
           </div>
 
           <div class="input-block required">
@@ -562,9 +584,29 @@
               type="file"
               (change)="onFileSelectedTest($event, 'photo')"
               class="form-control"
-              accept=".jpg,.jpeg,.png"
+              accept=".jpg,.jpeg"
               formControlName="photoAttachments"
             />
+
+            @if (!isCreateMode() && existingPhotoName()) {
+              <div class="file-preview-zone">
+                <span class="file-info">
+                  <i class="ph ph-image"></i>
+                  {{ existingPhotoName() }}
+                </span>
+              </div>
+            }
+
+            @if (
+              requestDocumentsForm().controls.photoAttachments.touched &&
+              requestDocumentsForm().controls.photoAttachments.errors
+            ) {
+              <ul class="form-error">
+                @if (requestDocumentsForm().controls.photoAttachments.errors?.['required']) {
+                  <li>{{ 'formError.required' | translate }}</li>
+                }
+              </ul>
+            }
           </div>
         </div>
       </form>

@@ -1,10 +1,10 @@
-﻿using Application.Api;
+﻿using System.Diagnostics.CodeAnalysis;
+using Application.Api;
 using Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
-using System.Diagnostics.CodeAnalysis;
 using Tools.Exceptions.Errors;
 
 namespace Application.Features.Users.RegisterUser
@@ -13,11 +13,10 @@ namespace Application.Features.Users.RegisterUser
     [ApiController]
     [Route("user")]
     [OpenApiTag("user")]
-    public class RegisterUserController: ApiControllerBase
+    public class RegisterUserController : ApiControllerBase
     {
-
         /// <summary>
-        /// Create a user
+        /// Create a user registration
         /// </summary>
         /// <param name="command"></param>
         /// <param name="cancellationToken"></param>

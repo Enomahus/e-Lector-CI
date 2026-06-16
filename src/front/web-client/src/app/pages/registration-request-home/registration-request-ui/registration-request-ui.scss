@@ -6,22 +6,24 @@
 }
 
 .registration-layout {
-  display: grid;
-  grid-template-columns: 300px 1fr;
+  //display: grid;
+  //grid-template-columns: 300px 1fr;
+  //padding: 8px;
+  //align-items: start;
+  //margin: 0 auto;
+  display: flex;
   gap: 8px;
   width: 100%;
-  margin: 0 auto;
-  padding: 8px;
+  padding: 16px;
   box-sizing: border-box;
-  align-items: start;
 
-  .constituency-tree {
-    min-width: 300px;
-    border-right: 1px solid #eee; // Optionnel : une petite séparation visuelle
-    padding-right: 1rem;
-    height: 100%;
-    min-height: 600px;
-  }
+  // .constituency-tree {
+  //   min-width: 300px;
+  //   border-right: 1px solid #eee; // Optionnel : une petite séparation visuelle
+  //   padding-right: 1rem;
+  //   height: 100%;
+  //   min-height: 600px;
+  // }
 
   .form-container-group {
     display: flex;
@@ -32,10 +34,18 @@
     .grid-item {
       background-color: #ffffff;
       border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 20px;
+      border-radius: 12px;
+      //border-radius: 8px;
+      //padding: 20px;
+      padding: 8px;
       box-sizing: border-box;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transition: box-shadow 0.2s ease;
+      //box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+      &:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+      }
 
       h3,
       h4 {
@@ -64,14 +74,54 @@
     .request-documents-form {
       min-height: 150px;
     }
+
+    .file-preview-zone {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      background-color: #f0fdf4;
+      border: 1px dashed #bbf7d0;
+      border-radius: 6px;
+      margin-top: 4px;
+
+      .file-info {
+        font-size: 0.85rem;
+        color: #166534;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+
+        a {
+          color: #2563eb;
+          text-decoration: underline;
+          font-weight: 500;
+        }
+      }
+    }
   }
 
   @media (max-width: 800px) {
-    grid-template-columns: 1fr;
+    //grid-template-columns: 1fr;
 
-    .constituency-tree {
-      height: auto;
-      min-height: 200px;
+    // .constituency-tree {
+    //   height: auto;
+    //   min-height: 200px;
+    // }
+
+    .registration-layout {
+      padding: 10px;
+
+      .form-container-group {
+        .grid-item {
+          padding: 16px;
+        }
+
+        .inputs-container {
+          grid-template-columns: 1fr; // Mode colonne unique sur mobile
+        }
+      }
     }
   }
 }

@@ -15,6 +15,12 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequestsForAd
     [OpenApiTag("registration-requests")]
     public class GetRegistrationRequestsForAdminController : ApiControllerBase
     {
+        /// <summary>
+        /// Get all registration request for admin
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPost("for-admin/get-registration-requests")]
         [OpenApiOperation(
             "GetRegistrationRequestsForAdmin",

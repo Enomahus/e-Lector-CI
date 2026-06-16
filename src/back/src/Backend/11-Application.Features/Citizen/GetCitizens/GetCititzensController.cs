@@ -14,8 +14,13 @@ namespace Application.Features.Citizen.GetCitizens
     [OpenApiTag("citizens")]
     public class GetCititzensController : ApiControllerBase
     {
+        /// <summary>
+        /// Get citizens
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpGet("citizens")]
-        [OpenApiOperation("GetCitizensAsync", "Récupère tous les départements.", "")]
+        [OpenApiOperation("GetCitizens", "Récupère tous les citoyens.", "")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<GetCitizensResponse>>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<Error>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<Error>))]

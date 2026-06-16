@@ -15,7 +15,7 @@ namespace Application.Features.Constituency.UpdateConstituency
     public class UpdateConstituencyCommandController : ApiControllerBase
     {
         /// <summary>
-        /// Update a geagraphic area.
+        /// Update a constituency.
         /// </summary>
         /// <param name="command"></param>
         /// <param name="token"></param>

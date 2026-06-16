@@ -3,6 +3,7 @@
   <app-registration-request-ui
     [isSaving]="isSaving()"
     [isCreateMode]="false"
+    [selectedStatus]="selectedStatus()!"
     [registrationRequest]="registrationRequest()"
     (saveTriggered)="update($event)"
     (goBack)="goBack()"

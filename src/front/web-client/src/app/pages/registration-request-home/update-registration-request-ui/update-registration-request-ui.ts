@@ -5,6 +5,7 @@ import {
   FileParameter,
   GetRegistrationRequestResponse,
   RegistrationRequestModel,
+  RegistrationStatus,
 } from '@app/services/nswag/api-nswag-client';
 import { Loader } from '@app/shared/loader/loader';
 import { getFileParameter } from '@app/shared/upload/file-upload-helper';
@@ -23,6 +24,7 @@ export class UpdateRegistrationRequestUi implements OnInit {
   private readonly registrationRequestService = inject(RegistrationRequestApiService);
   isSaving = signal(false);
   isLoading = signal(false);
+  selectedStatus = signal<RegistrationStatus | null>(null);
   constituencyId = signal<number | undefined>(undefined);
   registrationRequest = signal<GetRegistrationRequestResponse | undefined>(undefined);
   registrationRequestId = computed(() => {
@@ -44,6 +46,7 @@ export class UpdateRegistrationRequestUi implements OnInit {
         this.isLoading.set(false);
         this.registrationRequest.set(response.data);
         this.constituencyId.set(response.data?.constituencyId);
+        this.selectedStatus.set(response.data?.status!);
       },
       error: () => {
         this.isLoading.set(false);
