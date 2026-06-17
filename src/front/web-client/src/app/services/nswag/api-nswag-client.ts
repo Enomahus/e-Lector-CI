@@ -29,6 +29,9 @@ export class InfosServerClient extends CustomApiClient {
         this.baseUrl = baseUrl ?? "http://localhost:44210";
     }
 
+    /**
+     * Get the date on the server
+     */
     getDate(): Observable<string> {
         let url_ = this.baseUrl + "/info/date";
         url_ = url_.replace(/[?&]$/, "");
@@ -76,6 +79,9 @@ export class InfosServerClient extends CustomApiClient {
         return _observableOf(null as any);
     }
 
+    /**
+     * get the timezone on the server
+     */
     getTimezone(): Observable<string> {
         let url_ = this.baseUrl + "/info/timezone";
         url_ = url_.replace(/[?&]$/, "");
@@ -123,6 +129,9 @@ export class InfosServerClient extends CustomApiClient {
         return _observableOf(null as any);
     }
 
+    /**
+     * Get the application version
+     */
     getVersion(): Observable<string> {
         let url_ = this.baseUrl + "/info/version";
         url_ = url_.replace(/[?&]$/, "");
@@ -185,6 +194,9 @@ export class HealthCheckServerClient extends CustomApiClient {
         this.baseUrl = baseUrl ?? "http://localhost:44210";
     }
 
+    /**
+     * Check if the server is healthy
+     */
     checkHealth(): Observable<void> {
         let url_ = this.baseUrl + "/";
         url_ = url_.replace(/[?&]$/, "");
@@ -2985,7 +2997,7 @@ export class ServerClient extends CustomApiClient {
     }
 
     /**
-     * Récupère tous les départements.
+     * Récupère tous les citoyens.
      */
     getCitizens(): Observable<ResultOfListOfGetCitizensResponse> {
         let url_ = this.baseUrl + "/citizens/citizens";
@@ -3328,6 +3340,7 @@ export interface BasicCitizenModel {
     birthDate?: string | undefined;
     birthPlace?: string | undefined;
     nationality?: string | undefined;
+    maritalStatus?: MaritalStatus | undefined;
 }
 
 export interface ElectorModel {
