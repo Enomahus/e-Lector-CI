@@ -16,10 +16,7 @@ public class CreateRegistrationRequestFromData
     public string? RegistrationRequestJson { get; set; }
 
     [FromForm]
-    public IFormFile? RegistrationRequestCertificateAttachments { get; set; }
-
-    [FromForm]
-    public IFormFile? RegistrationRequestCniAttachments { get; set; }
+    public IFormFile? RegistrationRequestCniOrCertificateAttachments { get; set; }
 
     [FromForm]
     public IFormFile? Photo { get; set; }

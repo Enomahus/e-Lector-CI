@@ -1,5 +1,4 @@
 ﻿using Application.Features.Common.Citizen;
-using Application.Features.Users.Common;
 using Application.Models.Errors;
 using FluentValidation;
 using Infrastructure.Persistence.SQLServer.Contexts;

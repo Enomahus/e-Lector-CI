@@ -26,19 +26,17 @@ export class CreateRegistrationRequestUi {
   async create(event: {
     registrationRequest: RegistrationRequestModel;
     certificateOfNationalityAttachments?: File;
-    cniAttachments?: File;
     photoAttachments?: File;
   }): Promise<void> {
     this.isSaving.set(true);
 
-    const { certificateOfNationalityAttachments, cniAttachments, photoAttachments } =
+    const { certificateOfNationalityAttachments, photoAttachments } =
       await this.mapAttachments(event);
 
     this.registrationRequestService
       .createRegistrationRequest(
         event.registrationRequest,
         certificateOfNationalityAttachments ? certificateOfNationalityAttachments : undefined,
-        cniAttachments ? cniAttachments : undefined,
         photoAttachments ? photoAttachments : undefined,
         {
           errorMessage: this.translateService.instant('registrationRequest.errorCreating'),
@@ -60,19 +58,16 @@ export class CreateRegistrationRequestUi {
 
   private async mapAttachments(event: {
     certificateOfNationalityAttachments?: File;
-    cniAttachments?: File;
     photoAttachments?: File;
   }): Promise<{
     certificateOfNationalityAttachments?: FileParameter;
-    cniAttachments?: FileParameter;
     photoAttachments?: FileParameter;
   }> {
     const certificateOfNationalityAttachments = await getFileParameter(
       event.certificateOfNationalityAttachments,
     );
-    const cniAttachments = await getFileParameter(event.cniAttachments);
     const photoAttachments = await getFileParameter(event.photoAttachments);
 
-    return { certificateOfNationalityAttachments, cniAttachments, photoAttachments };
+    return { certificateOfNationalityAttachments, photoAttachments };
   }
 }

@@ -72,14 +72,14 @@ namespace Application.Features.RegistrationRequests.Common
             long lastReference = 0;
             if (!string.IsNullOrEmpty(lasRequestReference) && lasRequestReference.StartsWith("DE"))
             {
-                var sequenceNumericPart = lasRequestReference[6..];
+                var sequenceNumericPart = lasRequestReference[8..];
                 _ = long.TryParse(sequenceNumericPart, out lastReference);
             }
 
             var newReference = lastReference + 1;
 
-            // Format final: DE20250012547
-            return $"DE{year}{newReference.ToString().PadLeft(7, '0')}";
+            // Format final: DE-2025-0012547
+            return $"DE-{year}-{newReference.ToString().PadLeft(7, '0')}";
         }
     }
 }

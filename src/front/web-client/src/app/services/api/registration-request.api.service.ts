@@ -22,16 +22,14 @@ import { ApiToastOptions } from './models/api-toast-options';
 export class RegistrationRequestApiService extends ApiBaseService {
   createRegistrationRequest(
     registrationRequestJson: RegistrationRequestModel | undefined,
-    registrationRequestCertificateAttachments: FileParameter | undefined,
-    registrationRequestCniAttachments: FileParameter | undefined,
+    registrationRequestCniOrCertificateAttachments: FileParameter | undefined,
     photo: FileParameter | undefined,
     options: ApiToastOptions = {},
   ): Observable<ResultOfGuid> {
     return this.apiClient
       .createRegistrationRequest(
         registrationRequestJson,
-        registrationRequestCertificateAttachments,
-        registrationRequestCniAttachments,
+        registrationRequestCniOrCertificateAttachments,
         photo,
       )
       .pipe(this.handleResult(options));

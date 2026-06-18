@@ -18,7 +18,7 @@
 | -------- | ----------------------------------------- |
 | Frontend | https://localhost:44082/                  |
 | Swagger  | http://localhost:44210/swagger/index.html |
-| ReDoc    | http://localhost:40200/docs/index.html    |
+| ReDoc    | http://localhost:44210/docs/index.html    |
 | Jaeger   | http://localhost:41100/search             |
 
 ### Database (SQL Server 2022)

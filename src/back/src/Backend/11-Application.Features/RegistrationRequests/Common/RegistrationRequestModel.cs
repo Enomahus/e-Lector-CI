@@ -32,7 +32,9 @@ namespace Application.Features.RegistrationRequests.Common
                 ConstituencyId = dao.ConstituencyId,
                 Documents =
                 [
-                    .. dao.RegistrationRequestDocuments.Select(d => RegistrationRequestDocumentModel.From(d)),
+                    .. dao.RegistrationRequestDocuments.Select(d =>
+                        RegistrationRequestDocumentModel.FromDao(d)
+                    ),
                 ],
             };
         }

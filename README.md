@@ -46,7 +46,7 @@ Pour plus de détails, voir le Readme: [Lien](/docs/front.md)
 
 Pour accéder à la base de données, nous conseillons l'utilisation des outils **SQL Server Management Studio** ou **Azure Data Studio**.
 
-- **Host**: `localhost:44200`
+- **Host**: `localhost:43100`
 - **User**: `sa`
 - **Password**: `#Elector@2026`
 - **Database**: `ElectorDb`
