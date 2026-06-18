@@ -1,69 +1,30 @@
-﻿using System.IO;
-using Application.Exceptions;
+﻿using Application.Exceptions;
 using Application.Interfaces.Services;
 using Infrastructure.Persistence.Entities;
 using Infrastructure.Persistence.File.Configurations;
 using Infrastructure.Persistence.SQLServer.Contexts;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Persistence.File.Services
 {
-    public class FileService(IOptions<StorageConfiguration> storageConfig, ILogger<FileService> logger)
-        : IFileService
+    public class FileService : IFileService
     {
-        //private readonly string _storagePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+        //private readonly string _basePath = storageConfig.Value.RootPath;
+        private readonly string _registrationDocumentsPath;
+        private readonly ILogger<FileService> _logger;
 
-        //public FileService(string storagePath)
-        //{
-        //    _storagePath = storagePath;
+        public FileService(IOptions<StorageConfiguration> storageConfig, ILogger<FileService> logger)
+        {
+            _logger = logger;
+            _registrationDocumentsPath = storageConfig.Value.RegistrationDocumentsPath;
 
-        //    if(!Directory.Exists(_storagePath))
-        //        Directory.CreateDirectory(_storagePath);
-        //}
-
-        //#region Local file service
-        //public async Task<(byte[] content, string contentType, string fileName)> DownloadFileAsync(Guid fileId, WritableDbContext context, CancellationToken token)
-        //{
-        //    var record = await context.Documents.FirstOrDefaultAsync(d => d.Id == fileId, token)
-        //        ?? throw new NotFoundException(nameof(DocumentDao), fileId);
-
-        //    var path = Path.Combine(_storagePath, record.StoredName);
-        //    var bytes = await System.IO.File.ReadAllBytesAsync(path,token);
-
-        //    return (bytes, record.ContentType, record.FileName);
-        //}
-
-        //public async Task<DocumentDao> UploadFileAsync(WritableDbContext context, IFormFile file, CancellationToken cancellationToken)
-        //{
-        //    ArgumentNullException.ThrowIfNull(file);
-
-        //    var record = new DocumentDao
-        //    {
-        //        FileName = file.FileName,
-        //        StoredName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName),
-        //        ContentType = file.ContentType,
-        //        FileSize = file.Length,
-        //    };
-
-        //    var fullPath = Path.Combine(_storagePath, record.StoredName);
-
-        //    using (var stream = new FileStream(fullPath, FileMode.Create))
-        //    {
-        //        await file.CopyToAsync(stream, cancellationToken);
-        //    }
-
-        //    context.Documents.Add(record);
-        //    await context.SaveChangesAsync(cancellationToken);
-
-        //    return record;
-        //}
-
-        //#endregion
-
-        private readonly string _basePath = storageConfig.Value.RootPath;
+            if (string.IsNullOrWhiteSpace(_registrationDocumentsPath))
+            {
+                throw new StorageException($"The 'RegistrationDocumentsPath' setting is missing or empty. ");
+            }
+        }
 
         public Task<Stream> GetFileDownloadStreamAsync(Guid documentId, CancellationToken cancellationToken)
         {
@@ -179,7 +140,7 @@ namespace Infrastructure.Persistence.File.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Erreur lors de l'écriture physique du fichier {Id}", document.Id);
+                _logger.LogError(ex, "Error whilst writing the file to disk {Id}", document.Id);
                 throw new StorageException("Error while uploading file to local storage.", ex);
             }
 
@@ -225,8 +186,7 @@ namespace Infrastructure.Persistence.File.Services
             string subFolder1 = idStr[..2];
             string subFolder2 = idStr.Substring(2, 2);
 
-            //return Path.Combine(_basePath, subFolder1, subFolder2, idStr + ".dat");
-            return Path.Combine(_basePath, subFolder1, subFolder2, $"{idStr}.dat");
+            return Path.Combine(_registrationDocumentsPath, subFolder1, subFolder2, $"{idStr}.dat");
         }
     }
 }

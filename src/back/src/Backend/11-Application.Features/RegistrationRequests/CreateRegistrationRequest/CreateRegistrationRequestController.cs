@@ -34,7 +34,8 @@ namespace Application.Features.RegistrationRequests.CreateRegistrationRequest
             var command = new CreateRegistrationRequestCommand()
             {
                 RegistrationRequest = formData.GetRegistrationRequest(),
-                RegistrationRequestCniOrCertificateAttachments = formData.RegistrationRequestCniAttachments,
+                RegistrationRequestCniOrCertificateAttachments =
+                    formData.RegistrationRequestCniOrCertificateAttachments,
                 Photo = formData.Photo,
             };
 

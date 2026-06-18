@@ -2,7 +2,6 @@
 using Application.Common.Enums;
 using Application.Exceptions;
 using Application.Exceptions.Auth;
-using Application.Features.Common.RegistrationRequestDocument;
 using Application.Features.RegistrationRequests.Common;
 using Application.Interfaces.Services;
 using Application.Models;

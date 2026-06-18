@@ -101,7 +101,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   isEditMode = signal<boolean>(false);
   form = signal<RegistrationRequestForm>(createRegistrationRequestForm());
   residenceForm = signal<ResidenceForm>(createResidenceForm());
-  registrationRequestId = signal<number | undefined>(undefined);
+  registrationRequestId = signal<string | undefined>(undefined);
   municipalityId = signal<number | null>(null);
   constituencies = signal<GetConstituenciesResponse[] | null>(null);
 
@@ -167,6 +167,16 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     return selectedSubPrefecture?.children ?? [];
   });
 
+  requestForm(): RequestsForm {
+    return this.form().controls.request;
+  }
+  citizenForm(): CitizenForm {
+    return this.form().controls.citizen;
+  }
+  requestDocumentsForm(): RequestDocumentsForm {
+    return this.form().controls.requestDocuments;
+  }
+
   constructor() {
     effect(() => {
       const nodes = this.nodes();
@@ -191,11 +201,8 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   ngOnInit(): void {
     const idParam = this.route.snapshot.params['id'];
     if (idParam) {
-      const id = Number(idParam);
-      if (!isNaN(id)) {
-        this.registrationRequestId.set(id);
-        this.isEditMode.set(true);
-      }
+      this.registrationRequestId.set(idParam as string);
+      this.isEditMode.set(true);
     }
 
     const getConstituenciesData = this.constituencieService.getConstituencyTree({});
@@ -210,30 +217,22 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         const regionDataLevel = this.constituencies()?.filter((d) => d.level === 'region');
         this.allRegion.set(regionDataLevel!);
 
-        const controls = this.residenceForm().controls;
-        if (controls.regionId.value) this.selectedRegionId.set(Number(controls.regionId.value));
-
-        if (controls.departmentId.value)
-          this.selectedDepartmentId.set(Number(controls.departmentId.value));
-
-        if (controls.subPrefectureId.value)
-          this.selectedSubPrefectureId.set(Number(controls.subPrefectureId.value));
-
-        this.toggleControlStates();
+        if (this.isEditMode() && this.registrationRequest()?.constituencyId) {
+          const munId = this.registrationRequest()?.constituencyId;
+          this.getResidenceData(munId!);
+        } else {
+          const controls = this.residenceForm().controls;
+          if (controls.regionId.value) this.selectedRegionId.set(Number(controls.regionId.value));
+          if (controls.departmentId.value)
+            this.selectedDepartmentId.set(Number(controls.departmentId.value));
+          if (controls.subPrefectureId.value)
+            this.selectedSubPrefectureId.set(Number(controls.subPrefectureId.value));
+          this.toggleControlStates();
+        }
       },
     });
     this.setupFormLinkage();
     this.setBreadcrumbs();
-  }
-
-  requestForm(): RequestsForm {
-    return this.form().controls.request;
-  }
-  citizenForm(): CitizenForm {
-    return this.form().controls.citizen;
-  }
-  requestDocumentsForm(): RequestDocumentsForm {
-    return this.form().controls.requestDocuments;
   }
 
   private filterParents(query: string): GetCitizensResponse[] {
@@ -340,6 +339,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   private async loadRegistrationRequest(): Promise<void> {
     const requestData = this.registrationRequest();
     if (!this.isCreateMode() && requestData) {
+      this.isEditMode.set(true);
       const documentData = requestData.documents?.find(
         (d) =>
           d.registrationRequestId === requestData.id &&
@@ -365,6 +365,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
             marriedName: requestData.citizen?.marriedName,
             nationality: requestData.citizen?.nationality,
             profession: requestData.citizen?.profession,
+            email: requestData.citizen?.email,
             physicalAddress: requestData.citizen?.physicalAddress,
             postalAddress: requestData.citizen?.postalAddress,
             fatherId: requestData.citizen?.fatherId,
@@ -375,6 +376,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
             issueDate: documentData?.issueDate ? new Date(documentData?.issueDate) : undefined,
             expiryDate: documentData?.expiryDate ? new Date(documentData?.expiryDate) : undefined,
             issuePlace: documentData?.issuePlace,
+            registrationDocumentType: documentData?.documentType,
           },
         },
         { emitEvent: false },
@@ -402,10 +404,70 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
       }
 
       const constituency = this.store.findNode(requestData.constituencyId!);
-      if (constituency) this.constituencySelected.set([constituency]);
+      if (constituency) {
+        this.constituencySelected.set([constituency]);
+      }
 
       this.syncInputValues();
+
+      const targetConstituencyId = requestData.constituencyId;
+      if (targetConstituencyId && this.allRegion() && this.allRegion()!.length > 0) {
+        this.getResidenceData(targetConstituencyId);
+      }
     }
+  }
+
+  private getResidenceData(municipalityId: number): void {
+    const regions = this.allRegion();
+    if (!regions || regions.length === 0) return;
+
+    const path = this.findConstituencyPath(regions, municipalityId);
+
+    if (path && path.length > 0) {
+      const regionId = path[0]?.id;
+      const deptId = path[1]?.id;
+      const subPrefId = path[2]?.id;
+      const munId = path[3]?.id || path[path.length - 1]?.id;
+
+      if (regionId) this.selectedRegionId.set(regionId);
+      if (deptId) this.selectedDepartmentId.set(deptId);
+      if (subPrefId) this.selectedSubPrefectureId.set(subPrefId);
+
+      this.residenceForm().patchValue(
+        {
+          regionId: regionId,
+          departmentId: deptId,
+          subPrefectureId: subPrefId,
+          municipalityId: munId,
+        },
+        { emitEvent: false },
+      );
+
+      this.toggleControlStates();
+
+      const constituency = this.store.findNode(municipalityId);
+      if (constituency) {
+        this.constituencySelected.set([constituency]);
+      }
+    }
+  }
+
+  private findConstituencyPath(
+    nodes: GetConstituenciesResponse[],
+    targetId: number,
+    currentPath: GetConstituenciesResponse[] = [],
+  ): GetConstituenciesResponse[] | null {
+    for (const node of nodes) {
+      const path = [...currentPath, node];
+      if (node.id === targetId) {
+        return path;
+      }
+      if (node.children && node.children.length > 0) {
+        const found = this.findConstituencyPath(node.children, targetId, path);
+        if (found) return found;
+      }
+    }
+    return null;
   }
 
   async onSave(): Promise<void> {
@@ -423,30 +485,36 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   }
 
   getRegistrationRequestModel(): RegistrationRequestModel {
-    const registrationRequest: RegistrationRequestModel = {
-      id: this.form().value.id,
-      constituencyId: this.form().value.request?.constituencyId,
-      registrationRequestType: this.form().value.request?.registrationType,
-      reasonForRejection: this.form().value.request?.reasonForRejection,
-      citizen: {
-        gender: this.form().value.citizen?.gender,
-        firstName: this.form().value.citizen?.firstName,
-        lastName: this.form().value.citizen?.lastName,
-        birthDate: this.form().value.citizen?.birthDate
-          ? new Date(this.form().value.citizen?.birthDate!).toISOString()
-          : undefined,
-        birthPlace: this.form().value.citizen?.birthPlace,
-        maritalStatus: this.form().value.citizen?.maritalStatus,
-        marriedName: this.form().value.citizen?.marriedName,
-        nationality: this.form().value.citizen?.nationality,
-        profession: this.form().value.citizen?.profession,
-        physicalAddress: this.form().value.citizen?.physicalAddress,
-        postalAddress: this.form().value.citizen?.postalAddress,
-        fatherId: this.form().value.citizen?.fatherId,
-        motherId: this.form().value.citizen?.motherId,
-      },
+    const formValue = this.form().getRawValue();
+    const { id, request, citizen, requestDocuments } = formValue;
+
+    return {
+      id,
+      constituencyId: request?.constituencyId,
+      registrationRequestType: request?.registrationType,
+      reasonForRejection: request?.reasonForRejection,
+
+      // Le mapping du citoyen est maintenant beaucoup plus propre et direct
+      citizen: citizen
+        ? {
+            ...citizen,
+            birthDate: citizen.birthDate ? citizen.birthDate.toISOString() : undefined,
+          }
+        : undefined,
+
+      // 3. Mapping correct du tableau de documents attendu par l'interface
+      documents: requestDocuments
+        ? [
+            {
+              documentType: requestDocuments.registrationDocumentType,
+              partNumber: requestDocuments.partNumber,
+              issuePlace: requestDocuments.issuePlace,
+              issueDate: requestDocuments.issueDate?.toISOString(),
+              expiryDate: requestDocuments.expiryDate?.toISOString(),
+            },
+          ]
+        : undefined,
     };
-    return registrationRequest;
   }
 
   cancel(): void {
@@ -470,7 +538,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
       } else if (permissions.some((p) => p === 'getRegistrationRequestForManagement')) {
         label = this.translateService.instant('breadcrumb.registrationRequestsForManagement');
       } else if (permissions.some((p) => p === 'createRegistrationRequest')) {
-        label = this.translateService.instant('breadcrumb.registrationRequestAdd');
+        label = this.translateService.instant('breadcrumb.registrationRequests');
       }
 
       this.breadcrumbService.setBreadcrumbs([

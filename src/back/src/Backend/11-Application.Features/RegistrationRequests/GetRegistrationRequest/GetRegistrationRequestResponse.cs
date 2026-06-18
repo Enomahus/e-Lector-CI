@@ -1,5 +1,6 @@
 ﻿using Application.Common.Enums;
 using Application.Features.Common.Citizen;
+using Application.Features.Common.RegistrationRequestDocument;
 using Application.Features.RegistrationRequests.Common;
 using Application.Features.Users.Common;
 using Infrastructure.Persistence.Entities;
@@ -29,6 +30,12 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
                 ReasonForRejection = dao.ReasonForRejection,
                 Citizen = CitizenModel.FromDao(dao.Citizen),
                 Author = UserModel.FromDao(userDao, dateNow),
+                Documents =
+                [
+                    .. dao.RegistrationRequestDocuments.Select(d =>
+                        RegistrationRequestDocumentModel.FromDao(d)
+                    ),
+                ],
 
                 IdentityDocumentOrCertificateIds = dao
                     .RegistrationRequestDocuments.FirstOrDefault(d =>
@@ -36,6 +43,7 @@ namespace Application.Features.RegistrationRequests.GetRegistrationRequest
                         == RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate
                     )
                     ?.DocumentId,
+
                 PhotoIds = dao
                     .RegistrationRequestDocuments.FirstOrDefault(d =>
                         d.RegistrationRequestDocumentType == RegistrationRequestDocumentType.Photo

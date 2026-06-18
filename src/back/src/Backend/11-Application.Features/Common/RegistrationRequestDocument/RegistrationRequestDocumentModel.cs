@@ -14,7 +14,7 @@ namespace Application.Features.Common.RegistrationRequestDocument
         public string? PartNumber { get; set; }
         public string? IssuePlace { get; set; }
 
-        public static RegistrationRequestDocumentModel From(RegistrationRequestDocumentDao dao)
+        public static RegistrationRequestDocumentModel FromDao(RegistrationRequestDocumentDao dao)
         {
             return new RegistrationRequestDocumentModel
             {

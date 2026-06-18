@@ -10,6 +10,7 @@
     "refresh": "Refresh",
     "login": "Log in",
     "selectFile": "Select a file",
+    "select": "...Please select an option...",
     "no": "No",
     "yes": "Yes",
     "noData": "No data",
@@ -49,6 +50,7 @@
     "pollingStationEdit": "Edit polling station",
     "constituencies": "Constituencies",
     "constituencyCreate": "New constituency",
+    "registrationRequests": "My requests",
     "registrationRequestAdd": "New registration request",
     "registrationRequestEdit": "Edit registration request",
     "registrationRequestsForAdmin": "Request list",
@@ -329,6 +331,12 @@
       "approved": "Approved",
       "rejected": "Rejected"
     },
+    "maritalStatus": {
+      "single": "Single",
+      "married": "Married",
+      "divorced": "Divorced",
+      "widowed": "Widowed"
+    },
     "fields": {
       "reference": "Reference",
       "status": "Status",
@@ -387,7 +395,11 @@
     "docType": "Identity document type",
     "documentType": {
       "photo": "Passport photo",
-      "identityDocumentOrNationalCertificate": "National identity card / Certificate of nationaliyé"
+      "identityDocumentOrNationalCertificate": "National identity card / Certificate of nationaliyé",
+      "partNumber": "Part number",
+      "issueDate": "Date of issue",
+      "expiryDate": "Expiry date",
+      "issuePlace": "Place of issue"
     }
   }
 }
