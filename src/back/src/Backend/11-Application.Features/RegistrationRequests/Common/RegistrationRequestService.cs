@@ -25,7 +25,8 @@ namespace Application.Features.RegistrationRequests.Common
         {
             var registrationRequest =
                 await context
-                    .RegistrationRequests.AsSplitQuery()
+                    .RegistrationRequests.AsNoTracking()
+                    .AsSplitQuery()
                     .Include(r => r.RegistrationRequestDocuments)
                         .ThenInclude(r => r.Document)
                     .Include(r => r.Citizen)

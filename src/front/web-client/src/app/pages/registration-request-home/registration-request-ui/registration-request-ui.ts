@@ -315,11 +315,20 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     formControls.municipalityId.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
-        const municipalityId = value ? Number(value) : null;
-        const constituency = this.store.findNode(municipalityId!);
+        this.selectedMunicipalityId.set(value ? Number(value) : null);
+        formControls.vottingLocationId.setValue(undefined, { emitEvent: false });
+        this.toggleControlStates();
+      });
+
+    // 4. Écoute spécifique du lieu de vôte pour émettre vers le parent
+    formControls.vottingLocationId.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        const vottingLocationId = value ? Number(value) : null;
+        const constituency = this.store.findNode(vottingLocationId!);
         this.constituencySelected.set([constituency!]);
 
-        this.form().controls.request.controls.constituencyId.setValue(municipalityId!);
+        this.form().controls.request.controls.constituencyId.setValue(vottingLocationId!);
       });
   }
 

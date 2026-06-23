@@ -1377,11 +1377,10 @@ export class ServerClient extends CustomApiClient {
     /**
      * Met à jour une demande.
      * @param registrationRequestJson (optional) 
-     * @param registrationRequestCertificateAttachments (optional) 
-     * @param registrationRequestCniAttachments (optional) 
+     * @param registrationRequestCniOrCertificateAttachments (optional) 
      * @param photo (optional) 
      */
-    updateRegistrationRequest(id: string, registrationRequestJson: RegistrationRequestModel | null | undefined, registrationRequestCertificateAttachments: FileParameter | null | undefined, registrationRequestCniAttachments: FileParameter | null | undefined, photo: FileParameter | null | undefined): Observable<ResultOfGuid> {
+    updateRegistrationRequest(id: string, registrationRequestJson: RegistrationRequestModel | null | undefined, registrationRequestCniOrCertificateAttachments: FileParameter | null | undefined, photo: FileParameter | null | undefined): Observable<ResultOfGuid> {
         let url_ = this.baseUrl + "/registration-requests/{Id}";
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
@@ -1391,10 +1390,8 @@ export class ServerClient extends CustomApiClient {
         const content_ = new FormData();
         if (registrationRequestJson !== null && registrationRequestJson !== undefined)
             content_.append("RegistrationRequestJson", JSON.stringify(registrationRequestJson));
-        if (registrationRequestCertificateAttachments !== null && registrationRequestCertificateAttachments !== undefined)
-            content_.append("RegistrationRequestCertificateAttachments", registrationRequestCertificateAttachments.data, registrationRequestCertificateAttachments.fileName ? registrationRequestCertificateAttachments.fileName : "RegistrationRequestCertificateAttachments");
-        if (registrationRequestCniAttachments !== null && registrationRequestCniAttachments !== undefined)
-            content_.append("RegistrationRequestCniAttachments", registrationRequestCniAttachments.data, registrationRequestCniAttachments.fileName ? registrationRequestCniAttachments.fileName : "RegistrationRequestCniAttachments");
+        if (registrationRequestCniOrCertificateAttachments !== null && registrationRequestCniOrCertificateAttachments !== undefined)
+            content_.append("RegistrationRequestCniOrCertificateAttachments", registrationRequestCniOrCertificateAttachments.data, registrationRequestCniOrCertificateAttachments.fileName ? registrationRequestCniOrCertificateAttachments.fileName : "RegistrationRequestCniOrCertificateAttachments");
         if (photo !== null && photo !== undefined)
             content_.append("Photo", photo.data, photo.fileName ? photo.fileName : "Photo");
 

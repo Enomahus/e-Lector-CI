@@ -75,6 +75,19 @@
               </ul>
             }
           </div>
+          <div class="input-block required">
+            <label for="municipalityId">{{
+              'registrationRequests.fields.vottingLocation' | translate
+            }}</label>
+            <select id="vottingLocationId" formControlName="vottingLocationId">
+              <option value="" selected>{{ 'global.select' | translate }}</option>
+              @for (vottingLocation of allVottingLocation(); track vottingLocation.id) {
+                <option [value]="vottingLocation.id">
+                  {{ vottingLocation.code }} {{ vottingLocation.wording }}
+                </option>
+              }
+            </select>
+          </div>
         </div>
       </form>
     </section>

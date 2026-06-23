@@ -18,7 +18,6 @@ import { CreateRegistrationRequestUi } from './pages/registration-request-home/c
 import { RegistrationRequestsForAdminUi } from './pages/registration-request-home/registration-requests-for-admin-ui/registration-requests-for-admin-ui';
 import { RegistrationRequestsForManagementUi } from './pages/registration-request-home/registration-requests-for-management-ui/registration-requests-for-management-ui';
 import { RegistrationRequestsUi } from './pages/registration-request-home/registration-requests-ui/registration-requests-ui';
-import { RegistrationWizardUi } from './pages/registration-request-home/registration-wizard-ui/registration-wizard-ui';
 import { UpdateRegistrationRequestUi } from './pages/registration-request-home/update-registration-request-ui/update-registration-request-ui';
 import { ResetPasswordUi } from './pages/reset-password-ui/reset-password-ui';
 import { PermissionGuard } from './services/auth/permission.guard';
@@ -69,7 +68,7 @@ export const routes: Routes = [
         path: 'register',
         component: CreateAccount,
         title: 'register.title',
-        canActivate: [PermissionGuard],
+        //canActivate: [PermissionGuard],
       },
       {
         path: 'faq',
@@ -93,15 +92,6 @@ export const routes: Routes = [
         component: RegistrationRequestsForAdminUi,
         canActivate: [PermissionGuard],
         title: 'registrationRequests.titleForAdmin',
-      },
-      {
-        path: 'registration/new',
-        component: RegistrationWizardUi,
-        // canActivate: [PermissionGuard],
-        // data: {
-        //   permission: perm('createRegistrationRequest'),
-        // },
-        // title: 'registrationRequests.titleNewRegistrationRequest',
       },
       {
         path: 'registration-requests/new',

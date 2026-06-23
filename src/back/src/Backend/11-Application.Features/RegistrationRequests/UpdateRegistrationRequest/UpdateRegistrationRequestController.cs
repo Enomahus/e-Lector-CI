@@ -37,7 +37,8 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequest
             {
                 Id = formData.Id,
                 RegistrationRequest = formData.GetRegistrationRequest(),
-                RegistrationRequestCniOrCertificateAttachments = formData.RegistrationRequestCniAttachments,
+                RegistrationRequestCniOrCertificateAttachments =
+                    formData.RegistrationRequestCniOrCertificateAttachments,
                 Photo = formData.Photo,
             };
             return Mediator.Send(command, cancellationToken);

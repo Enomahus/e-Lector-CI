@@ -71,7 +71,6 @@ export class UpdateRegistrationRequestUi implements OnInit {
       reasonForRejection: event.reason,
       registrationRequestId: event.requestId,
       newStatus: event.newStatus,
-      pollingStationId: 0,
     };
 
     this.registrationRequestService
