@@ -752,18 +752,12 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
 
             var idDoc = new DocumentDao
             {
-                FileName = $"CNI_{data.LastName}.pdf",
+                FileName = $"CNI_OR_CERT_NAT_{data.LastName}.pdf",
                 ContentType = "application/pdf",
                 FileSize = 512_000,
                 UploadDate = submissionDate,
             };
-            var certDoc = new DocumentDao
-            {
-                FileName = $"CERT_NAT_{data.LastName}.pdf",
-                ContentType = "application/pdf",
-                FileSize = 256_000,
-                UploadDate = submissionDate,
-            };
+
             var photoDoc = new DocumentDao
             {
                 FileName = $"PHOTO_{data.LastName}.jpg",
@@ -786,8 +780,8 @@ namespace Infrastructure.Persistence.SQLServer.Seeders
                     new()
                     {
                         PartNumber = "partNumber",
-                        IssueDate = DateTime.UtcNow,
-                        ExpiryDate = DateTime.UtcNow,
+                        IssueDate = DateTime.UtcNow.AddMonths(-2),
+                        ExpiryDate = DateTime.UtcNow.AddYears(5),
                         IssuePlace = "issuePlace",
                         RegistrationRequestDocumentType =
                             RegistrationRequestDocumentType.IdentityDocumentOrNationalCertificate,

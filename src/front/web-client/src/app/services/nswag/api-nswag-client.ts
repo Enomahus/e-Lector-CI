@@ -3380,7 +3380,6 @@ export interface UpdateRegistrationRequestStatusCommand {
     registrationRequestId?: string;
     newStatus?: RegistrationStatus;
     reasonForRejection?: string | undefined;
-    pollingStationId?: number | undefined;
 }
 
 export interface ResultOfGetRegistrationRequestResponse extends Result {

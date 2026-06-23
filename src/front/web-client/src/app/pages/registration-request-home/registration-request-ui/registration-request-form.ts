@@ -4,18 +4,21 @@ import {
   MaritalStatus,
   RegistrationRequestDocumentType,
   RegistrationRequestType,
+  RegistrationStatus,
 } from '@app/services/nswag/api-nswag-client';
 export type RegistrationRequestForm = FormGroup<{
   id: FormControl<string | undefined>;
   request: RequestsForm;
   citizen: CitizenForm;
   requestDocuments: RequestDocumentsForm;
+  residence: ResidenceForm;
 }>;
 
 export type RequestsForm = FormGroup<{
   constituencyId: FormControl<number | undefined>;
   registrationType: FormControl<RegistrationRequestType | undefined>;
   reasonForRejection: FormControl<string | undefined>;
+  status: FormControl<RegistrationStatus | undefined>;
 }>;
 
 export type RequestDocumentsForm = FormGroup<{
@@ -26,6 +29,14 @@ export type RequestDocumentsForm = FormGroup<{
   expiryDate: FormControl<Date | undefined>;
   registrationCniOrCretificateAttachments: FormControl<File | undefined>;
   photoAttachments: FormControl<File | undefined>;
+}>;
+
+export type ResidenceForm = FormGroup<{
+  regionId: FormControl<number | undefined>;
+  departmentId: FormControl<number | undefined>;
+  subPrefectureId: FormControl<number | undefined>;
+  municipalityId: FormControl<number | undefined>;
+  vottingLocationId: FormControl<number | undefined>;
 }>;
 
 export type CitizenForm = FormGroup<{
@@ -59,8 +70,35 @@ export function createRequestsForm(): RequestsForm {
       validators: Validators.maxLength(500),
       nonNullable: true,
     }),
+    status: new FormControl<RegistrationStatus | undefined>('toBeProcessed', { nonNullable: true }),
   }) as RequestsForm;
   return form;
+}
+
+export function createResidenceForm(): ResidenceForm {
+  const residence = new FormGroup({
+    regionId: new FormControl<number | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    departmentId: new FormControl<number | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    subPrefectureId: new FormControl<number | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    municipalityId: new FormControl<number | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    vottingLocationId: new FormControl<number | undefined>(undefined, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+  }) as ResidenceForm;
+  return residence;
 }
 
 export function createCitizenForm(): CitizenForm {
@@ -164,6 +202,7 @@ export function createRegistrationRequestForm(): RegistrationRequestForm {
     request: createRequestsForm(),
     citizen: createCitizenForm(),
     requestDocuments: createRequestDocumentsForm(),
+    residence: createResidenceForm(),
   }) as RegistrationRequestForm;
   return form;
 }

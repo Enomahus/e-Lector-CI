@@ -6,6 +6,8 @@
     [selectedStatus]="selectedStatus()!"
     [registrationRequest]="registrationRequest()"
     (saveTriggered)="update($event)"
+    (approvedTriggered)="approveRequestTriggerred($event)"
+    (viewDocumentTriggered)="viewDocument($event)"
     (goBack)="goBack()"
   ></app-registration-request-ui>
 } @else {

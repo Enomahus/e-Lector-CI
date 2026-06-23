@@ -556,6 +556,13 @@
                     >({{ 'global.alreadyUploaded' | translate: 'Fichier enregistré' }})</span
                   > -->
                 </span>
+                <button
+                  type="button"
+                  class="btn text-primary"
+                  (click)="onViewDocument(existingCertificateId()!)"
+                >
+                  <i class="ph ph-eye"></i> {{ 'global.viewDocument' | translate }}
+                </button>
               </div>
             }
 
@@ -594,6 +601,13 @@
                   <i class="ph ph-image"></i>
                   {{ existingPhotoName() }}
                 </span>
+                <button
+                  type="button"
+                  class="btn text-primary"
+                  (click)="onViewDocument(existingPhotoId()!)"
+                >
+                  <i class="ph ph-eye"></i> {{ 'global.viewDocument' | translate }}
+                </button>
               </div>
             }
 
@@ -659,6 +673,14 @@
               {{ 'certificateRequest.cancelRequest' | translate }}
             </button>
           }
+        </div>
+      </ng-container>
+
+      <ng-container *appHasPermission="'triggerActionOnRegistrationRequest'">
+        <div class="tab-action-center">
+          <button [disabled]="isSaving()" type="button" class="btn success" (click)="onApprove()">
+            <i class="ph ph-check-circle"></i> {{ 'registrationRequest.approve' | translate }}
+          </button>
         </div>
       </ng-container>
     }

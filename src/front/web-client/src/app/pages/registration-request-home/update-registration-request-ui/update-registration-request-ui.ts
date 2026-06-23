@@ -1,11 +1,13 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DocumentApiService } from '@app/services/api/document.api.service';
 import { RegistrationRequestApiService } from '@app/services/api/registration-request.api.service';
 import {
   FileParameter,
   GetRegistrationRequestResponse,
   RegistrationRequestModel,
   RegistrationStatus,
+  UpdateRegistrationRequestStatusCommand,
 } from '@app/services/nswag/api-nswag-client';
 import { Loader } from '@app/shared/loader/loader';
 import { getFileParameter } from '@app/shared/upload/file-upload-helper';
@@ -22,6 +24,8 @@ export class UpdateRegistrationRequestUi implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly registrationRequestService = inject(RegistrationRequestApiService);
+  private readonly documentService = inject(DocumentApiService);
+
   isSaving = signal(false);
   isLoading = signal(false);
   selectedStatus = signal<RegistrationStatus | null>(null);
@@ -56,25 +60,54 @@ export class UpdateRegistrationRequestUi implements OnInit {
     });
   }
 
+  approveRequestTriggerred(event: {
+    newStatus: RegistrationStatus;
+    requestId: string;
+    reason: string;
+  }): void {
+    this.isSaving.set(true);
+
+    const command: UpdateRegistrationRequestStatusCommand = {
+      reasonForRejection: event.reason,
+      registrationRequestId: event.requestId,
+      newStatus: event.newStatus,
+      pollingStationId: 0,
+    };
+
+    this.registrationRequestService
+      .updateRegistrationRequestStatus(event.requestId, command)
+      .subscribe({
+        next: () => {
+          this.isSaving.set(false);
+          this.goBack();
+        },
+        error: () => this.isSaving.set(false),
+      });
+  }
+
+  viewDocument(documentId: string): void {
+    this.documentService.downloadDocument(documentId).subscribe((blob) => {
+      const url = window.URL.createObjectURL(blob.data);
+      window.open(url, '_blank');
+    });
+  }
+
   async update(event: {
     registrationRequest: RegistrationRequestModel;
     certificateOfNationalityAttachments?: File;
-    cniAttachments?: File;
     photoAttachments?: File;
   }): Promise<void> {
     this.isSaving.set(true);
 
-    const { certificateOfNationalityAttachments, cniAttachments, photoAttachments } =
+    const { certificateOfNationalityAttachments, photoAttachments } =
       await this.handleAttachments(event);
 
     this.registrationRequestService
       .updateRegistrationRequest(
         this.registrationRequest()?.id!,
         event.registrationRequest,
-        certificateOfNationalityAttachments ? certificateOfNationalityAttachments : undefined,
-        cniAttachments ? cniAttachments : undefined,
-        photoAttachments ? photoAttachments : undefined,
-        {},
+        certificateOfNationalityAttachments,
+        photoAttachments,
       )
       .subscribe({
         next: () => {
@@ -89,7 +122,6 @@ export class UpdateRegistrationRequestUi implements OnInit {
 
   private async handleAttachments(event: {
     certificateOfNationalityAttachments?: File;
-    cniAttachments?: File;
     photoAttachments?: File;
   }): Promise<{
     certificateOfNationalityAttachments?: FileParameter;
@@ -99,10 +131,9 @@ export class UpdateRegistrationRequestUi implements OnInit {
     const certificateOfNationalityAttachments = await getFileParameter(
       event.certificateOfNationalityAttachments,
     );
-    const cniAttachments = await getFileParameter(event.cniAttachments);
     const photoAttachments = await getFileParameter(event.photoAttachments);
 
-    return { certificateOfNationalityAttachments, cniAttachments, photoAttachments };
+    return { certificateOfNationalityAttachments, photoAttachments };
   }
 
   goBack(): void {
