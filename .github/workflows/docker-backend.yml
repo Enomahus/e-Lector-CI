@@ -1,9 +1,3 @@
-# ==============================================================================
-# Continuous Deployment - Backend .NET : Build & Push Docker vers GHCR
-# ==============================================================================
-# GitHub Container Registry (ghcr.io) = gratuit + intégré + utilise GITHUB_TOKEN
-# Déclenché uniquement sur push vers main ET si backend a changé.
-# ==============================================================================
 
 name: Build & Push Backend Docker Image
 
@@ -33,7 +27,7 @@ jobs:
         with:
           filters: |
             backend:
-              - 'backend/**'
+              - 'src/back/src/Backend/00-Web'
               - '.github/workflows/docker-backend.yml'
 
   # --------------------------------------------------------------------------
@@ -77,8 +71,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: /src/back/src/Backend/00-Web                    # Dossier contenant le Dockerfile
-          file: /src/back/src/Backend/00-Web/Dockerfile            # Ajuste si ton Dockerfile est ailleurs
+          context: ./src/back/src/Backend/00-Web                    # Dossier contenant le Dockerfile
+          file: ./src/back/src/Backend/00-Web/Dockerfile            # Ajuste si ton Dockerfile est ailleurs
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
