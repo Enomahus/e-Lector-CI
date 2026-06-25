@@ -77,8 +77,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: backend                    # Dossier contenant le Dockerfile
-          file: backend/Dockerfile            # Ajuste si ton Dockerfile est ailleurs
+          context: /src/back/src/Backend/00-Web                    # Dossier contenant le Dockerfile
+          file: /src/back/src/Backend/00-Web/Dockerfile            # Ajuste si ton Dockerfile est ailleurs
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -93,12 +93,3 @@ jobs:
           echo ""
           echo "Pour puller localement :"
           echo "docker pull ghcr.io/${{ github.repository }}/backend:sha-${{ github.sha }}"
-
-# ==============================================================================
-# Conseils importants :
-# - Ajoute dans ton Dockerfile (juste après le premier FROM) :
-#   LABEL org.opencontainers.image.source="https://github.com/OWNER/REPO"
-# - L'image sera visible dans l'onglet "Packages" du repo
-# - Pour rendre une image publique : Package settings → Change visibility → Public
-# - Tu peux ensuite déployer cette image sur Azure, K8s, Fly.io, etc.
-# ==============================================================================
