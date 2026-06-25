@@ -27,7 +27,7 @@ jobs:
         with:
           filters: |
             backend:
-              - 'src/back/src/Backend/00-Web'
+              - './src/back/src/Backend/00-Web'
               - '.github/workflows/docker-backend.yml'
 
   # --------------------------------------------------------------------------
