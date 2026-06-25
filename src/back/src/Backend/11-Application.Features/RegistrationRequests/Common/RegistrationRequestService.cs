@@ -25,7 +25,8 @@ namespace Application.Features.RegistrationRequests.Common
         {
             var registrationRequest =
                 await context
-                    .RegistrationRequests.AsSplitQuery()
+                    .RegistrationRequests.AsNoTracking()
+                    .AsSplitQuery()
                     .Include(r => r.RegistrationRequestDocuments)
                         .ThenInclude(r => r.Document)
                     .Include(r => r.Citizen)
@@ -132,8 +133,6 @@ namespace Application.Features.RegistrationRequests.Common
 
             var newDocuments = new List<RegistrationRequestDocumentDao>();
 
-            //foreach (var file in attachements)
-            //{
             if (attachement is { Length: > 0 })
             {
                 var existingDocument = existingDocumentsForType.FirstOrDefault(doc =>
@@ -172,7 +171,6 @@ namespace Application.Features.RegistrationRequests.Common
                     newDocuments.Add(newDocument);
                 }
             }
-            //}
 
             context.RegistrationRequestDocuments.AddRange(newDocuments);
             await context.SaveChangesAsync(cancellationToken);

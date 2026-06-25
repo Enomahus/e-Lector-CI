@@ -38,8 +38,7 @@ export class RegistrationRequestApiService extends ApiBaseService {
   updateRegistrationRequest(
     id: string,
     registrationRequestJson: RegistrationRequestModel | undefined,
-    registrationRequestCertificateAttachments: FileParameter | undefined,
-    registrationRequestCniAttachments: FileParameter | undefined,
+    registrationRequestCniOrCertificateAttachments: FileParameter | undefined,
     photo: FileParameter | undefined,
     options: ApiToastOptions = {},
   ): Observable<ResultOfGuid> {
@@ -47,8 +46,7 @@ export class RegistrationRequestApiService extends ApiBaseService {
       .updateRegistrationRequest(
         id,
         registrationRequestJson,
-        registrationRequestCertificateAttachments,
-        registrationRequestCniAttachments,
+        registrationRequestCniOrCertificateAttachments,
         photo,
       )
       .pipe(this.handleResult(options));

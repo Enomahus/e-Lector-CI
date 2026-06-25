@@ -18,10 +18,8 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequest
         public string? RegistrationRequestJson { get; set; }
 
         [FromForm]
-        public required IFormFile RegistrationRequestCertificateAttachments { get; set; }
+        public required IFormFile RegistrationRequestCniOrCertificateAttachments { get; set; }
 
-        [FromForm]
-        public required IFormFile RegistrationRequestCniAttachments { get; set; }
         public required IFormFile Photo { get; set; }
 
         public RegistrationRequestModel? GetRegistrationRequest()

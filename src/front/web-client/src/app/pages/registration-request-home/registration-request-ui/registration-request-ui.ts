@@ -45,15 +45,12 @@ import { StickyButtonsContainer } from '@app/shared/sticky-buttons-container/sti
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import {
-  createResidenceForm,
-  ResidenceForm,
-} from '../registration-wizard-ui/registration-wizard-form';
-import {
   CitizenForm,
   createRegistrationRequestForm,
   RegistrationRequestForm,
   RequestDocumentsForm,
   RequestsForm,
+  ResidenceForm,
 } from './registration-request-form';
 
 @Component({
@@ -83,7 +80,13 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     cniAttachments?: File;
     photoAttachments?: File;
   }>();
-  saveForManagementTriggered = output<RegistrationRequestForm>();
+  //approvedTriggered = output<RegistrationRequestForm>();
+  approvedTriggered = output<{
+    newStatus: RegistrationStatus;
+    requestId: string;
+    reason: string;
+  }>();
+  viewDocumentTriggered = output<string>();
   goBack = output<void>();
 
   private readonly breadcrumbService = inject(BreadcrumbService);
@@ -100,7 +103,6 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   isLoading = signal<boolean>(false);
   isEditMode = signal<boolean>(false);
   form = signal<RegistrationRequestForm>(createRegistrationRequestForm());
-  residenceForm = signal<ResidenceForm>(createResidenceForm());
   registrationRequestId = signal<string | undefined>(undefined);
   municipalityId = signal<number | null>(null);
   constituencies = signal<GetConstituenciesResponse[] | null>(null);
@@ -121,6 +123,9 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   // Signaux pour suivre l'état des documents déjà enregistrés en base
   existingCertificateName = signal<string | null>(null);
   existingPhotoName = signal<string | null>(null);
+  // Conserver les IDs des documents pour la visualisation
+  existingCertificateId = signal<string | null>(null);
+  existingPhotoId = signal<string | null>(null);
 
   // Computed properties pour filtrer les datalists
   protected filteredFatherOptions = computed(() => this.filterParents(this.fatherInputValue()));
@@ -142,6 +147,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   selectedRegionId = signal<number | null>(null);
   selectedDepartmentId = signal<number | null>(null);
   selectedSubPrefectureId = signal<number | null>(null);
+  selectedMunicipalityId = signal<number | null>(null);
 
   allDepartement = computed<GetConstituenciesResponse[]>(() => {
     const regionId = this.selectedRegionId();
@@ -167,6 +173,14 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     return selectedSubPrefecture?.children ?? [];
   });
 
+  allVottingLocation = computed<GetConstituenciesResponse[]>(() => {
+    const municipalityId = this.selectedMunicipalityId();
+    if (!municipalityId) return [];
+
+    const selectedMunicipality = this.allMunicipalities()?.find((vl) => vl.id === municipalityId);
+    return selectedMunicipality?.children ?? [];
+  });
+
   requestForm(): RequestsForm {
     return this.form().controls.request;
   }
@@ -175,6 +189,9 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
   }
   requestDocumentsForm(): RequestDocumentsForm {
     return this.form().controls.requestDocuments;
+  }
+  residenceForm(): ResidenceForm {
+    return this.form().controls.residence;
   }
 
   constructor() {
@@ -227,6 +244,8 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
             this.selectedDepartmentId.set(Number(controls.departmentId.value));
           if (controls.subPrefectureId.value)
             this.selectedSubPrefectureId.set(Number(controls.subPrefectureId.value));
+          if (controls.vottingLocationId.value)
+            this.selectedMunicipalityId.set(Number(controls.municipalityId.value));
           this.toggleControlStates();
         }
       },
@@ -296,11 +315,20 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     formControls.municipalityId.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
-        const municipalityId = value ? Number(value) : null;
-        const constituency = this.store.findNode(municipalityId!);
+        this.selectedMunicipalityId.set(value ? Number(value) : null);
+        formControls.vottingLocationId.setValue(undefined, { emitEvent: false });
+        this.toggleControlStates();
+      });
+
+    // 4. Écoute spécifique du lieu de vôte pour émettre vers le parent
+    formControls.vottingLocationId.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        const vottingLocationId = value ? Number(value) : null;
+        const constituency = this.store.findNode(vottingLocationId!);
         this.constituencySelected.set([constituency!]);
 
-        this.form().controls.request.controls.constituencyId.setValue(municipalityId!);
+        this.form().controls.request.controls.constituencyId.setValue(vottingLocationId!);
       });
   }
 
@@ -326,6 +354,13 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
       controls.municipalityId.enable({ emitEvent: false });
     } else {
       controls.municipalityId.disable({ emitEvent: false });
+    }
+
+    // 4. Lieu de vôte active ssi Municipalité renseigné et active
+    if (controls.municipalityId.value && controls.municipalityId.enabled) {
+      controls.vottingLocationId.enable({ emitEvent: false });
+    } else {
+      controls.vottingLocationId.disable({ emitEvent: false });
     }
   }
 
@@ -386,8 +421,10 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
         requestData.identityDocumentOrCertificateIds &&
         requestData.identityDocumentOrCertificateIds.length > 0
       ) {
-        this.existingCertificateName.set(`Document_Identité_${requestData.id}.pdf`);
-        // On supprime le validateur requis car le fichier existe déjà côté serveur
+        this.existingCertificateName.set(
+          `Document_Identité_${requestData.identityDocumentOrCertificateIds}.pdf`,
+        );
+        this.existingCertificateId.set(requestData.identityDocumentOrCertificateIds);
         this.requestDocumentsForm().controls.registrationCniOrCretificateAttachments.clearValidators();
         this.requestDocumentsForm().controls.registrationCniOrCretificateAttachments.updateValueAndValidity(
           { emitEvent: false },
@@ -395,8 +432,8 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
       }
 
       if (requestData.photoIds && requestData.photoIds.length > 0) {
-        this.existingPhotoName.set(`Photo_Identite_${requestData.id}.jpg`);
-        // On supprime le validateur requis car le fichier existe déjà côté serveur
+        this.existingPhotoName.set(`Photo_Identite_${requestData.photoIds}.jpg`);
+        this.existingPhotoId.set(requestData.photoIds);
         this.requestDocumentsForm().controls.photoAttachments.clearValidators();
         this.requestDocumentsForm().controls.photoAttachments.updateValueAndValidity({
           emitEvent: false,
@@ -417,11 +454,11 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
     }
   }
 
-  private getResidenceData(municipalityId: number): void {
+  private getResidenceData(locationId: number): void {
     const regions = this.allRegion();
     if (!regions || regions.length === 0) return;
 
-    const path = this.findConstituencyPath(regions, municipalityId);
+    const path = this.findConstituencyPath(regions, locationId);
 
     if (path && path.length > 0) {
       const regionId = path[0]?.id;
@@ -432,6 +469,7 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
       if (regionId) this.selectedRegionId.set(regionId);
       if (deptId) this.selectedDepartmentId.set(deptId);
       if (subPrefId) this.selectedSubPrefectureId.set(subPrefId);
+      if (munId) this.selectedMunicipalityId.set(munId);
 
       this.residenceForm().patchValue(
         {
@@ -439,13 +477,14 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
           departmentId: deptId,
           subPrefectureId: subPrefId,
           municipalityId: munId,
+          vottingLocationId: locationId,
         },
         { emitEvent: false },
       );
 
       this.toggleControlStates();
 
-      const constituency = this.store.findNode(municipalityId);
+      const constituency = this.store.findNode(locationId);
       if (constituency) {
         this.constituencySelected.set([constituency]);
       }
@@ -482,6 +521,33 @@ export class RegistrationRequestUi implements OnInit, OnChanges {
       cniAttachments: this.cniFile() ?? undefined,
       photoAttachments: this.photoFile() ?? undefined,
     });
+  }
+
+  onApprove(): void {
+    const reason = this.form().controls.request.controls.reasonForRejection.value ?? '';
+    const registrationRequestId = this.form().controls.id.value;
+    const newStatus = this.form().controls.request.controls.status.value;
+
+    // Sécurité : On s'assure que l'ID est présent avant d'émettre
+    if (!registrationRequestId) {
+      console.error("Impossible d'émettre l'approbation : l'ID de la demande est manquant.");
+      return;
+    }
+
+    if (newStatus === undefined || newStatus === null) {
+      console.error("Impossible d'émettre l'approbation : le nouveau statut est invalide.");
+      return;
+    }
+
+    this.approvedTriggered.emit({
+      newStatus: newStatus,
+      requestId: registrationRequestId,
+      reason: reason,
+    });
+  }
+
+  onViewDocument(docId: string): void {
+    if (docId) this.viewDocumentTriggered.emit(docId);
   }
 
   getRegistrationRequestModel(): RegistrationRequestModel {

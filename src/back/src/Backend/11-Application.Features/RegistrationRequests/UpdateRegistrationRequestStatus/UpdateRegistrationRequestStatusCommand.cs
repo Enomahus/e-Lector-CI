@@ -9,6 +9,7 @@ using Infrastructure.Persistence.SQLServer.Contexts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Pcea.Core.Net.Authorization.Application.Attributes;
+using Tools.Constants;
 using Tools.Logging;
 
 namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestStatus
@@ -20,7 +21,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
         public Guid RegistrationRequestId { get; set; }
         public RegistrationStatus NewStatus { get; set; }
         public string? ReasonForRejection { get; set; }
-        public long? PollingStationId { get; set; }
+        //public long? PollingStationId { get; set; }
     }
 
     public class UpdateRegistrationRequestStatusCommandValidator
@@ -40,19 +41,19 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
                 .WithMessage(ValidationErrorCode.Required.ToString())
                 .MaximumLength(500);
 
-            RuleFor(r => r.PollingStationId)
-                .NotEmpty()
-                .When(r => r.NewStatus == RegistrationStatus.Approved)
-                .WithMessage(ValidationErrorCode.Required.ToString())
-                .MustAsync(
-                    async (id, token) =>
-                    {
-                        if (!id.HasValue)
-                            return false;
-                        return await context.PollingStations.AnyAsync(ps => ps.Id == id.Value, token);
-                    }
-                )
-                .WithMessage(ValidationErrorCode.PollingStationMustExist.ToString());
+            //RuleFor(r => r.PollingStationId)
+            //    .NotEmpty()
+            //    .When(r => r.NewStatus == RegistrationStatus.Approved)
+            //    .WithMessage(ValidationErrorCode.Required.ToString())
+            //    .MustAsync(
+            //        async (id, token) =>
+            //        {
+            //            if (!id.HasValue)
+            //                return false;
+            //            return await context.PollingStations.AnyAsync(ps => ps.Id == id.Value, token);
+            //        }
+            //    )
+            //    .WithMessage(ValidationErrorCode.PollingStationMustExist.ToString());
         }
     }
 
@@ -101,7 +102,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
             {
                 await ProcessApprovalAsync(
                     registrationDao,
-                    command.PollingStationId!.Value,
+                    //command.PollingStationId!.Value,
                     dateNow,
                     cancellationToken
                 );
@@ -123,7 +124,7 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
 
         private async Task ProcessApprovalAsync(
             RegistrationRequestDao dao,
-            long pollingSationId,
+            //long pollingSationId,
             DateTimeOffset now,
             CancellationToken token
         )
@@ -137,9 +138,11 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
             if (alreadyElector)
                 throw new Exception("Le citoyen est déjà inscrit comme électeur.");
 
+            var pollingStation = await GetOrCreateAvailablePollingStationAsync(dao.ConstituencyId, token);
+
             string voterNumber = await referenceGeneratorService.GenerateElectorNumberAsync(
                 context,
-                pollingSationId,
+                pollingStation.Id,
                 token
             );
 
@@ -150,13 +153,65 @@ namespace Application.Features.RegistrationRequests.UpdateRegistrationRequestSta
                 VoterRegistrationNumber = voterNumber,
                 RegistrationDate = now,
                 Status = ElectorStatus.Active,
-                PollingStationId = pollingSationId,
+                PollingStationId = pollingStation.Id,
                 CreatedAt = now,
                 ModifiedAt = now,
             };
 
             dao.Status = RegistrationStatus.Approved;
             context.Electors.Add(elector);
+        }
+
+        private async Task<PollingStationDao> GetOrCreateAvailablePollingStationAsync(
+            long constituencyId,
+            CancellationToken cancellationToken
+        )
+        {
+            const int maxElectorsPerStation = AppConstants.MAX_ELECTORS_PER_STATION;
+
+            var constituency =
+                await context
+                    .Constituencies.Include(ps => ps.PollingStations)
+                        .ThenInclude(pse => pse.Electors)
+                    .FirstOrDefaultAsync(c => c.Id == constituencyId, cancellationToken)
+                ?? throw new NotFoundException(nameof(ConstituencyDao), constituencyId);
+
+            if (constituency.Level != LocationLevel.VotingLocation)
+            {
+                throw new InvalidOperationException(
+                    "Les bureaux de vôte ne peuvent être créés que pour une circonscription de niveau LIEU DE VOTE"
+                );
+            }
+
+            var availableStation = constituency.PollingStations.FirstOrDefault(ps =>
+                ps.Electors.Count < maxElectorsPerStation
+            );
+
+            if (availableStation is not null)
+            {
+                return availableStation;
+            }
+
+            int nextNumber =
+                constituency.PollingStations.Count == 0
+                    ? 1
+                    : constituency
+                        .PollingStations.Select(ps => int.TryParse(ps.StationNumber, out var n) ? n : 0)
+                        .Max() + 1;
+
+            var newStation = new PollingStationDao
+            {
+                StationNumber = nextNumber.ToString("D2"),
+                Wording = "",
+                ConstituencyId = constituencyId,
+                CreatedAt = timeProvider.GetUtcNow(),
+                ModifiedAt = timeProvider.GetUtcNow(),
+            };
+
+            context.PollingStations.Add(newStation);
+            await context.SaveChangesAsync(cancellationToken);
+
+            return newStation;
         }
     }
 }
