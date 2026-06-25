@@ -71,7 +71,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./src/back/src/Backend/00-Web                    # Dossier contenant le Dockerfile
+          context: ./src/back                    # Dossier contenant le Dockerfile
           file: ./src/back/src/Backend/00-Web/Dockerfile            # Ajuste si ton Dockerfile est ailleurs
           push: true
           tags: ${{ steps.meta.outputs.tags }}
