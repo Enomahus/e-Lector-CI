@@ -1,0 +1,158 @@
+# ==============================================================================
+# CI Pipeline - Validation sur Pull Request et Push
+# ==============================================================================
+# Ce workflow tourne à chaque PR et à chaque push sur master.
+# Il vérifie que le code frontend ET backend est correct.
+# En monorepo : on utilise des path filters pour ne pas tout relancer inutilement.
+# ==============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+
+# Permet d'annuler les runs précédents si un nouveau push arrive sur la même PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # --------------------------------------------------------------------------
+  # Job 1 : Détecter les changements (path filter)
+  # --------------------------------------------------------------------------
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Action très utile en monorepo : détecte les fichiers modifiés
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - './src/front/web-client'
+              - '.github/workflows/ci.yml'
+              - '.github/workflows/deploy-frontend.yml'
+            backend:
+              - './src/back/src/Backend/00-Webd'
+              - '.github/workflows/ci.yml'
+              - '.github/workflows/docker-backend.yml'
+
+  # --------------------------------------------------------------------------
+  # Job 2 : Frontend Angular - Tests + Build + Lint
+  # --------------------------------------------------------------------------
+  frontend-ci:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+    
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run unit tests (headless)
+        run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
+
+      # Optionnel : si tu as des tests E2E avec Playwright
+      - name: Run E2E tests
+        run: npm run e2e -- --headless
+      - name: Build production
+        run: npm run build -- --configuration production
+
+      # Sauvegarde le build pour le job de déploiement (si besoin)
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          retention-days: 1
+
+  # --------------------------------------------------------------------------
+  # Job 3 : Backend .NET - Restore + Build + Test + (optionnel) Docker build
+  # --------------------------------------------------------------------------
+  backend-ci:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Run unit tests
+        run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage"
+
+      # Optionnel : Vérifie que le Dockerfile build correctement (très recommandé)
+      - name: Build Docker image (test only, no push)
+        if: always()  # On veut quand même voir si Docker build passe même si tests échouent
+        uses: docker/build-push-artifact@v6
+        with:
+          context: backend
+          file: backend/Dockerfile
+          push: false
+          tags: backend-test:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # --------------------------------------------------------------------------
+  # Job 4 : Rapport de couverture (optionnel mais pro)
+  # --------------------------------------------------------------------------
+  coverage-report:
+    needs: [frontend-ci, backend-ci]
+    if: always() && (needs.frontend-ci.result != 'skipped' || needs.backend-ci.result != 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download coverage artifacts (si tu en as)
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          path: coverage
+          merge-multiple: true
+
+      # Tu peux ajouter ici l'upload vers Codecov, SonarQube, etc.
+      # - uses: codecov/codecov-action@v4
+      #   with:
+      #     files: ./coverage/lcov.info
+      #     token: ${{ secrets.CODECOV_TOKEN }}
