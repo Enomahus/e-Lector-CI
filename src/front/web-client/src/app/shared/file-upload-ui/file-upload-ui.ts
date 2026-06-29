@@ -1,7 +1,7 @@
 import { Component, computed, forwardRef, inject, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { DocumentApiService } from '@app/services/api/document.api.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { DocumentApiService } from '../../services/api/document.api.service';
 import { UploadFormValue } from '../upload/upload-form-value';
 
 @Component({

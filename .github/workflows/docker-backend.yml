@@ -2,7 +2,7 @@
 # Continuous Deployment - Backend .NET : Build & Push Docker vers GHCR
 # ==============================================================================
 # GitHub Container Registry (ghcr.io) = gratuit + intégré + utilise GITHUB_TOKEN
-# Déclenché uniquement sur push vers main ET si backend a changé.
+# Déclenché uniquement sur push vers master et develop ET si backend a changé.
 # ==============================================================================
 
 name: Build & Push Backend Docker Image

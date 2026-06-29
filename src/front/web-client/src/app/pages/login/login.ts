@@ -1,10 +1,10 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { form, FormField, maxLength, minLength, required } from '@angular/forms/signals';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthService } from '@app/services/auth/auth.service';
-import { AuthProvider, ResultOfTokenResponse } from '@app/services/nswag/api-nswag-client';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { combineLatest, Observable, take } from 'rxjs';
+import { AuthService } from '../../services/auth/auth.service';
+import { AuthProvider, ResultOfTokenResponse } from '../../services/nswag/api-nswag-client';
 import { Loader } from '../../shared/loader/loader';
 import { LoginPageTemplate } from './login-page-template/login-page-template';
 

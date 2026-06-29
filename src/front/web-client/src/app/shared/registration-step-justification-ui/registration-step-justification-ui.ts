@@ -1,8 +1,8 @@
 import { Component, input } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { RequestDocumentsForm } from '@app/pages/registration-request-home/registration-wizard-ui/registration-wizard-form';
 import { TranslateModule } from '@ngx-translate/core';
+import { RequestDocumentsForm } from '../../pages/registration-request-home/registration-wizard-ui/registration-wizard-form';
 
 @Component({
   selector: 'app-registration-step-justification-ui',

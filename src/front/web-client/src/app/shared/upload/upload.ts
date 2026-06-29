@@ -3,8 +3,8 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { DocumentApiService } from '@app/services/api/document.api.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { DocumentApiService } from '../../services/api/document.api.service';
 import { saveBlobAsFile } from '../helpers/document.helper';
 import { UploadFormValue } from './upload-form-value';
 

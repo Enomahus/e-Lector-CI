@@ -1,4 +1,4 @@
-import { FileParameter } from '@app/services/nswag/api-nswag-client';
+import { FileParameter } from '../../services/nswag/api-nswag-client';
 
 export async function getFileParameters(values?: File[]): Promise<FileParameter[]> {
   if (!values) return [];

@@ -6,8 +6,8 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { patternPassword } from '@app/pages/constants';
-import { AuthProvider, PersonTitle } from '@app/services/nswag/api-nswag-client';
+import { patternPassword } from '../../pages/constants';
+import { AuthProvider, PersonTitle } from '../../services/nswag/api-nswag-client';
 import { passwordMatchValidator } from '../helpers/form.helper';
 import { phoneNumberValidator } from '../phone-input/phone-input-intl.validator';
 

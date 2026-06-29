@@ -8,8 +8,8 @@ import {
   signal,
 } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { CountryData } from '@app/models/country.model';
 import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
+import { CountryData } from '../../models/country.model';
 import { getCountriesList } from '../helpers/form.helper';
 
 const phoneUtil = PhoneNumberUtil.getInstance();

@@ -3,14 +3,14 @@ import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { IdentityForm } from '@app/pages/registration-request-home/registration-wizard-ui/registration-wizard-form';
+import { TranslateModule } from '@ngx-translate/core';
+import { IdentityForm } from '../../pages/registration-request-home/registration-wizard-ui/registration-wizard-form';
 import {
   allGenders,
   allMaritalStatus,
   allPersonTitle,
   allRegistrationRequestType,
-} from '@app/pages/types/enumerations';
-import { TranslateModule } from '@ngx-translate/core';
+} from '../../pages/types/enumerations';
 import { InputDatepickerUi } from '../input-datepicker-ui/input-datepicker-ui';
 
 @Component({
