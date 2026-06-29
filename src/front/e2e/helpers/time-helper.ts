@@ -9,7 +9,7 @@ import {
 } from '@playwright/test';
 
 export async function getCurrentTime(request: APIRequestContext) {
-  const apiUrl = process.env.API_URL ?? 'http://localhost:44082';
+  const apiUrl = process.env.API_URL ?? 'http://localhost:44210';
   const res = await request.get(`${apiUrl}/info/date`);
   const dateStr: string = await res.json();
   return new Date(dateStr);

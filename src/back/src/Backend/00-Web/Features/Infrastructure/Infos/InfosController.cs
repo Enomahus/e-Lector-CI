@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
 
 namespace Web.Features.Infrastructure.Infos
 {
@@ -16,12 +16,12 @@ namespace Web.Features.Infrastructure.Infos
         private readonly Version _version = version;
         private readonly TimeProvider _timeProvider = timeProvider;
 
-        
         /// <summary>
         /// Get the date on the server
         /// </summary>
         /// <returns></returns>
         [HttpGet("date")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(DateTime), (int)HttpStatusCode.OK)]
         public ActionResult GetDate()
         {
