@@ -130,8 +130,8 @@ jobs:
           file: src/back/src/Backend/00-Web/Dockerfile
           push: false
           tags: backend-test:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          #cache-from: type=gha
+          #cache-to: type=gha,mode=max
 
   # --------------------------------------------------------------------------
   # Job 4 : Rapport de couverture (optionnel mais pro)
