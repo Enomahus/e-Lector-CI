@@ -1,1 +1,1 @@
-import { CustomApiClient } from '@app/services/nswag/custom-api-client'
+import { CustomApiClient } from '../../services/nswag/custom-api-client'
