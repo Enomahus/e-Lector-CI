@@ -12,12 +12,6 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { PermissionDirective } from '@app/services/auth/permission.directive';
-import {
-  AppPermission,
-  GetRegistrationRequestsResponseModel,
-  RegistrationStatus,
-} from '@app/services/nswag/api-nswag-client';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   debounceTime,
@@ -28,6 +22,12 @@ import {
   Subject,
   takeUntil,
 } from 'rxjs';
+import { PermissionDirective } from '../../services/auth/permission.directive';
+import {
+  AppPermission,
+  GetRegistrationRequestsResponseModel,
+  RegistrationStatus,
+} from '../../services/nswag/api-nswag-client';
 
 /** Params emitted on each user interaction (sort, page, search). */
 export interface RegistrationRequestTableParams {

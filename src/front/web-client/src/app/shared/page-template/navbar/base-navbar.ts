@@ -10,12 +10,12 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { UsersApiService } from '@app/services/api/users.api.service';
-import { AuthService } from '@app/services/auth/auth.service';
-import { AppPermission, GetCurrentUserResponse } from '@app/services/nswag/api-nswag-client';
 import { filter, map, Observable, tap } from 'rxjs';
 import { Language } from '../../../enums/language.enum';
+import { UsersApiService } from '../../../services/api/users.api.service';
+import { AuthService } from '../../../services/auth/auth.service';
 import { LanguageService } from '../../../services/language.service';
+import { AppPermission, GetCurrentUserResponse } from '../../../services/nswag/api-nswag-client';
 
 @Component({
   standalone: true,

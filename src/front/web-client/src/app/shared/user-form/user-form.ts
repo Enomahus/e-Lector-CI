@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ConstituencyNode } from '@app/models/constituency.model';
-import { UsersApiService } from '@app/services/api/users.api.service';
-import { AuthService } from '@app/services/auth/auth.service';
-import { ConstituencyTreeHelperService } from '@app/services/constituency-tree-helper.service';
-import { RoleModel, UserModel } from '@app/services/nswag/api-nswag-client';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
+import { ConstituencyNode } from '../../models/constituency.model';
+import { UsersApiService } from '../../services/api/users.api.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { ConstituencyTreeHelperService } from '../../services/constituency-tree-helper.service';
+import { RoleModel, UserModel } from '../../services/nswag/api-nswag-client';
 import { ConstituencyTree } from '../constituency-tree/constituency-tree';
 import { Loader } from '../loader/loader';
 import { PhoneInput } from '../phone-input/phone-input';

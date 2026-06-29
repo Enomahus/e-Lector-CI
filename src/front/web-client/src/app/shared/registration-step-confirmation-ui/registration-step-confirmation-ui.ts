@@ -1,8 +1,8 @@
 import { Component, computed, input, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RegistrationForm } from '@app/pages/registration-request-home/registration-wizard-ui/registration-wizard-form';
-import { GetCitizensResponse } from '@app/services/nswag/api-nswag-client';
 import { TranslateModule } from '@ngx-translate/core';
+import { RegistrationForm } from '../../pages/registration-request-home/registration-wizard-ui/registration-wizard-form';
+import { GetCitizensResponse } from '../../services/nswag/api-nswag-client';
 import { RecapItem, RecapSectionUi } from '../recap-section-ui/recap-section-ui';
 
 @Component({

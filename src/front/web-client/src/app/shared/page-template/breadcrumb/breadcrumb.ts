@@ -2,9 +2,9 @@ import { AsyncPipe } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { Breadcrumbs } from '@app/models/breadcrumb.model';
-import { BreadcrumbService } from '@app/services/breadcrumb.service';
 import { Observable } from 'rxjs';
+import { Breadcrumbs } from '../../../models/breadcrumb.model';
+import { BreadcrumbService } from '../../../services/breadcrumb.service';
 
 @Component({
   selector: 'app-breadcrumb',

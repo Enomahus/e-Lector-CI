@@ -10,10 +10,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ResidenceForm } from '@app/pages/registration-request-home/registration-wizard-ui/registration-wizard-form';
-import { ConstituencyApiService } from '@app/services/api/constituency.api.service';
-import { GetConstituenciesResponse } from '@app/services/nswag/api-nswag-client';
 import { TranslateModule } from '@ngx-translate/core';
+import { ResidenceForm } from '../../pages/registration-request-home/registration-wizard-ui/registration-wizard-form';
+import { ConstituencyApiService } from '../../services/api/constituency.api.service';
+import { GetConstituenciesResponse } from '../../services/nswag/api-nswag-client';
 
 @Component({
   selector: 'app-registration-step-residence-ui',

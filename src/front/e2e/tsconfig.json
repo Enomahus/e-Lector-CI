@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
-   //"ignoreDeprecations": "6.0",
     "types": ["node"],
-    //"baseUrl": ".",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
 	"paths": {

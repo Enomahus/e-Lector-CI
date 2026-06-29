@@ -1,9 +1,9 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { AuthService } from '@app/services/auth/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, Observable, tap } from 'rxjs';
+import { AuthService } from '../../../services/auth/auth.service';
 import { CurrentUserService } from '../../../services/current-user.service';
 import { NavbarDesktop } from './navbar-desktop/navbar-desktop';
 import { NavbarMobile } from './navbar-mobile/navbar-mobile';

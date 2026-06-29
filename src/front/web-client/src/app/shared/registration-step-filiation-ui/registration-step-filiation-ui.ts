@@ -4,10 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FiliationForm } from '@app/pages/registration-request-home/registration-wizard-ui/registration-wizard-form';
-import { CitizenApiService } from '@app/services/api/citizen.api.service';
-import { Gender, GetCitizensResponse, MaritalStatus } from '@app/services/nswag/api-nswag-client';
 import { TranslateModule } from '@ngx-translate/core';
+import { FiliationForm } from '../../pages/registration-request-home/registration-wizard-ui/registration-wizard-form';
+import { CitizenApiService } from '../../services/api/citizen.api.service';
+import { Gender, GetCitizensResponse, MaritalStatus } from '../../services/nswag/api-nswag-client';
 import { ParentModalUi } from '../parent-modal-ui/parent-modal-ui';
 
 @Component({

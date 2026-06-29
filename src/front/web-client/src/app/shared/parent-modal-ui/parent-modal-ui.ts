@@ -2,14 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { allGenders } from '@app/pages/types/enumerations';
-import { CitizenApiService } from '@app/services/api/citizen.api.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { allGenders } from '../../pages/types/enumerations';
+import { CitizenApiService } from '../../services/api/citizen.api.service';
 import {
   CreateBasicCitizenCommand,
   Gender,
   GetCitizensResponse,
-} from '@app/services/nswag/api-nswag-client';
-import { TranslateModule } from '@ngx-translate/core';
+} from '../../services/nswag/api-nswag-client';
 import { InputDatepickerUi } from '../input-datepicker-ui/input-datepicker-ui';
 import { Loader } from '../loader/loader';
 
