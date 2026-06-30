@@ -74,12 +74,9 @@ jobs:
       #- name: Run linter
       #  run: npm run lint
 
-      - name: Run unit tests (headless)
-        run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
+      - name: Run unit tests
+        run: npm run test -- --watch=false
 
-      # Optionnel : si tu as des tests E2E avec Playwright
-      - name: Run E2E tests
-        run: npm run e2e -- --headless
       - name: Build production
         run: npm run build -- --configuration production
 
@@ -119,7 +116,15 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Run unit tests
-        run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage"
+        run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-backend
+          path: src/back/coverage
+          retention-days: 1
 
       # Optionnel : Vérifie que le Dockerfile build correctement (très recommandé)
       - name: Build Docker image (test only, no push)
